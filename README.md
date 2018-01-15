@@ -30,5 +30,8 @@ This application will run on the Node.js runtime and NPM.
     > brew install node
 
 ## Running ScienceOlympiad
-1) Type (for now): 
-> npm start 
+1) Type (for now):
+    a) Install dependent modules:
+    > npm install
+    b) Run the UI:
+    > npm start
