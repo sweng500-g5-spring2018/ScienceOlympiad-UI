@@ -5,7 +5,7 @@ import App from './components/app/App';
 import Contact from './components/contact/contact';
 import NotFound from './components/not_found/notFound';
 
-// const Routes = (props) => (
+// khconst Routes = (props) => (
 //     <Router {...props}>
 //         <Route path="/" component={App}>
 //             <Route path="/contact" component={Contact} />
