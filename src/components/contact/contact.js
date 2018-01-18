@@ -10,7 +10,7 @@ class Contact extends Component {
         super(props);
 
         this.state = {
-            chuckNorris: {}
+            chuckNorris: ""
         };
 
     }
@@ -21,7 +21,7 @@ class Contact extends Component {
         var _this = this;
         _this.serverRequest = HttpRequest.httpRequest("https://api.chucknorris.io/jokes/random", "get", null, null).then(function (result) {
             _this.setState({
-                chuckNorris: result.value.toString()
+                chuckNorris: result.value
             })
         }).catch(function (error) {
             console.log(error);

@@ -13,7 +13,7 @@ function httpRequest(url, httpMethod, httpHeader, requestData) {
     var promise = new Promise(function (resolve, reject) {
         var returnJson = {};
 
-        if(httpMethod.toLowerCase() == 'get') {
+        if(httpMethod.toLowerCase() === 'get') {
             axios.get(url, httpHeader).then( function (result) {
                 resolve(result.data);
             }).catch( function (error) {
