@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './contact.css';
+//import '../../../style/contact.css';
 import HttpRequest from '../../adapters/httpRequest';
 
 import ChuckNorris from './chuckNorris';
