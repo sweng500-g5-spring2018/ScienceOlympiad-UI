@@ -18,20 +18,29 @@ This application will run on the Node.js runtime and NPM.
 1) Install xcode if it is not already installed: <br />
     a) Open terminal <br />
     b) Type: <br />
-    > xcode-select --install
+    >       xcode-select --install
 2) Install Homebrew if it is not already installed: <br />
     a) Open terminal <br />
     b) Type: <br />
-    > ruby -e "$(curl -fsSL 
-    https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    >       ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 3) Install Node.js <br />
     a) Open terminal <br />
     b) Type: <br />
-    > brew install node
+    >       brew install node
 
 ## Running ScienceOlympiad
-1) Type (for now):
-    a) Install dependent modules:
-    > npm install
-    b) Run the UI:
-    > npm start
+1) The following are NPM commands for installing module dependencies in the package.json 
+and for compiling/executing modules.  Run these commands from project root directory.
+ 
+    a) Install dependent modules: 
+    >       npm install 
+    
+    b) Run the UI (which runs buildpack server, transpiles JS, compiles LESS files, 
+    and watches for any changes so that they can be reflected in the running 
+    application): <br />
+    >       npm start
+    
+    c) Currently the application runs on port 3000; navigate to:
+    >       localhost:3000
+    
+   
