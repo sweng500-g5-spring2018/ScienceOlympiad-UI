@@ -3,16 +3,7 @@ import {BrowserRouter, Route} from 'react-router-dom';
 
 import App from './components/app/App';
 import Contact from './components/contact/contact';
-import NotFound from './components/not_found/notFound';
-
-// khconst Routes = (props) => (
-//     <Router {...props}>
-//         <Route path="/" component={App}>
-//             <Route path="/contact" component={Contact} />
-//             <Route path="*" component={NotFound} />
-//         </Route>
-//     </Router>
-// );
+import TestModule from './components/not_found/testModule';
 
 class Routes extends Component {
     render() {
@@ -21,7 +12,7 @@ class Routes extends Component {
                 <div id="route-container">
                     <Route path = '/' component = {App} />
                     <Route path = '/contact' component = {Contact} />
-                    <Route path = '/notFound' component = {NotFound} />
+                    <Route path = '/testModule' component = {TestModule} />
                 </div>
             </BrowserRouter>
         )

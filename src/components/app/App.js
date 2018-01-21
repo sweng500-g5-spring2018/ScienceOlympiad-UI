@@ -12,14 +12,14 @@ class App extends Component {
           <h1 className="App-title">Welcome to Science Olympiad</h1>
         </header>
         <p className="App-intro">
-          Welcome to Science Olympaid :) a currently barebones react app that doesn't do anything!
+          Welcome to Science Olympiad :) a currently barebones react app that doesn't do anything!
         </p>
 
         <p><Link to="/">Home</Link></p>
 
         <p><Link to="/contact">Contact</Link></p>
 
-        <p><Link to="/notFound">Not Exist</Link></p>
+        <p><Link to="/testModule">Not Exist</Link></p>
 
       </div>
     );
