@@ -19,7 +19,7 @@ class App extends Component {
 
         <p><Link to="/contact">Contact</Link></p>
 
-        <p><Link to="/testModule">Not Exist</Link></p>
+        <p><Link to="/testModule">Test API</Link></p>
 
       </div>
     );
