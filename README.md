@@ -40,7 +40,7 @@ and for compiling/executing modules.  Run these commands from project root direc
     application): <br />
     >       npm start
     
-    c) Currently the application runs on port 8080; navigate to:
-    >       http://localhost:8080
+    c) Currently the application runs on port 3000; navigate to:
+    >       http://localhost:3000
     
    

@@ -18,7 +18,7 @@
   "scripts": {
     "build-css": "lessc style/style.less public/style.css",
     "watch-css": "less-watch-compiler style public style.less",
-    "start-js": "PORT=8080 react-scripts start",
+    "start-js": "PORT=3000 react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
     "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js",
