@@ -11,7 +11,7 @@ const fs = require('fs');
 // Read SSL Files
 const cert = fs.readFileSync('/home/ec2-user/science-olympiad/keys/cert.pem');
 const key = fs.readFileSync('/home/ec2-user/science-olympiad/keys/privkey.pem');
-const ca = fs.readFileSync('/home/ec2user/science-olympiad/keys/chain.pem');
+const ca = fs.readFileSync('/home/ec2-user/science-olympiad/keys/chain.pem');
 
 // Set Options
 const options = {
