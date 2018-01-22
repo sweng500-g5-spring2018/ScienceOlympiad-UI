@@ -9,9 +9,9 @@ const https = require('https');
 const fs = require('fs');
 
 // Read SSL Files
-const cert = fs.readFileSync('../science-olympiad/keys/cert.pem');
-const key = fs.readFileSync('../science-olympiad/keys/privatekey.pem');
-const ca = fs.readFileSync('../science-olympiad/keys/chain.pem');
+const cert = fs.readFileSync('../keys/cert.pem');
+const key = fs.readFileSync('../keys/privatekey.pem');
+const ca = fs.readFileSync('../keys/chain.pem');
 
 // Set Options
 const options = {
