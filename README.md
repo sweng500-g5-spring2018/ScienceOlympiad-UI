@@ -40,7 +40,27 @@ and for compiling/executing modules.  Run these commands from project root direc
     application): <br />
     >       npm start
     
-    c) Currently the application runs on port 3000; navigate to:
+    c) Currently the application runs on port 8080; navigate to:
     >       http://localhost:3000
     
    
+## IntelliJ Configurations
+1) Verify that you have your language level set to React JSX
+
+    a) Preferences / Language & Frameworks / JavaScript
+    
+    b) Set JavaScript language level to React JSX in the dropdown
+    
+2) Set up IntelliJ to run the app locally:
+
+    a) Edit Run Configurations 
+    
+    b) Add new configuration (plus button in top right)
+    
+    c) Select 'npm'
+    
+    d) Verify that the 'package.json' points to the file of the same name within the root of our project space
+    
+    e) set the command to 'run'
+     
+    f) set the scripts to 'start'
