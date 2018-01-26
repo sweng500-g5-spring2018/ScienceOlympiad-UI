@@ -1,39 +1,41 @@
-import React, {PropTypes, Component} from 'react/addons';
-import shouldPureComponentUpdate from 'react-pure-render/function';
-import GoogleMap from 'google-map-react';
-import MyGreatPlace from './my_great_place.jsx';
+import React, { Component } from 'react';
+import {Map, Marker, GoogleApiWrapper} from 'google-maps-react';
 
 
-class Map extends Component {
-    static propTypes = {
-        center: PropTypes.array,
-        zoom: PropTypes.number,
-        greatPlaceCoords: PropTypes.any
+class Maps extends Component{
+    divStyle = {
+        width: '90%',
+        height: '90%',
+        position:'absolute',
+        textAlign:'center'
     };
 
-    static defaultProps = {
-        center: [59.938043, 30.337157],
-        zoom: 9,
-        greatPlaceCoords: {lat: 59.724465, lng: 30.080121
-    };
-
-    shouldComponentUpdate = shouldPureComponentUpdate;
-
-    constructor(props) {
-        super(props);
+    onMarkerClick() {
+        alert("GOOD JOB YOU FOUND PENN STATE WOOHOO.");
     }
-
     render() {
         return (
-            <GoogleMap
-                ApiKey={'AIzaSyDGFUZX-S2JR_RSCkvqWWvljG93hOHOQx0'} // set if you need stats etc ...
-                center={this.props.center}
-                zoom={this.props.zoom}>
-                <MyGreatPlace lat={59.955413} lng={30.337844} text={'A'} /* Kreyser Avrora */ />
-                <MyGreatPlace {...this.props.greatPlaceCoords} text={'B'} /* road circle */ />
-            </GoogleMap>
+            <div id="map" style={this.divStyle}>
+                <Map
+                    style={{width: '70%', height: '100%', margin:'0px auto', display:'inline-block'}}
+                    google={this.props.google}
+                    initialCenter={{
+                        lat: 40.798214,
+                        lng: -77.859909
+                    }}
+                    zoom={12}
+                    clickableIcons={false}
+                >
+                    <Marker onClick={this.onMarkerClick}
+                            name={'Current location'}
+                    />
+                </Map>
+            </div>
         );
     }
+
 }
 
-export default Map;
+export default GoogleApiWrapper({
+    apiKey: "AIzaSyC7xiiV97LyRQd-GB9aBmiJaYFGW5DVIbM"
+})(Maps)
