@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import HttpRequest from '../../adapters/httpRequest';
 
 import ChuckNorris from './chuckNorris';
+import TestModule from './testModule';
 
 class Contact extends Component {
 
@@ -48,6 +49,8 @@ class Contact extends Component {
             <div key="contact-key" id="contact-id" className="contactClass">
                 <span><h1>Contact Us</h1></span>
                 <ChuckNorris chuckNorrisFromParent={this.state.chuckNorris} callChuckNorris={this.callChuckNorris}></ChuckNorris>
+                <br />
+                <TestModule/>
             </div>
         );
     }
