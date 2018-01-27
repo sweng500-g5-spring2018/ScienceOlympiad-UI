@@ -7,7 +7,7 @@ class ChuckNorris extends Component {
 
         return (
             <div key="contact-chuck-container-div" className="chuckNorrisClass">
-                <a href="https://en.wikipedia.org/wiki/Chuck_Norris">Chuck Norris!!!</a>
+                <button onClick={event => this.props.callChuckNorris(event) }>Chuck Norris!!!</button>
                 <br />
                 <span key="chuck-norris-quote"> {this.props.chuckNorrisFromParent} </span>
             </div>
@@ -18,9 +18,11 @@ class ChuckNorris extends Component {
 export default ChuckNorris;
 
 ChuckNorris.propTypes = {
-    chuckNorrisFromParent: PropTypes.string
+    chuckNorrisFromParent: PropTypes.string,
+    callChuckNorris: PropTypes.any
 }
 
 ChuckNorris.defaultProps = {
-    chuckNorrisFromParent: ". . ."
+    chuckNorrisFromParent : ". . .",
+    callChuckNorris : null
 }
