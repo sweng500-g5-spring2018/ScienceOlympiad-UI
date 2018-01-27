@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
 
-import {StatsCard} from '../../components/StatsCard/StatsCard.jsx';
+import {StatsCard} from '../../components/StatsCard/StatsCard.js';
+
+import Contact from '../../components/HttpExample/contact.js'
 
 class Dashboard extends Component {
     createLegend(json){
@@ -59,6 +61,9 @@ class Dashboard extends Component {
                                 statsIconText="Updated now"
                             />
                         </Col>
+                    </Row>
+                    <Row>
+                        <Contact />
                     </Row>
                 </Grid>
             </div>

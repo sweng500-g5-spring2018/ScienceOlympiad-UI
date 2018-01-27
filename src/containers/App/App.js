@@ -10,9 +10,9 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import Sidebar from '../../components/Sidebar/Sidebar';
 
-import {style} from "../../variables/Variables.jsx";
+import {style} from "../../variables/Variables.js";
 
-import appRoutes from '../../routes/app.jsx';
+import appRoutes from '../../routes/app.js';
 
 class App extends Component {
     constructor(props){
