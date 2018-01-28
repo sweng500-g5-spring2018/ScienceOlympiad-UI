@@ -13,24 +13,23 @@ class Maps extends Component{
         alert("WOW YOU FOUND PENN STATE GOOD FOR YOU.");
     }
     render() {
-        return (
-            <div id="map" >
-                <Map
-                    style={this.divStyle}
-                    google={this.props.google}
-                    initialCenter={{
-                        lat: 40.798214,
-                        lng: -77.859909
-                    }}
-                    zoom={13}
-                    clickableIcons={false}
-                >
-                    <Marker onClick={this.onMarkerClick}
+        return <div id="map">
+            <Map
+                style={this.divStyle}
+                google={this.props.google}
+                zoomControl={true}
+                initialCenter={{
+                    lat: 41.306610,
+                    lng: -76.015437
+                }}
+                zoom={17}
+                clickableIcons={false}
+            >
+                <Marker onClick={this.onMarkerClick}
                         name={'Current location'}
-                    />
-                </Map>
-            </div>
-        );
+                />
+            </Map>
+        </div>;
     }
 
 }

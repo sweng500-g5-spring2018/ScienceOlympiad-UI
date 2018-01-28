@@ -250,14 +250,14 @@ var style = {
 // // // For tables
 // //
 //
-const thArray = ["ID","Name","Salary","Country","City"];
+const thArray = ["ID","Name","Phone Number","Email","SMS Verification"];
 const tdArray = [
-    [ "1" , "Dakota Rice" , "$36,738" , "Niger" , "Oud-Turnhout" ] ,
-    [ "2" , "Minerva Hooper" , "$23,789" , "Curaçao" , "Sinaai-Waas" ] ,
-    [ "3" , "Sage Rodriguez" , "$56,142" , "Netherlands" , "Baileux" ] ,
-    [ "4" , "Philip Chaney" , "$38,735" , "Korea, South" , "Overland Park" ] ,
-    [ "5" , "Doris Greene" , "$63,542" , "Malawi" , "Feldkirchen in Kärnten" ] ,
-    [ "6" , "Mason Porter" , "$78,615" , "Chile" , "Gloucester" ]
+    [ "1" , "Dakota Rice" , "570-432-4543" , "rice@aol.com" , "Yes" ] ,
+    [ "2" , "Minerva Hooper" , "570-323-9423" , "m_hooper@gmail.com" , "Yes" ] ,
+    [ "3" , "Sage Rodriguez" , "983-443-3433" , "sage@yahoo.com" , "No" ] ,
+    [ "4" , "Philip Chaney" , "570-874-3471" , "chan_p@gmail.com" , "Yes" ] ,
+    [ "5" , "Doris Greene" , "570-323-6542" , "greener_Doris43@yahool.com" , "Yes" ] ,
+    [ "6" , "Mason Porter" , "583-564-2348" , "mporter343@yahoo.com" , "Yes" ]
 ];
 
 
