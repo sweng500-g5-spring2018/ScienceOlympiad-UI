@@ -6,7 +6,7 @@ class ChuckNorris extends Component {
     render() {
 
         return (
-            <div key="contact-chuck-container-div" className="chuckNorrisClass">
+            <div id="contact-chuck-container-div" key="contact-chuck-container-div" className="chuckNorrisClass">
                 <button onClick={event => this.props.callChuckNorris(event) }>Chuck Norris!!!</button>
                 <br />
                 <span key="chuck-norris-quote"> {this.props.chuckNorrisFromParent} </span>
