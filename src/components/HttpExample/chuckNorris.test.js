@@ -26,7 +26,7 @@ describe('chuckNorris Component', function () {
     test('Renders div with button and span with correct default props', function () {
         const component = shallow(<ChuckNorris />);
 
-        expect(component.find('div#conact-chuck-container-div')).to.have.length(1);
+        expect(component.find('div#contact-chuck-container-div')).to.have.length(1);
         expect(component.find('button')).to.have.length(1);
         expect(component.find('span')).to.have.length(1);
 

@@ -72,10 +72,10 @@ and for compiling/executing modules.  Run these commands from project root direc
 ##### Creating Tests
 1) Currently, create tests in the same directly that the components are located
 in.  Each test file must end with <b><i>.test.js</i></b><br />
-    <ul>If your component name is: <i>App.js</i> your test file 
-    should be <i>App.test.js</i></ul>
+    <ul><b>If your component name is: <i>App.js</i> your test file 
+    should be <i>App.test.js</i></b></ul>
     
-2) Running tests with watcher locally:
+2) Running tests with locally:
 
     a) The local test environment provides the ability for tests to run
         on demand as they are updated and a CLI to execute some or all tests
@@ -89,6 +89,14 @@ in.  Each test file must end with <b><i>.test.js</i></b><br />
     
     >       npm run test:coverage
     
+3) Running tests through CI/CD:
+    
+    a) When Jenkins is running a build, it will run the tests via the following
+        command.  This can be run locally too for a 'one and done' test run, but 
+        it only works on unix-based systems (due to how the CI variable is set).
+        It outputs to the <i><b>coverage/junit</b></i> directory.
+        
+    >       npm run test:ci
     
 
 ## Production Build 
