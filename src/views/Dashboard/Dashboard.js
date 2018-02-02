@@ -4,6 +4,8 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import {StatsCard} from '../../components/StatsCard/StatsCard.js';
 
 import Contact from '../../components/HttpExample/contact.js'
+import Login from '../../components/Login/Login';
+import LoginBootstrap from '../../components/Login/LoginBootstrap';
 
 class Dashboard extends Component {
     createLegend(json){
@@ -60,6 +62,14 @@ class Dashboard extends Component {
                                 statsIcon={<i className="fa fa-refresh"></i>}
                                 statsIconText="Updated now"
                             />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={3} sm={6}>
+                            <Login />
+                        </Col>
+                        <Col lg={3} sm={6}>
+                            <LoginBootstrap />
                         </Col>
                     </Row>
                     <Row>
