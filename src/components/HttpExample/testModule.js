@@ -30,7 +30,7 @@ class NotFound extends Component {
     componentDidMount() {
         //Make call out to backend
         var _this = this;
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/users", "get", null, null).then(function (result) {
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/users", "get", null, null).then(function (result) {
             _this.setState({
                 test: result
             })
@@ -60,9 +60,13 @@ class NotFound extends Component {
                 <div>
                     {
                         Object.keys(this.state.test).map(function (key) {
-                            return <div key={'test-'+ key +'-key'}>
-                                <h3>{key}:</h3> {this.state.test[key]}
-                            </div>
+                            if(key === 'firstName' || key === 'lastName' || key === 'id') {
+                                return (
+                                    <div key={'test-' + key + '-key'}>
+                                        <h3>{key}:</h3> {this.state.test[key]}
+                                    </div>
+                                )
+                            }
                         }, this)
                     }
                 </div>

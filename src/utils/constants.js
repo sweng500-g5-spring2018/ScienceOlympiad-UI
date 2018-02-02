@@ -1,9 +1,9 @@
 
 module.exports.getServerUrl = function () {
     if(process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase() === 'development') {
-        return 'http://localhost:8080/';
+        return 'http://localhost:8080';
     } else {
-        return window.location.protocol + '//server.sweng500.com/';
+        return window.location.protocol + '//server.sweng500.com';
     }
 }
 
