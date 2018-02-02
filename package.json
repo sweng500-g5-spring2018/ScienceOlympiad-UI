@@ -28,7 +28,8 @@
     "start": "npm-run-all -p watch-css start-js",
     "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test",
+    "test:ci": "CI=true react-scripts test --testResultsProcessor ./node_modules/jest-junit",
     "test:coverage": "npm run test -- --coverage",
     "eject": "react-scripts eject"
   },
@@ -36,7 +37,12 @@
     "chai": "^4.1.2",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "jest-junit": "^3.4.1",
     "react-test-renderer": "^16.2.0",
     "sinon": "^4.2.2"
+  },
+  "jest-junit": {
+    "output": "./coverage/junit/junit.xml",
+    "classNameTemplate": "{filepath}"
   }
 }

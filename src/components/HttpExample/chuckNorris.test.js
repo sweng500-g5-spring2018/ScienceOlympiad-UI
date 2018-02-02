@@ -5,7 +5,7 @@ import {shallow, mount} from 'enzyme';
 
 import ChuckNorris from "./chuckNorris";
 
-describe('components/HttpExample/chuckNorris', function () {
+describe('chuckNorris Component', function () {
 
     //Test Data declarations
     let chuckData;
