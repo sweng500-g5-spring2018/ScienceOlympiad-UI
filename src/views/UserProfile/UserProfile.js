@@ -9,7 +9,7 @@ import {FormInputs} from '../../components/FormInputs/FormInputs.js';
 import {UserCard} from '../../components/UserCard/UserCard.js';
 import Button from '../../elements/CustomButton/CustomButton.js';
 
-import avatar from "../../assets/img/faces/face-3.jpg";
+import avatar from "../../assets/img/faces/face-0.jpg";
 
 class UserProfile extends Component {
     render() {
@@ -26,11 +26,11 @@ class UserProfile extends Component {
                                             ncols = {["col-md-5" , "col-md-3" , "col-md-4"]}
                                             proprieties = {[
                                                 {
-                                                 label : "Company (disabled)",
+                                                 label : "School (disabled)",
                                                  type : "text",
                                                  bsClass : "form-control",
                                                  placeholder : "Company",
-                                                 defaultValue : "Creative Code Inc.",
+                                                 defaultValue : "Penn State Univ.",
                                                  disabled : true
                                                 },
                                                 {
@@ -109,7 +109,7 @@ class UserProfile extends Component {
                                             <Col md={12}>
                                                 <FormGroup controlId="formControlsTextarea">
                                                     <ControlLabel>About Me</ControlLabel>
-                                                    <FormControl rows="5" componentClass="textarea" bsClass="form-control" placeholder="Here can be your description" defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."/>
+                                                    <FormControl rows="5" componentClass="textarea" bsClass="form-control" placeholder="Here can be your description" defaultValue="About me... idk..."/>
                                                 </FormGroup>
                                             </Col>
                                         </Row>
@@ -134,11 +134,11 @@ class UserProfile extends Component {
                                 userName="michael24"
                                 description={
                                     <span>
-                                        "Lamborghini Mercy
+                                        "I am
                                         <br />
-                                        Your chick she so thirsty
+                                        a person
                                         <br />
-                                        I'm in that two seat Lambo"
+                                        and I like cats"
                                     </span>
                                 }
                                 socials={
@@ -152,7 +152,7 @@ class UserProfile extends Component {
                         </Col>
 
                     </Row>
-                </Grid>>
+                </Grid>
             </div>
         );
     }
