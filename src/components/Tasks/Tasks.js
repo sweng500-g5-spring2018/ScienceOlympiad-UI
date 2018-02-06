@@ -43,7 +43,7 @@ export class Tasks extends Component{
                                 type="button"
                                 bsSize="xs"
                             >
-                                <i className="fa fa-edit"></i>
+                                <i className="pe-7s-pen"></i>
                             </Button>
                         </OverlayTrigger>
 

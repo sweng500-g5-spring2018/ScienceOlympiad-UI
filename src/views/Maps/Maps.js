@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {Map, Marker, GoogleApiWrapper} from 'google-maps-react';
-import NotificationSystem from 'react-notification-system';
 
 class Maps extends Component{
     divStyle = {
