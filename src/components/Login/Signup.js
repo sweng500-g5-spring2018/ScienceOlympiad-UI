@@ -4,20 +4,21 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import AppBar from 'material-ui/AppBar';
-
 import {Redirect} from 'react-router-dom';
 
 import AuthService from '../../containers/Login/AuthService';
 
-class Login extends Component {
+class Signup extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             username: '',
             password:'',
-            userRequired: undefined,
-            passRequired: undefined,
+            password2:'',
+            userRequired:'',
+            passRequired:'',
+            pass2Required:'',
             redirect:false
         }
 
@@ -26,31 +27,48 @@ class Login extends Component {
         this.AuthService = new AuthService();
     }
 
+    areFieldsValid() {
+        if(!this.state.username) {
+            this.setState({userRequired: "This is a required field.", passRequired:undefined, pass2Required:undefined});
+            return false;
+        }
+        if(!this.state.password) {
+            this.setState({userRequired:undefined, passRequired: "This is a required field.", pass2Required:undefined});
+            return false;
+        }
+        if(!this.state.password2) {
+            this.setState({userRequired:undefined, passRequired: undefined, pass2Required: "This is a required field."});
+            return false;
+        }
+        if(this.state.password2 !== this.state.password) {
+            this.setState({userRequired:undefined, passRequired: "The passwords must match.",pass2Required: "The passwords must match."});
+            return false;
+        }
+        return true;
+    }
+
     handleClick(event) {
         event.preventDefault();
+        console.log(this.state);
 
-        if(this.state.username.trim()) {
-            if(this.state.password.trim()) {
-                this.AuthService.login(this.state.username, this.state.password);
+        if(this.areFieldsValid()) {
+            this.AuthService.login(this.state.username, this.state.password);
 
-                if(this.AuthService.isLoggedIn()) {
-                    this.setState({
-                        redirect: true
-                    })
-                }
-            } else {
+            if(this.AuthService.isLoggedIn()) {
                 this.setState({
-                    userRequired: undefined,
-                    passRequired: "Password is required."
+                    redirect: true
                 })
             }
         } else {
-            this.setState({
-                username: this.state.username.trim(),
-                userRequired: "Username is required.",
-                passRequired: undefined
-            })
+            this.props.notify(
+                "Error attempting to Signup.  Ensure fields are correctly filled out.",
+                "error",
+                "tr",
+                15
+            )
         }
+
+        // this.props.loginUser({user: this.state.username, pass: this.state.password});
     }
 
     componentDidMount() {
@@ -67,13 +85,12 @@ class Login extends Component {
                 <div id='login-div'>
                     <MuiThemeProvider>
                         <div>
-                            <AppBar showMenuIconButton={false} title="Login"/>
+                            <AppBar showMenuIconButton={false} title="Coach Signup"/>
                             <TextField
                                 hintText="Enter your Username"
                                 errorText={this.state.userRequired}
                                 floatingLabelText="Username"
                                 onChange={(event, newValue) => this.setState({username: newValue})}
-                                required={true}
                             />
                             <br/>
                             <TextField
@@ -82,7 +99,14 @@ class Login extends Component {
                                 errorText={this.state.passRequired}
                                 floatingLabelText="Password"
                                 onChange={(event, newValue) => this.setState({password: newValue})}
-                                required={true}
+                            />
+                            <br/>
+                            <TextField
+                                type="password"
+                                hintText="Re-enter your Password"
+                                errorText={this.state.pass2Required}
+                                floatingLabelText="Password"
+                                onChange={(event, newValue) => this.setState({password2: newValue})}
                             />
                             <br/>
                             <RaisedButton label="Submit" primary={true} style={{margin:15}}
@@ -99,11 +123,11 @@ class Login extends Component {
     }
 }
 
-Login.propTypes = {
+Signup.propTypes = {
     notify: PropTypes.any,
 }
-Login.defaultProps = {
+Signup.defaultProps = {
     notify : null
 }
 
-export default Login;
+export default Signup;

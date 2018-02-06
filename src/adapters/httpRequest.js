@@ -18,25 +18,25 @@ function httpRequest(url, httpMethod, httpHeader, requestData) {
 
         if(httpMethod.toLowerCase() === 'get') {
             axios.get(url, httpHeader).then( function (result) {
-                resolve(result.data);
+                resolve(result);
             }).catch( function (error) {
                 reject('Failed [' + httpMethod.toUpperCase() + '] request.  Message: ' + error.message);
             })
         } else if (httpMethod.toLowerCase() === 'put') {
             axios.put(url, requestData, httpHeader).then( function (result) {
-                resolve(result.data);
+                resolve(result);
             }).catch( function (error) {
                 reject('Failed [' + httpMethod.toUpperCase() + '] request.  Message: ' + error.message);
             })
         } else if(httpMethod.toLowerCase() === 'post') {
             axios.post(url, requestData, httpHeader).then( function (result) {
-                resolve(result.data);
+                resolve(result);
             }).catch( function (error) {
                 reject('Failed [' + httpMethod.toUpperCase() + '] request.  Message: ' + error.message);
             })
         } else if(httpMethod.toLowerCase() === 'delete') {
             axios.delete(url, requestData, httpHeader).then( function (result) {
-                resolve(result.data);
+                resolve(result);
             }).catch( function (error) {
                 reject('Failed [' + httpMethod.toUpperCase() + '] request.  Message: ' + error.message);
             })

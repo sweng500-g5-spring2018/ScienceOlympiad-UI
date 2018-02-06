@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
-
 import {StatsCard} from '../../components/StatsCard/StatsCard.js';
 
 import Contact from '../../components/HttpExample/contact.js'
-import Login from '../../components/Login/Login';
 
 class Dashboard extends Component {
 
@@ -30,11 +28,6 @@ class Dashboard extends Component {
                                 statsIcon={<i className="fa fa-clock-o"></i>}
                                 statsIconText="In the last hour"
                             />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={3} sm={6}>
-                            <Login />
                         </Col>
                     </Row>
                     <Row>
