@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import EasterEgg from './views/EasterEgg/sudoku';
+
 import {
     HashRouter,
     Route,
@@ -23,6 +25,7 @@ ReactDOM.render((
         <Switch>
             <Route path="/app" name="Home" component={App}/>
             <Route path="/login" name="Login" component={LoginContainer} />
+            <Route path="/easteregg/sudoku" name="Sudoku" component={EasterEgg} />
             <Redirect from="/" to="/login" />
         </Switch>
     </HashRouter>

@@ -22,7 +22,8 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.0",
-    "react-tap-event-plugin": "^3.0.2"
+    "react-tap-event-plugin": "^3.0.2",
+    "sudoku-react-component": "0.0.5"
   },
   "scripts": {
     "build-css": "lessc style/style.less public/style.css",
