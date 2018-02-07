@@ -23,7 +23,7 @@ class Contact extends Component {
         var _this = this;
         _this.serverRequest = HttpRequest.httpRequest("https://api.chucknorris.io/jokes/random", "get", null, null).then(function (result) {
             _this.setState({
-                chuckNorris: result.value
+                chuckNorris: result.data.value
             })
         }).catch(function (error) {
             console.log(error);
@@ -36,7 +36,7 @@ class Contact extends Component {
         var _this = this;
         _this.serverRequest = HttpRequest.httpRequest("https://api.chucknorris.io/jokes/random", "get", null, null).then(function (result) {
             _this.setState({
-                chuckNorris: result.value
+                chuckNorris: result.data.value
             })
         }).catch(function (error) {
             console.log(error);

@@ -72,3 +72,23 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+.login-center {
+  font-family: 'Raleway', sans-serif;
+  background-color: #1abc9c;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-card {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 0.8rem;
+}
+.login-card a:hover {
+  background-color: lawngreen;
+  cursor: pointer;
+  text-decoration-line: underline;
+}

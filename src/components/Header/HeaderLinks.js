@@ -1,8 +1,25 @@
 import React, {Component} from 'react';
 import { NavItem, Nav, NavDropdown, MenuItem } from 'react-bootstrap';
 
+import AuthService from '../../containers/Login/AuthService';
+
 
 class HeaderLinks extends Component{
+
+    constructor(props) {
+        super(props);
+
+        this.onLogoutClick = this.onLogoutClick.bind(this);
+    }
+
+    onLogoutClick(event) {
+        event.preventDefault();
+
+        var Auth = new AuthService();
+        Auth.logout();
+        window.location = '/';
+    }
+
     render(){
         const notification = (
             <div>
@@ -42,7 +59,7 @@ class HeaderLinks extends Component{
                         <MenuItem divider />
                         <MenuItem eventKey={2.5}>Separated link</MenuItem>
                     </NavDropdown>
-                    <NavItem eventKey={3} href="#">Log out</NavItem>
+                    <NavItem eventKey={3} onClick={this.onLogoutClick}>Log out</NavItem>
                 </Nav>
             </div>
         );
