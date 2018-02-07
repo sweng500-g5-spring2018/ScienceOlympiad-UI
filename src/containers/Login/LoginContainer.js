@@ -33,15 +33,15 @@ class LoginContainer extends Component {
 
     addNotification(message, level, position, autoDismiss) {
         this.state._notificationSystem.addNotification({
-            title: (<span data-notify="icon" className="pe-7s-gift"></span>),
+            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
             message: (
                 <div>
                     {message}
                 </div>
             ),
-            level: level,
-            position: position,
-            autoDismiss: autoDismiss,
+            level: 'error',
+            position: 'tc',
+            autoDismiss: 10,
         });
     }
 
@@ -50,15 +50,15 @@ class LoginContainer extends Component {
         var _notificationSystem = this.refs.notificationSystem;
 
         _notificationSystem.addNotification({
-            title: (<span data-notify="icon" className="pe-7s-gift"></span>),
+            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
             message: (
                 <div>
                     Please <b>Login</b> to the Science Olympiad System.
                 </div>
             ),
             level: 'info',
-            position: "tr",
-            autoDismiss: 15,
+            position: 'tc',
+            autoDismiss: 20,
         });
     }
 
