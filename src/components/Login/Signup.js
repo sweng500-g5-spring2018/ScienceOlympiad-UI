@@ -64,7 +64,7 @@ class Signup extends Component {
                 "Error attempting to Signup.  Ensure fields are correctly filled out.",
                 "error",
                 "tr",
-                15
+                6
             )
         }
 
