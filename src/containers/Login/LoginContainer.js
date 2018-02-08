@@ -8,6 +8,14 @@ import mountainBackground from '../../assets/img/Mountain.jpg';
 
 import {style} from "../../variables/Variables";
 
+const backgroundStyle = {
+    background: 'url(' + mountainBackground + ') no-repeat center center fixed',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center no-repeat'
+};
+
+
+
 class LoginContainer extends Component {
 
     constructor(props) {
@@ -65,15 +73,13 @@ class LoginContainer extends Component {
     }
 
     render() {
-        const background = {
-            backgroundImage: 'url(' + mountainBackground + ')'
-        };
+
 
         if(this.isLoggedIn()) {
             return <div id='logged-in-successful-yo'></div>
         } else {
             return (
-                <div id='login-container' className="login-center"  style={background}>
+                <div id='login-container' className="login-center"  style={backgroundStyle}>
                     <NotificationSystem ref="notificationSystem" style={style}/>
                     <div id='login-container-card' className="login-card row">
                         <div id='login-container-slider' className="animated bounceInLeft">
