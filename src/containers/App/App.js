@@ -13,6 +13,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import {style} from "../../variables/Variables.js";
 
 import appRoutes from '../../routes/app.js';
+import AuthService from "../Login/AuthService";
 
 class App extends Component {
     constructor(props){
@@ -105,7 +106,7 @@ class App extends Component {
                                     appRoutes.map((prop,key) => {
                                         if(prop.name === "Notifications")
                                             return (
-                                                <Route
+                                                <AuthenticatedRoute
                                                     path={prop.path}
                                                     key={key}
                                                     render={routeProps =>
@@ -120,7 +121,7 @@ class App extends Component {
                                                 <Redirect from={prop.path} to={prop.to} key={key}/>
                                             );
                                         return (
-                                            <Route path={prop.path} component={prop.component} key={key}/>
+                                            <AuthenticatedRoute path={prop.path} component={prop.component} key={key}/>
                                         );
                                     })
                                 }
@@ -131,5 +132,18 @@ class App extends Component {
         );
     }
 }
+
+const AuthenticatedRoute = ({ component: Component, ...rest }) => (
+    <Route {...rest} render={props => (
+        AuthService.isAuthorized() ? (
+            <Component {...props}/>
+        ) : (
+            <Redirect to={{
+                pathname: '/login',
+                state: { from: props.location }
+            }}/>
+        )
+    )}/>
+)
 
 export default App;

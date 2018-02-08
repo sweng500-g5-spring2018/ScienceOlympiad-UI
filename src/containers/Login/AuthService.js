@@ -1,20 +1,19 @@
 import jwt from 'jwt-simple';
 import moment from 'moment';
 
-
 import constants from '../../utils/constants';
 //import HttpRequest from '../../adapters/httpRequest';
 
 export default class AuthService {
+
+    //TODO: Stop faking security ;)
+    static secret = 'superGoodAuth';
 
     constructor(domain) {
         this.domain = domain || constants.getServerUrl();
         this.login = this.login.bind(this);
         this.isLoggedIn = this.isLoggedIn.bind(this);
         this.logout = this.logout.bind(this);
-
-        //TODO: Stop faking security ;)
-        this.secret = 'superGoodAuth';
     }
 
 
@@ -41,7 +40,7 @@ export default class AuthService {
             expiration: moment().add(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS')
         }
 
-        var encoded = jwt.encode(toEncode, this.secret);
+        var encoded = jwt.encode(toEncode, AuthService.secret);
 
         this.setToken(encoded);
     }
@@ -66,7 +65,7 @@ export default class AuthService {
 
     isTokenExpired(token) {
         try {
-            const decoded = jwt.decode(token, this.secret);
+            const decoded = jwt.decode(token, AuthService.secret);
             if (moment(decoded.expiration).isBefore(moment())) { // Checking if token is expired.
                 this.logout();
                 return true;
@@ -85,6 +84,41 @@ export default class AuthService {
     _checkStatus(response) {
         if (response.status >= 200 && response.status < 300) { // Success status lies between 200 to 300
             return true
+        } else {
+            return false;
+        }
+    }
+
+
+    static requireAuth(nextState, replace, next) {
+        console.log("HELLO FROM REQUIREAUTH");
+        console.log(nextState);
+        console.log(replace);
+        if (AuthService.isAuthorized()) {
+            replace({
+                pathname: '/login',
+                state: {nextPathname: nextState.location.pathname}
+            });
+        }
+        next();
+    }
+
+    static isAuthorized() {
+        var token = localStorage.getItem('id_token');
+        if (token) {
+            try {
+                const decoded = jwt.decode(token, 'superGoodAuth');
+                if (moment(decoded.expiration).isBefore(moment())) { // Checking if token is expired.
+                    localStorage.removeItem('id_token');
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            catch (err) {
+                return false;
+            }
         } else {
             return false;
         }

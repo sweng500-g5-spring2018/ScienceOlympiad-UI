@@ -9,7 +9,7 @@ const appRoutes = [
     { path: "/app/user", name: "User Profile", icon: "pe-7s-user", component: UserProfile },
     { path: "/app/reports", name: "Reports", icon: "pe-7s-note2", component: Reports },
     { path: "/app/maps", name: "Campus Map", icon: "pe-7s-map-marker", component: Maps },
-    { path: "/app/notifications", name: "Notifications", icon: "pe-7s-bell", component: Notifications },
+    // { path: "/app/notifications", name: "Notifications", icon: "pe-7s-bell", component: Notifications },
     { redirect: true, path:"/", to:"/app/dashboard", name: "Dashboard" }
 ];
 
