@@ -55,7 +55,6 @@ body {
   padding: 0.8rem;
 }
 .login-card a:hover {
-  background-color: lawngreen;
   cursor: pointer;
   text-decoration-line: underline;
 }

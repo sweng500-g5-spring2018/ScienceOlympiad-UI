@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Login from "../../components/Login/Login";
 import Signup from "../../components/Login/Signup";
+import Forgot from "../../components/Login/Forgot";
 import $ from 'jquery';
 import NotificationSystem from 'react-notification-system';
 
@@ -32,9 +33,26 @@ class LoginContainer extends Component {
     toggleLoginView(event) {
         event.preventDefault();
 
-        $('#login-container-slider').toggleClass('collapse');
-        $('#signup-container-slider').toggleClass('collapse');
+        var value = event.target.attributes.getNamedItem('data-Type').value;
 
+        switch (value) {
+            case 'register':
+                $('#login-container-slider').addClass('collapse');
+                $('#signup-container-slider').removeClass('collapse');
+                break;
+            case 'forgot':
+                $('#login-container-slider').addClass('collapse');
+                $('#forgot-container-slider').removeClass('collapse');
+                break;
+            case 'slogin':
+                $('#login-container-slider').removeClass('collapse');
+                $('#signup-container-slider').addClass('collapse');
+                break;
+            case 'flogin':
+                $('#login-container-slider').removeClass('collapse');
+                $('#forgot-container-slider').addClass('collapse');
+                break;
+        }
     }
 
     isLoggedIn() {
@@ -84,11 +102,19 @@ class LoginContainer extends Component {
                     <div id='login-container-card' className="login-card row">
                         <div id='login-container-slider' className="animated bounceInLeft">
                             <Login notify={this.addNotification}/>
-                            <a onClick={event => this.toggleLoginView(event)} className="col-sm-10">Or Click for Coach Signup</a>
+                            <a data-Type={'forgot'} onClick={event => this.toggleLoginView(event)} className="col-sm-10">Forgot your password?</a>
+                            <br/>
+                            <a data-Type={'register'} onClick={event => this.toggleLoginView(event)} className="col-sm-10">Register for a new account</a>
                         </div>
                         <div id='signup-container-slider' className="animated collapse bounceInLeft">
                             <Signup notify={this.addNotification}/>
-                            <a onClick={event => this.toggleLoginView(event)} className="col-sm-9">Or Click for User Login </a>
+                            <br/>
+                            <a data-Type={'slogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Already have an account? Login</a>
+                        </div>
+                        <div id='forgot-container-slider' className="animated collapse bounceInLeft">
+                            <Forgot notify={this.addNotification}/>
+                            <br/>
+                            <a data-Type={'flogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Return to the login screen</a>
                         </div>
                     </div>
                 </div>
