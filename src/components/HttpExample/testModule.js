@@ -32,7 +32,7 @@ class NotFound extends Component {
         var _this = this;
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/users", "get", null, null).then(function (result) {
             _this.setState({
-                test: result.d
+                test: result.data
             })
         }).catch(function (error) {
             console.log(error);

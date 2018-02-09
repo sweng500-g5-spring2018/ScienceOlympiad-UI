@@ -2,9 +2,19 @@ import React, {Component} from 'react';
 import Login from "../../components/Login/Login";
 import Signup from "../../components/Login/Signup";
 import $ from 'jquery';
-
 import NotificationSystem from 'react-notification-system';
+
+import mountainBackground from '../../assets/img/Mountain.jpg';
+
 import {style} from "../../variables/Variables";
+
+const backgroundStyle = {
+    background: 'url(' + mountainBackground + ') no-repeat center center fixed',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center no-repeat'
+};
+
+
 
 class LoginContainer extends Component {
 
@@ -33,15 +43,15 @@ class LoginContainer extends Component {
 
     addNotification(message, level, position, autoDismiss) {
         this.state._notificationSystem.addNotification({
-            title: (<span data-notify="icon" className="pe-7s-gift"></span>),
+            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
             message: (
                 <div>
                     {message}
                 </div>
             ),
-            level: level,
-            position: position,
-            autoDismiss: autoDismiss,
+            level: 'error',
+            position: 'tc',
+            autoDismiss: 10,
         });
     }
 
@@ -50,24 +60,26 @@ class LoginContainer extends Component {
         var _notificationSystem = this.refs.notificationSystem;
 
         _notificationSystem.addNotification({
-            title: (<span data-notify="icon" className="pe-7s-gift"></span>),
+            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
             message: (
                 <div>
                     Please <b>Login</b> to the Science Olympiad System.
                 </div>
             ),
             level: 'info',
-            position: "tr",
-            autoDismiss: 15,
+            position: 'tc',
+            autoDismiss: 20,
         });
     }
 
     render() {
+
+
         if(this.isLoggedIn()) {
             return <div id='logged-in-successful-yo'></div>
         } else {
             return (
-                <div id='login-container' className="login-center">
+                <div id='login-container' className="login-center"  style={backgroundStyle}>
                     <NotificationSystem ref="notificationSystem" style={style}/>
                     <div id='login-container-card' className="login-card row">
                         <div id='login-container-slider' className="animated bounceInLeft">

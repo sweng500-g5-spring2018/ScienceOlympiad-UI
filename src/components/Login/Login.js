@@ -31,12 +31,23 @@ class Login extends Component {
 
         if(this.state.username.trim()) {
             if(this.state.password.trim()) {
-                this.AuthService.login(this.state.username, this.state.password);
+
+                //TODO: STOP USING A TEST USER
+                if(this.state.username.toLowerCase() === 'testuser') {
+                    this.AuthService.login(this.state.username, this.state.password);
+                }
 
                 if(this.AuthService.isLoggedIn()) {
                     this.setState({
                         redirect: true
                     })
+                } else {
+                    this.props.notify(
+                        "ERROR: Please provide valid login credentials.",
+                        "error",
+                        "tr",
+                        6
+                    )
                 }
             } else {
                 this.setState({
