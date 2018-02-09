@@ -89,25 +89,11 @@ export default class AuthService {
         }
     }
 
-
-    static requireAuth(nextState, replace, next) {
-        console.log("HELLO FROM REQUIREAUTH");
-        console.log(nextState);
-        console.log(replace);
-        if (AuthService.isAuthorized()) {
-            replace({
-                pathname: '/login',
-                state: {nextPathname: nextState.location.pathname}
-            });
-        }
-        next();
-    }
-
     static isAuthorized() {
         var token = localStorage.getItem('id_token');
         if (token) {
             try {
-                const decoded = jwt.decode(token, 'superGoodAuth');
+                const decoded = jwt.decode(token, AuthService.secret);
                 if (moment(decoded.expiration).isBefore(moment())) { // Checking if token is expired.
                     localStorage.removeItem('id_token');
                     return false;

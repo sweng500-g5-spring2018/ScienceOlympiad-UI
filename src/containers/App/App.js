@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import NotificationSystem from 'react-notification-system';
 import {
     Route,
     Switch,
     Redirect
 } from 'react-router-dom';
-import NotificationSystem from 'react-notification-system';
+import AuthenticatedRoute from  '../../routes/AuthenticatedRoute';
+
 
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
@@ -13,7 +15,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import {style} from "../../variables/Variables.js";
 
 import appRoutes from '../../routes/app.js';
-import AuthService from "../Login/AuthService";
+
 
 class App extends Component {
     constructor(props){
@@ -104,18 +106,6 @@ class App extends Component {
                             <Switch>
                                 {
                                     appRoutes.map((prop,key) => {
-                                        if(prop.name === "Notifications")
-                                            return (
-                                                <AuthenticatedRoute
-                                                    path={prop.path}
-                                                    key={key}
-                                                    render={routeProps =>
-                                                       <prop.component
-                                                           {...routeProps}
-                                                           handleClick={this.handleNotificationClick}
-                                                       />}
-                                                />
-                                            );
                                         if(prop.redirect)
                                             return (
                                                 <Redirect from={prop.path} to={prop.to} key={key}/>
@@ -132,18 +122,5 @@ class App extends Component {
         );
     }
 }
-
-const AuthenticatedRoute = ({ component: Component, ...rest }) => (
-    <Route {...rest} render={props => (
-        AuthService.isAuthorized() ? (
-            <Component {...props}/>
-        ) : (
-            <Redirect to={{
-                pathname: '/login',
-                state: { from: props.location }
-            }}/>
-        )
-    )}/>
-)
 
 export default App;
