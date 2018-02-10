@@ -13,6 +13,7 @@ import AppBar from 'material-ui/AppBar';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import InputMask from 'react-input-mask'
+import {Row, Col, Grid} from 'react-bootstrap';
 
 
 class Signup extends React.Component {
@@ -178,43 +179,54 @@ class Signup extends React.Component {
         return (
             <MuiThemeProvider>
                 <AppBar showMenuIconButton={false} title="Account Registration"/>
-                <div style={{width: '100%', minWidth: 600, maxWidth: 800, margin: 'auto'}}>
+                <div style={{width: '100%', maxWidth: 800, margin: 'auto'}}>
                     <Stepper activeStep={stepIndex} orientation={'vertical'}>
                         <Step>
                             <StepLabel>Personal Information</StepLabel>
                             <StepContent>
-                                <TextField
-                                hintText="Enter your first name"
-                                errorText={this.state.firstNameRequired}
-                                floatingLabelText="First name"
-                                onChange={(event, newValue) => this.setState({firstName: newValue})}
-                                value = {this.state.firstName}
-                                required={true}/>
-                                &nbsp;&nbsp;
-                                <TextField
-                                hintText="Enter your last name"
-                                errorText={this.state.lastNameRequired}
-                                floatingLabelText="Last name"
-                                onChange={(event, newValue) => this.setState({lastName: newValue})}
-                                value = {this.state.lastName}
-                                required={true}/>
-                                <br/>
-                                <TextField
-                                errorText={this.state.phoneNumberRequired}
-                                floatingLabelText="Phone number"
-                                onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
-                                value = {this.state.phoneNumber}
-                                required={true}>
-                                    <InputMask mask="1 (999) 999-9999" maskChar="#"  value = {this.state.phoneNumber}/>
-                                </TextField>
-                                &nbsp;&nbsp;
-                                <TextField
-                                hintText="Enter your email address"
-                                errorText={this.state.emailAddressRequired}
-                                floatingLabelText="Email address"
-                                onChange={(event, newValue) => this.setState({emailAddress: newValue})}
-                                value = {this.state.emailAddress}
-                                required={true}/>
+                                <Grid>
+                                    <Row className="show-grid">
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                            hintText="Enter your first name"
+                                            errorText={this.state.firstNameRequired}
+                                            floatingLabelText="First name"
+                                            onChange={(event, newValue) => this.setState({firstName: newValue})}
+                                            value = {this.state.firstName}
+                                            required={true}/>
+                                        </Col>
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                            hintText="Enter your last name"
+                                            errorText={this.state.lastNameRequired}
+                                            floatingLabelText="Last name"
+                                            onChange={(event, newValue) => this.setState({lastName: newValue})}
+                                            value = {this.state.lastName}
+                                            required={true}/>
+                                        </Col>
+                                    </Row>
+                                    <Row className="show-grid">
+                                        <Col xs={7} md={4} >
+                                            <TextField
+                                            errorText={this.state.phoneNumberRequired}
+                                            floatingLabelText="Phone number"
+                                            onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
+                                            value = {this.state.phoneNumber}
+                                            required={true}>
+                                                <InputMask mask="1 (999) 999-9999" maskChar="#"  value = {this.state.phoneNumber}/>
+                                            </TextField>
+                                        </Col>
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                            hintText="Enter your email address"
+                                            errorText={this.state.emailAddressRequired}
+                                            floatingLabelText="Email address"
+                                            onChange={(event, newValue) => this.setState({emailAddress: newValue})}
+                                            value = {this.state.emailAddress}
+                                            required={true}/>
+                                        </Col>
+                                    </Row>
+                                </Grid>
                             </StepContent>
                         </Step>
                         <Step>
