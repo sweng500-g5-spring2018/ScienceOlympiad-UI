@@ -9,6 +9,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
+import AppBar from 'material-ui/AppBar';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 /**
  * Horizontal steppers are ideal when the contents of one step depend on an earlier step.
@@ -41,13 +44,9 @@ class HorizontalLinearStepper extends React.Component {
     getStepContent(stepIndex) {
         switch (stepIndex) {
             case 0:
-                return 'Account registrations are intended for coaches. Students and judges will receive ' +
-                    'their username and password via email. <br/> If you are a coach click' +
-                    'next to create your account.';
+                return (1);
             case 1:
-                return '<TextField/>';
-            case 2:
-                return '<TextField/>';
+                return (1);
             case 3:
                 return 'Your account has been created. You are being re-directed to the login screen.';
             default:
@@ -61,19 +60,77 @@ class HorizontalLinearStepper extends React.Component {
 
         return (
             <MuiThemeProvider>
+                <AppBar showMenuIconButton={false} title="Account Registration"/>
             <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
-                <Stepper activeStep={stepIndex}>
-                    <Step>
-                        <StepLabel>Intro</StepLabel>
-                    </Step>
+                <Stepper activeStep={stepIndex} orientation={'vertical'}>
                     <Step>
                         <StepLabel>Personal Info</StepLabel>
+                        <StepContent>
+                            <TextField
+                            hintText="Enter your first name"
+                            errorText={this.state.userRequired}
+                            floatingLabelText="First name"
+                            onChange={(event, newValue) => this.setState({username: newValue})}
+                            required={true}
+                        />
+                            <br/>
+                            <TextField
+                                hintText="Enter your last name"
+                                errorText={this.state.userRequired}
+                                floatingLabelText="Last name"
+                                onChange={(event, newValue) => this.setState({username: newValue})}
+                                required={true}
+                            />
+                            <br/>
+                            <TextField
+                                hintText="Enter your Phone Number"
+                                errorText={this.state.userRequired}
+                                floatingLabelText="Phone number"
+                                onChange={(event, newValue) => this.setState({username: newValue})}
+                                required={true}
+                            />
+                            <br/>
+                        <SelectField
+                        hintText="Select your school district"
+                        floatingLabelText="School district"
+                        >
+                        <MenuItem>Hanover Area</MenuItem>
+                            <MenuItem>Wyoming Area</MenuItem>
+                            <MenuItem>Wyoming Valley West</MenuItem>
+                        </SelectField>
+                        </StepContent>
                     </Step>
                     <Step>
                         <StepLabel>Account Info</StepLabel>
+                        <StepContent>
+                            <TextField
+                                hintText="Enter your email address"
+                                errorText={this.state.userRequired}
+                                floatingLabelText="Email address"
+                                onChange={(event, newValue) => this.setState({username: newValue})}
+                                required={true}
+                            />
+                            <br/>
+                            <TextField
+                                hintText="Enter your password"
+                                errorText={this.state.userRequired}
+                                floatingLabelText="Password"
+                                onChange={(event, newValue) => this.setState({username: newValue})}
+                                required={true}
+                            />
+                            <br/>
+                            <TextField
+                                hintText="Confirm your password"
+                                errorText={this.state.userRequired}
+                                floatingLabelText="Confirm your password"
+                                onChange={(event, newValue) => this.setState({username: newValue})}
+                                required={true}
+                            /></StepContent>
                     </Step>
                     <Step>
                         <StepLabel>Complete</StepLabel>
+                        <StepContent>Congratulations!<br/>Your account has been created.
+                        </StepContent>
                     </Step>
                 </Stepper>
                 <div style={contentStyle}>
@@ -91,7 +148,6 @@ class HorizontalLinearStepper extends React.Component {
                         </p>
                     ) : (
                         <div>
-                            <p>{this.getStepContent(stepIndex)}</p>
                             <div style={{marginTop: 12}}>
                                 <FlatButton
                                     label="Back"
@@ -100,7 +156,7 @@ class HorizontalLinearStepper extends React.Component {
                                     style={{marginRight: 12}}
                                 />
                                 <RaisedButton
-                                    label={stepIndex === 3 ? 'Finish' : 'Next'}
+                                    label={stepIndex === 2 ? 'Return to login' : 'Next'}
                                     primary={true}
                                     onClick={this.handleNext}
                                 />
