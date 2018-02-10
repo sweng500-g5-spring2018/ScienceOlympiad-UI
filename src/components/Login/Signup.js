@@ -25,23 +25,51 @@ class Signup extends React.Component {
             finished: false,
             stepIndex: 0,
             firstName: '',
-            lastName:'',
-            phoneNumber:'',
-            emailAddress:'',
-            password:'',
-            confirm:'',
-            district:''
+            lastName: '',
+            phoneNumber: '',
+            emailAddress: '',
+            password: '',
+            confirm: '',
+            district: ''
         }
     }
 
+    // Checks to see if an email has a host, @ symbols, and domain.
+    validEmail(text) {
+        console.log(text);
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (reg.test(text) === false)
+            return true;
+        else
+            return false;
+    }
+
+    // Check if a passowrd is valid. 8 characters, uppercase, lowercase, and numbers
+    validPassword(text) {
+        if (text.length < 8)
+            return false;
+        var hasUpperCase = /[A-Z]/.test(text);
+        var hasLowerCase = /[a-z]/.test(text);
+        var hasNumbers = /\d/.test(text);
+        var hasNonalphas = /\W/.test(text);
+        if (hasUpperCase + hasLowerCase + hasNumbers + hasNonalphas < 3)
+            return false;
+
+        return true;
+    }
+
+    // Handles the next button
     handleNext = () => {
         const {stepIndex} = this.state;
 
-        var missingInfo=0;
+        // Flag to indicate if we can proceed
+        var missingInfo = 0;
 
 
+        // Form page 1
         if (stepIndex === 0) {
 
+            // Checks first name
             if (this.state.firstName.trim()) {
                 this.setState({
                     firstName: this.state.firstName.trim(),
@@ -56,6 +84,7 @@ class Signup extends React.Component {
                 missingInfo = 1;
             }
 
+            // Checks last name
             if (this.state.lastName.trim()) {
                 this.setState({
                     lastName: this.state.lastName.trim(),
@@ -70,6 +99,7 @@ class Signup extends React.Component {
                 missingInfo = 1;
             }
 
+            // Checks phone number
             if (this.state.phoneNumber.trim()) {
                 this.setState({
                     phoneNumber: this.state.phoneNumber.trim(),
@@ -84,11 +114,24 @@ class Signup extends React.Component {
                 missingInfo = 1;
             }
 
-            if(this.state.emailAddress.trim()) {
-                this.setState({
-                    emailAddress: this.state.emailAddress.trim(),
-                    emailAddressRequired: undefined
-                })
+            // Checks emails address is not blank
+            if (this.state.emailAddress.trim()) {
+
+                // If the address is not valid
+                if (this.validEmail(this.state.emailAddress.trim())) {
+                    this.setState({
+                        emailAddress: this.state.emailAddress.trim(),
+                        emailAddressRequired: "A valid email address is required."
+                    })
+
+                    missingInfo = 1;
+                }
+                else {
+                    this.setState({
+                        emailAddress: this.state.emailAddress.trim(),
+                        emailAddressRequired: undefined
+                    })
+                }
             }
             else {
                 this.setState({
@@ -97,12 +140,13 @@ class Signup extends React.Component {
                 })
                 missingInfo = 1;
             }
-        }
+
+
+        } // Form page 2
         else if (stepIndex === 1) {
 
-
-
-            if(this.state.password.trim()) {
+            // Checks for blank password
+            if (this.state.password.trim()) {
                 this.setState({
                     password: this.state.password.trim(),
                     passwordRequired: undefined
@@ -116,7 +160,8 @@ class Signup extends React.Component {
                 missingInfo = 1;
             }
 
-            if(this.state.confirm.trim()) {
+            // Checks for blank confirmation password
+            if (this.state.confirm.trim()) {
                 this.setState({
                     confirm: this.state.confirm.trim(),
                     confirmRequired: undefined
@@ -130,8 +175,12 @@ class Signup extends React.Component {
                 missingInfo = 1;
             }
 
-            if(this.state.password.trim() !== this.state.confirm.trim())
-            {
+            // Checks to see if the passwords are equal to each other
+            if (this.state.password.trim() !== this.state.confirm.trim()) {
+                this.setState({
+                    confirmRequired: "Passwords must match.",
+                    passwordRequired: "Passwords must match."
+                })
                 this.props.notify(
                     "ERROR: Your passwords do not match.",
                     "error",
@@ -140,11 +189,37 @@ class Signup extends React.Component {
                 );
                 missingInfo = 1;
             }
+            else {
+                // Tests the password complexity
+                if (this.validPassword(this.state.password.trim())) {
+                    this.setState({
+                        password: this.state.password.trim(),
+                        passwordRequired: undefined
+                    })
+                }
+                else {
+                    this.props.notify(
+                        "ERROR: Your password must be 8 or more characters, contain capital letters, lower case letters, and at least one number.",
+                        "error",
+                        "tr",
+                        10
+                    );
+                    this.setState({
+                        confirmRequired: "A complex password is required.",
+                        passwordRequired: "A complex password is required."
+                    })
+                    missingInfo = 1;
+                }
+            }
+
+            if (this.state.district = "")
+            {
+
+            }
         }
 
-
-        if (!missingInfo)
-        {
+        // Only proceeds if there is not missing info
+        if (!missingInfo) {
             this.setState({
                 stepIndex: stepIndex + 1,
                 finished: stepIndex >= 2,
@@ -162,16 +237,6 @@ class Signup extends React.Component {
         }
     };
 
-    handleList(event, index, value) {
-        event.persist()
-        const field = event.target.id;
-        const form = this.state.form;
-
-        event.target.selected.
-
-        console.log(form);
-    };
-
     render() {
         const {finished, stepIndex} = this.state;
         const contentStyle = {margin: '0 16px'};
@@ -179,7 +244,7 @@ class Signup extends React.Component {
         return (
             <MuiThemeProvider>
                 <AppBar showMenuIconButton={false} title="Account Registration"/>
-                <div style={{width: '100%', maxWidth: 800, margin: 'auto'}}>
+                <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
                     <Stepper activeStep={stepIndex} orientation={'vertical'}>
                         <Step>
                             <StepLabel>Personal Information</StepLabel>
@@ -188,42 +253,43 @@ class Signup extends React.Component {
                                     <Row className="show-grid">
                                         <Col xs={7} md={4}>
                                             <TextField
-                                            hintText="Enter your first name"
-                                            errorText={this.state.firstNameRequired}
-                                            floatingLabelText="First name"
-                                            onChange={(event, newValue) => this.setState({firstName: newValue})}
-                                            value = {this.state.firstName}
-                                            required={true}/>
+                                                hintText="Enter your first name"
+                                                errorText={this.state.firstNameRequired}
+                                                floatingLabelText="First name"
+                                                onChange={(event, newValue) => this.setState({firstName: newValue})}
+                                                value={this.state.firstName}
+                                                required={true}/>
                                         </Col>
                                         <Col xs={7} md={4}>
                                             <TextField
-                                            hintText="Enter your last name"
-                                            errorText={this.state.lastNameRequired}
-                                            floatingLabelText="Last name"
-                                            onChange={(event, newValue) => this.setState({lastName: newValue})}
-                                            value = {this.state.lastName}
-                                            required={true}/>
+                                                hintText="Enter your last name"
+                                                errorText={this.state.lastNameRequired}
+                                                floatingLabelText="Last name"
+                                                onChange={(event, newValue) => this.setState({lastName: newValue})}
+                                                value={this.state.lastName}
+                                                required={true}/>
                                         </Col>
                                     </Row>
                                     <Row className="show-grid">
-                                        <Col xs={7} md={4} >
+                                        <Col xs={7} md={4}>
                                             <TextField
-                                            errorText={this.state.phoneNumberRequired}
-                                            floatingLabelText="Phone number"
-                                            onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
-                                            value = {this.state.phoneNumber}
-                                            required={true}>
-                                                <InputMask mask="1 (999) 999-9999" maskChar="#"  value = {this.state.phoneNumber}/>
+                                                errorText={this.state.phoneNumberRequired}
+                                                floatingLabelText="Phone number"
+                                                onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
+                                                value={this.state.phoneNumber}
+                                                required={true}>
+                                                <InputMask mask="1 (999) 999-9999" maskChar="#"
+                                                           value={this.state.phoneNumber}/>
                                             </TextField>
                                         </Col>
                                         <Col xs={7} md={4}>
                                             <TextField
-                                            hintText="Enter your email address"
-                                            errorText={this.state.emailAddressRequired}
-                                            floatingLabelText="Email address"
-                                            onChange={(event, newValue) => this.setState({emailAddress: newValue})}
-                                            value = {this.state.emailAddress}
-                                            required={true}/>
+                                                hintText="Enter your email address"
+                                                errorText={this.state.emailAddressRequired}
+                                                floatingLabelText="Email address"
+                                                onChange={(event, newValue) => this.setState({emailAddress: newValue})}
+                                                value={this.state.emailAddress}
+                                                required={true}/>
                                         </Col>
                                     </Row>
                                 </Grid>
@@ -232,52 +298,68 @@ class Signup extends React.Component {
                         <Step>
                             <StepLabel>Account Information</StepLabel>
                             <StepContent>
-                                <TextField
-                                type="password"
-                                hintText="Enter your password"
-                                errorText={this.state.passwordRequired}
-                                floatingLabelText="Password"
-                                onChange={(event, newValue) => this.setState({password: newValue})}
-                                value = {this.state.password}
-                                required={true}/>
-                                    &nbsp;&nbsp;
-                                <TextField
-                                type="password"
-                                hintText="Confirm your password"
-                                errorText={this.state.confirmRequired}
-                                floatingLabelText="Confirm your password"
-                                onChange={(event, newValue) => this.setState({confirm: newValue})}
-                                value = {this.state.confirm}
-                                required={true}/>
-                                <br/>
-                                <SelectField
-                                hintText="Select your district"
-                                floatingLabelText="School district"
-                                onChange={(event, index, value) => this.setState({value})}
-                                maxHeight={200}
-                                value={this.state.value}>
-                                    <MenuItem primaryText="Berwick" value='1'/>
-                                    <MenuItem primaryText="Crestwood" value='2' />
-                                    <MenuItem primaryText="Dallas" value='3'/>
-                                    <MenuItem primaryText="Greater Nanticoke" value='4'/>
-                                    <MenuItem primaryText="Hanover" value='5'/>
-                                    <MenuItem primaryText="Hazleton" value='6'/>
-                                    <MenuItem primaryText="Lake-Lehman" value='7'/>
-                                    <MenuItem primaryText="Northwest" value='8'/>
-                                    <MenuItem primaryText="Non-public" value='9'/>
-                                    <MenuItem primaryText="Pittston" value='10'/>
-                                    <MenuItem primaryText="Wilkes-Barre" value='11'/>
-                                    <MenuItem primaryText="Wyoming Area" value='12'/>
-                                    <MenuItem primaryText="Wyoming Valley West" value='13'/>
-                                    <MenuItem primaryText="CTC Hazleton" value='14'/>
-                                    <MenuItem primaryText="West Side Area Vocational" value='15'/>
-                                    <MenuItem primaryText="Wilkes-Barre Area Vocational" value='16'/>
-                                </SelectField>
+                                <Grid>
+                                    <Row className="show-grid">
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                                type="password"
+                                                hintText="Enter your password"
+                                                errorText={this.state.passwordRequired}
+                                                floatingLabelText="Password"
+                                                onChange={(event, newValue) => this.setState({password: newValue})}
+                                                value={this.state.password}
+                                                required={true}/>
+                                        </Col>
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                                type="password"
+                                                hintText="Confirm your password"
+                                                errorText={this.state.confirmRequired}
+                                                floatingLabelText="Confirm your password"
+                                                onChange={(event, newValue) => this.setState({confirm: newValue})}
+                                                value={this.state.confirm}
+                                                required={true}/>
+                                        </Col>
+                                    </Row>
+                                    <Row className="show-grid">
+                                        <Col xs={7} md={4}>
+                                            <SelectField
+                                                hintText="Select your district"
+                                                floatingLabelText="School district"
+                                                onChange={(event, index, value) => this.setState({value})}
+                                                maxHeight={200}
+                                                value={this.state.value}>
+                                                <MenuItem primaryText="Berwick" value='1'/>
+                                                <MenuItem primaryText="Crestwood" value='2'/>
+                                                <MenuItem primaryText="Dallas" value='3'/>
+                                                <MenuItem primaryText="Greater Nanticoke" value='4'/>
+                                                <MenuItem primaryText="Hanover" value='5'/>
+                                                <MenuItem primaryText="Hazleton" value='6'/>
+                                                <MenuItem primaryText="Lake-Lehman" value='7'/>
+                                                <MenuItem primaryText="Northwest" value='8'/>
+                                                <MenuItem primaryText="Non-public" value='9'/>
+                                                <MenuItem primaryText="Pittston" value='10'/>
+                                                <MenuItem primaryText="Wilkes-Barre" value='11'/>
+                                                <MenuItem primaryText="Wyoming Area" value='12'/>
+                                                <MenuItem primaryText="Wyoming Valley West" value='13'/>
+                                                <MenuItem primaryText="CTC Hazleton" value='14'/>
+                                                <MenuItem primaryText="West Side Area Vocational" value='15'/>
+                                                <MenuItem primaryText="Wilkes-Barre Area Vocational" value='16'/>
+                                            </SelectField>
+                                        </Col>
+                                    </Row>
+                                </Grid>
                             </StepContent>
                         </Step>
                         <Step>
                             <StepLabel>Account Creation</StepLabel>
-                            <StepContent>Congratulations! Your account has been created.</StepContent>
+                            <Grid>
+                                <Row className="show-grid">
+                                    <Col xs={7} md={4}>
+                                        <StepContent>Congratulations! Your account has been created.</StepContent>
+                                    </Col>
+                                </Row>
+                            </Grid>
                         </Step>
                     </Stepper>
                     <div style={contentStyle}>
