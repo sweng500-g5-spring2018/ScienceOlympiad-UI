@@ -14,11 +14,7 @@ class Forgot extends Component {
         super(props);
 
         this.state = {
-            username: '',
-            password:'',
-            userRequired: undefined,
-            passRequired: undefined,
-            redirect:false
+            email: '',
         }
 
         this.handleClick = this.handleClick.bind(this);
@@ -29,37 +25,15 @@ class Forgot extends Component {
     handleClick(event) {
         event.preventDefault();
 
-        if(this.state.username.trim()) {
-            if(this.state.password.trim()) {
+        if(this.state.email.trim()) {
 
-                //TODO: STOP USING A TEST USER
-                if(this.state.username.toLowerCase() === 'testuser') {
-                    this.AuthService.login(this.state.username, this.state.password);
-                }
+            // received an email address
 
-                if(this.AuthService.isLoggedIn()) {
-                    this.setState({
-                        redirect: true
-                    })
-                } else {
-                    this.props.notify(
-                        "ERROR: Please provide valid login credentials.",
-                        "error",
-                        "tr",
-                        6
-                    )
-                }
-            } else {
-                this.setState({
-                    userRequired: undefined,
-                    passRequired: "Password is required."
-                })
-            }
+
         } else {
             this.setState({
-                username: this.state.username.trim(),
-                userRequired: "Email address is required.",
-                passRequired: undefined
+                email: this.state.email.trim(),
+                emailRequired: "Email address is required."
             })
         }
     }
@@ -81,9 +55,9 @@ class Forgot extends Component {
                             <AppBar showMenuIconButton={false} title="Password Recovery"/>
                             <TextField
                                 hintText="Enter your email address"
-                                errorText={this.state.userRequired}
+                                errorText={this.state.emailRequired}
                                 floatingLabelText="Email Address"
-                                onChange={(event, newValue) => this.setState({username: newValue})}
+                                onChange={(event, newValue) => this.setState({email: newValue})}
                                 required={true}
                             />
                             <br/>
