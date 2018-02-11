@@ -8,6 +8,7 @@ import AppBar from 'material-ui/AppBar';
 import {Redirect} from 'react-router-dom';
 
 import AuthService from '../../containers/Login/AuthService';
+import HttpRequest from '../../adapters/httpRequest';
 
 class Forgot extends Component {
     constructor(props) {
