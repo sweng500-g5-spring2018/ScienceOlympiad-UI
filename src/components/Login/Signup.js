@@ -212,10 +212,20 @@ class Signup extends React.Component {
                 }
             }
 
-            if (this.state.district = "")
+            if (this.state.district.trim() === '')
             {
-
+                this.setState({
+                    districtRequired: "Please select your school district."
+                })
             }
+            else
+            {
+                this.setState({
+                    districtRequired: undefined
+                })
+            }
+
+
         }
 
         // Only proceeds if there is not missing info
@@ -325,10 +335,11 @@ class Signup extends React.Component {
                                         <Col xs={7} md={4}>
                                             <SelectField
                                                 hintText="Select your district"
-                                                floatingLabelText="School district"
-                                                onChange={(event, index, value) => this.setState({value})}
+                                                errorText={this.state.districtRequired}
+                                                floatingLabelText="School District"
+                                                onChange={(event, index, value) => this.setState({district: value})}
                                                 maxHeight={200}
-                                                value={this.state.value}>
+                                                value={this.state.district}>
                                                 <MenuItem primaryText="Berwick" value='1'/>
                                                 <MenuItem primaryText="Crestwood" value='2'/>
                                                 <MenuItem primaryText="Dallas" value='3'/>

@@ -5,7 +5,7 @@ import Forgot from "../../components/Login/Forgot";
 import $ from 'jquery';
 import NotificationSystem from 'react-notification-system';
 
-import mountainBackground from '../../assets/img/Mountain.jpg';
+import mountainBackground from '../../assets/img/SmallerMountain.jpg';
 
 import {style} from "../../variables/Variables";
 
@@ -97,7 +97,7 @@ class LoginContainer extends Component {
             return <div id='logged-in-successful-yo'></div>
         } else {
             return (
-                <div id='login-container' className="login-center"  style={backgroundStyle}>
+                <div id='login-container' className="animated fadeIn login-center"  style={backgroundStyle}>
                     <NotificationSystem ref="notificationSystem" style={style}/>
                     <div id='login-container-card' className="login-card row">
                         <div id='login-container-slider' className="animated fadeIn">
@@ -111,7 +111,7 @@ class LoginContainer extends Component {
                         <div id='signup-container-slider' className="animated collapse fadeIn">
                             <Signup notify={this.addNotification}/>
                             <br/>
-                            <a data-Type={'slogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Return to the login screen</a>
+                            <a data-Type={'slogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Already have an account? Login</a>
                         </div>
                         <div id='forgot-container-slider' className="animated collapse fadeIn">
                             <Forgot notify={this.addNotification}/>
