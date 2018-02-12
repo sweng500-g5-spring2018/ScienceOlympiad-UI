@@ -139,8 +139,15 @@ class Signup extends React.Component {
                         _this.setState({
                             emailAddress: _this.state.emailAddress.trim(),
                             emailAddressRequired: "",
-                            httpResponse: result
+                            httpResponse: result,
                         })
+
+                        if (missingInfo === false)
+                        {
+                            _this.setState({
+                                stepIndex: stepIndex + 1
+                            })
+                        }
 
                     }).catch(function (error) {
                         console.log(error);
@@ -248,10 +255,19 @@ class Signup extends React.Component {
             }
 
             if (!missingInfo) {
+
+                this.setState({
+                    stepIndex: stepIndex + 1,
+                    finished: stepIndex >= 2,
+                });
+
                 // Create the user account
                 var _this = this;
                 var body = {};
+                var header = {};
 
+
+                header.userType = "COACH";
                 body.firstName = this.state.firstName;
                 body.lastName = this.state.lastName;
                 body.phoneNumber = this.state.phoneNumber;
@@ -260,26 +276,17 @@ class Signup extends React.Component {
                 body.district = this.state.district;
 
                 console.log(body);
-                /*
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/coach', 'POST', null, body).then(function (result, missingInfo) {
+
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser', 'POST', header, body).then(function (result) {
                     console.log(result);
 
                 }).catch(function (error) {
                     console.log(error);
                 })
-                */
+
             }
 
         }
-
-        // Only proceeds if there is not missing info
-        if (!missingInfo) {
-            this.setState({
-                stepIndex: stepIndex + 1,
-                finished: stepIndex >= 2,
-            });
-        }
-
 
     };
 
@@ -290,6 +297,11 @@ class Signup extends React.Component {
             this.setState({stepIndex: stepIndex - 1});
         }
     };
+
+    keyPress(input){
+        if (input.key == "Enter")
+            console.log("Enter")
+    }
 
     render() {
         const {finished, stepIndex} = this.state;
@@ -312,6 +324,7 @@ class Signup extends React.Component {
                                                 floatingLabelText="First name"
                                                 onChange={(event, newValue) => this.setState({firstName: newValue})}
                                                 value={this.state.firstName}
+                                                onKeyDown={this.keyPress}
                                                 required={true}/>
                                         </Col>
                                         <Col xs={7} md={4}>
