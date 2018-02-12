@@ -422,7 +422,7 @@ class Signup extends React.Component {
                             <div style={{marginTop: 12}}>
                                 <FlatButton
                                     label="Back"
-                                    disabled={stepIndex === 0}
+                                    disabled={stepIndex === 0 || stepIndex === 2}
                                     onClick={this.handlePrev}
                                     style={{marginRight: 12}}/>
                                 <RaisedButton
