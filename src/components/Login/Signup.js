@@ -63,7 +63,7 @@ class Signup extends React.Component {
         const {stepIndex} = this.state;
 
         // Flag to indicate if we can proceed
-        var missingInfo = 0;
+        var missingInfo = false;
 
 
         // Form page 1
@@ -81,7 +81,7 @@ class Signup extends React.Component {
                     firstName: this.state.firstName.trim(),
                     firstNameRequired: "First name is required."
                 })
-                missingInfo = 1;
+                missingInfo = true;
             }
 
             // Checks last name
@@ -133,7 +133,7 @@ class Signup extends React.Component {
                     var body = {};
                     body.email = this.state.emailAddress;
 
-                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body ).then(function (result, missingInfo) {
+                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body ).then(function (result) {
                         console.log(result);
 
                         _this.setState({
@@ -145,6 +145,9 @@ class Signup extends React.Component {
                     }).catch(function (error) {
                         console.log(error);
 
+                        if (_this.state.httpResponse.status !== 200)
+                            missingInfo = true;
+
                         _this.setState({
                             emailAddress: _this.state.emailAddress.trim(),
                             emailAddressRequired: "This address has already been registered.",
@@ -153,8 +156,6 @@ class Signup extends React.Component {
                     })
                 }
 
-                if (this.state.httpResponse.status !== 200)
-                    missingInfo = true;
             }
             else {
                 this.setState({
