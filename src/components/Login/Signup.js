@@ -1,133 +1,397 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import React from 'react';
+import {
+    Step,
+    Stepper,
+    StepLabel,
+    StepContent,
+} from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import AppBar from 'material-ui/AppBar';
-import {Redirect} from 'react-router-dom';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import InputMask from 'react-input-mask'
+import {Row, Col, Grid} from 'react-bootstrap';
 
-import AuthService from '../../containers/Login/AuthService';
 
-class Signup extends Component {
+class Signup extends React.Component {
+
     constructor(props) {
         super(props);
 
         this.state = {
-            username: '',
-            password:'',
-            password2:'',
-            userRequired:'',
-            passRequired:'',
-            pass2Required:'',
-            redirect:false
+            finished: false,
+            stepIndex: 0,
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
+            emailAddress: '',
+            password: '',
+            confirm: '',
+            district: ''
         }
-
-        this.handleClick = this.handleClick.bind(this);
-
-        this.AuthService = new AuthService();
     }
 
-    areFieldsValid() {
-        if(!this.state.username) {
-            this.setState({userRequired: "This is a required field.", passRequired:undefined, pass2Required:undefined});
+    // Checks to see if an email has a host, @ symbols, and domain.
+    validEmail(text) {
+        console.log(text);
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (reg.test(text) === false)
+            return true;
+        else
             return false;
-        }
-        if(!this.state.password) {
-            this.setState({userRequired:undefined, passRequired: "This is a required field.", pass2Required:undefined});
+    }
+
+    // Check if a passowrd is valid. 8 characters, uppercase, lowercase, and numbers
+    validPassword(text) {
+        if (text.length < 8)
             return false;
-        }
-        if(!this.state.password2) {
-            this.setState({userRequired:undefined, passRequired: undefined, pass2Required: "This is a required field."});
+        var hasUpperCase = /[A-Z]/.test(text);
+        var hasLowerCase = /[a-z]/.test(text);
+        var hasNumbers = /\d/.test(text);
+        var hasNonalphas = /\W/.test(text);
+        if (hasUpperCase + hasLowerCase + hasNumbers + hasNonalphas < 3)
             return false;
-        }
-        if(this.state.password2 !== this.state.password) {
-            this.setState({userRequired:undefined, passRequired: "The passwords must match.",pass2Required: "The passwords must match."});
-            return false;
-        }
+
         return true;
     }
 
-    handleClick(event) {
-        event.preventDefault();
-        console.log(this.state);
+    // Handles the next button
+    handleNext = () => {
+        const {stepIndex} = this.state;
 
-        if(this.areFieldsValid()) {
-            this.AuthService.login(this.state.username, this.state.password);
+        // Flag to indicate if we can proceed
+        var missingInfo = 0;
 
-            if(this.AuthService.isLoggedIn()) {
+
+        // Form page 1
+        if (stepIndex === 0) {
+
+            // Checks first name
+            if (this.state.firstName.trim()) {
                 this.setState({
-                    redirect: true
+                    firstName: this.state.firstName.trim(),
+                    firstNameRequired: undefined
                 })
             }
-        } else {
-            this.props.notify(
-                "Error attempting to Signup.  Ensure fields are correctly filled out.",
-                "error",
-                "tr",
-                6
-            )
+            else {
+                this.setState({
+                    firstName: this.state.firstName.trim(),
+                    firstNameRequired: "First name is required."
+                })
+                missingInfo = 1;
+            }
+
+            // Checks last name
+            if (this.state.lastName.trim()) {
+                this.setState({
+                    lastName: this.state.lastName.trim(),
+                    lastNameRequired: undefined
+                })
+            }
+            else {
+                this.setState({
+                    lastName: this.state.lastName.trim(),
+                    lastNameRequired: "Last name is required."
+                })
+                missingInfo = 1;
+            }
+
+            // Checks phone number
+            if (this.state.phoneNumber.trim()) {
+                this.setState({
+                    phoneNumber: this.state.phoneNumber.trim(),
+                    phoneNumberRequired: undefined
+                })
+            }
+            else {
+                this.setState({
+                    phoneNumber: this.state.phoneNumber.trim(),
+                    phoneNumberRequired: "A phone number is required."
+                })
+                missingInfo = 1;
+            }
+
+            // Checks emails address is not blank
+            if (this.state.emailAddress.trim()) {
+
+                // If the address is not valid
+                if (this.validEmail(this.state.emailAddress.trim())) {
+                    this.setState({
+                        emailAddress: this.state.emailAddress.trim(),
+                        emailAddressRequired: "A valid email address is required."
+                    })
+
+                    missingInfo = 1;
+                }
+                else {
+                    this.setState({
+                        emailAddress: this.state.emailAddress.trim(),
+                        emailAddressRequired: undefined
+                    })
+                }
+            }
+            else {
+                this.setState({
+                    emailAddress: this.state.emailAddress.trim(),
+                    emailAddressRequired: "An email address is required."
+                })
+                missingInfo = 1;
+            }
+
+
+        } // Form page 2
+        else if (stepIndex === 1) {
+
+            // Checks for blank password
+            if (this.state.password.trim()) {
+                this.setState({
+                    password: this.state.password.trim(),
+                    passwordRequired: undefined
+                })
+            }
+            else {
+                this.setState({
+                    password: this.state.password.trim(),
+                    passwordRequired: "A password is required."
+                })
+                missingInfo = 1;
+            }
+
+            // Checks for blank confirmation password
+            if (this.state.confirm.trim()) {
+                this.setState({
+                    confirm: this.state.confirm.trim(),
+                    confirmRequired: undefined
+                })
+            }
+            else {
+                this.setState({
+                    confirm: this.state.confirm.trim(),
+                    confirmRequired: "A password confirmation is required."
+                })
+                missingInfo = 1;
+            }
+
+            // Checks to see if the passwords are equal to each other
+            if (this.state.password.trim() !== this.state.confirm.trim()) {
+                this.setState({
+                    confirmRequired: "Passwords must match.",
+                    passwordRequired: "Passwords must match."
+                })
+                this.props.notify(
+                    "ERROR: Your passwords do not match.",
+                    "error",
+                    "tr",
+                    6
+                );
+                missingInfo = 1;
+            }
+            else {
+                // Tests the password complexity
+                if (this.validPassword(this.state.password.trim())) {
+                    this.setState({
+                        password: this.state.password.trim(),
+                        passwordRequired: undefined
+                    })
+                }
+                else {
+                    this.props.notify(
+                        "ERROR: Your password must be 8 or more characters, contain capital letters, lower case letters, and at least one number.",
+                        "error",
+                        "tr",
+                        10
+                    );
+                    this.setState({
+                        confirmRequired: "A complex password is required.",
+                        passwordRequired: "A complex password is required."
+                    })
+                    missingInfo = 1;
+                }
+            }
+
+            if (this.state.district.trim() === '')
+            {
+                this.setState({
+                    districtRequired: "Please select your school district."
+                })
+            }
+            else
+            {
+                this.setState({
+                    districtRequired: undefined
+                })
+            }
+
+
         }
 
-        // this.props.loginUser({user: this.state.username, pass: this.state.password});
-    }
-
-    componentDidMount() {
-        if(this.AuthService.isLoggedIn()) {
+        // Only proceeds if there is not missing info
+        if (!missingInfo) {
             this.setState({
-                redirect: true
-            })
+                stepIndex: stepIndex + 1,
+                finished: stepIndex >= 2,
+            });
         }
-    }
+
+
+    };
+
+    handlePrev = () => {
+        const {stepIndex} = this.state;
+
+        if (stepIndex > 0) {
+            this.setState({stepIndex: stepIndex - 1});
+        }
+    };
 
     render() {
-        if(!this.state.redirect) {
-            return (
-                <div id='login-div'>
-                    <MuiThemeProvider>
-                        <div>
-                            <AppBar showMenuIconButton={false} title="Coach Signup"/>
-                            <TextField
-                                hintText="Enter your Username"
-                                errorText={this.state.userRequired}
-                                floatingLabelText="Username"
-                                onChange={(event, newValue) => this.setState({username: newValue})}
-                            />
-                            <br/>
-                            <TextField
-                                type="password"
-                                hintText="Enter your Password"
-                                errorText={this.state.passRequired}
-                                floatingLabelText="Password"
-                                onChange={(event, newValue) => this.setState({password: newValue})}
-                            />
-                            <br/>
-                            <TextField
-                                type="password"
-                                hintText="Re-enter your Password"
-                                errorText={this.state.pass2Required}
-                                floatingLabelText="Password"
-                                onChange={(event, newValue) => this.setState({password2: newValue})}
-                            />
-                            <br/>
-                            <RaisedButton label="Submit" primary={true} style={{margin:15}}
-                                          onClick={(event) => this.handleClick(event)}/>
-                        </div>
-                    </MuiThemeProvider>
-                </div>
-            )
-        } else {
-            return (
-                <Redirect from="/" to="/app/dashboard" />
-            )
-        }
-    }
-}
+        const {finished, stepIndex} = this.state;
+        const contentStyle = {margin: '0 16px'};
 
-Signup.propTypes = {
-    notify: PropTypes.any,
-}
-Signup.defaultProps = {
-    notify : null
+        return (
+            <MuiThemeProvider>
+                <AppBar showMenuIconButton={false} title="Account Registration"/>
+                <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
+                    <Stepper activeStep={stepIndex} orientation={'vertical'}>
+                        <Step>
+                            <StepLabel>Personal Information</StepLabel>
+                            <StepContent>
+                                <Grid>
+                                    <Row className="show-grid">
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                                hintText="Enter your first name"
+                                                errorText={this.state.firstNameRequired}
+                                                floatingLabelText="First name"
+                                                onChange={(event, newValue) => this.setState({firstName: newValue})}
+                                                value={this.state.firstName}
+                                                required={true}/>
+                                        </Col>
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                                hintText="Enter your last name"
+                                                errorText={this.state.lastNameRequired}
+                                                floatingLabelText="Last name"
+                                                onChange={(event, newValue) => this.setState({lastName: newValue})}
+                                                value={this.state.lastName}
+                                                required={true}/>
+                                        </Col>
+                                    </Row>
+                                    <Row className="show-grid">
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                                errorText={this.state.phoneNumberRequired}
+                                                floatingLabelText="Phone number"
+                                                onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
+                                                value={this.state.phoneNumber}
+                                                required={true}>
+                                                <InputMask mask="1 (999) 999-9999" maskChar="#"
+                                                           value={this.state.phoneNumber}/>
+                                            </TextField>
+                                        </Col>
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                                hintText="Enter your email address"
+                                                errorText={this.state.emailAddressRequired}
+                                                floatingLabelText="Email address"
+                                                onChange={(event, newValue) => this.setState({emailAddress: newValue})}
+                                                value={this.state.emailAddress}
+                                                required={true}/>
+                                        </Col>
+                                    </Row>
+                                </Grid>
+                            </StepContent>
+                        </Step>
+                        <Step>
+                            <StepLabel>Account Information</StepLabel>
+                            <StepContent>
+                                <Grid>
+                                    <Row className="show-grid">
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                                type="password"
+                                                hintText="Enter your password"
+                                                errorText={this.state.passwordRequired}
+                                                floatingLabelText="Password"
+                                                onChange={(event, newValue) => this.setState({password: newValue})}
+                                                value={this.state.password}
+                                                required={true}/>
+                                        </Col>
+                                        <Col xs={7} md={4}>
+                                            <TextField
+                                                type="password"
+                                                hintText="Confirm your password"
+                                                errorText={this.state.confirmRequired}
+                                                floatingLabelText="Confirm your password"
+                                                onChange={(event, newValue) => this.setState({confirm: newValue})}
+                                                value={this.state.confirm}
+                                                required={true}/>
+                                        </Col>
+                                    </Row>
+                                    <Row className="show-grid">
+                                        <Col xs={7} md={4}>
+                                            <SelectField
+                                                hintText="Select your district"
+                                                errorText={this.state.districtRequired}
+                                                floatingLabelText="School District"
+                                                onChange={(event, index, value) => this.setState({district: value})}
+                                                maxHeight={200}
+                                                value={this.state.district}>
+                                                <MenuItem primaryText="Berwick" value='1'/>
+                                                <MenuItem primaryText="Crestwood" value='2'/>
+                                                <MenuItem primaryText="Dallas" value='3'/>
+                                                <MenuItem primaryText="Greater Nanticoke" value='4'/>
+                                                <MenuItem primaryText="Hanover" value='5'/>
+                                                <MenuItem primaryText="Hazleton" value='6'/>
+                                                <MenuItem primaryText="Lake-Lehman" value='7'/>
+                                                <MenuItem primaryText="Northwest" value='8'/>
+                                                <MenuItem primaryText="Non-public" value='9'/>
+                                                <MenuItem primaryText="Pittston" value='10'/>
+                                                <MenuItem primaryText="Wilkes-Barre" value='11'/>
+                                                <MenuItem primaryText="Wyoming Area" value='12'/>
+                                                <MenuItem primaryText="Wyoming Valley West" value='13'/>
+                                                <MenuItem primaryText="CTC Hazleton" value='14'/>
+                                                <MenuItem primaryText="West Side Area Vocational" value='15'/>
+                                                <MenuItem primaryText="Wilkes-Barre Area Vocational" value='16'/>
+                                            </SelectField>
+                                        </Col>
+                                    </Row>
+                                </Grid>
+                            </StepContent>
+                        </Step>
+                        <Step>
+                            <StepLabel>Account Creation</StepLabel>
+                            <Grid>
+                                <Row className="show-grid">
+                                    <Col xs={7} md={4}>
+                                        <StepContent>Congratulations! Your account has been created.</StepContent>
+                                    </Col>
+                                </Row>
+                            </Grid>
+                        </Step>
+                    </Stepper>
+                    <div style={contentStyle}>
+                        <div>
+                            <div style={{marginTop: 12}}>
+                                <FlatButton
+                                    label="Back"
+                                    disabled={stepIndex === 0}
+                                    onClick={this.handlePrev}
+                                    style={{marginRight: 12}}/>
+                                <RaisedButton
+                                    label={stepIndex === 2 ? 'Return to login' : 'Next'}
+                                    primary={true}
+                                    onClick={this.handleNext}/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </MuiThemeProvider>
+        );
+    }
 }
 
 export default Signup;
