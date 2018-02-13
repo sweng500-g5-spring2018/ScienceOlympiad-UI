@@ -264,20 +264,23 @@ class Signup extends React.Component {
                 // Create the user account
                 var _this = this;
                 var body = {};
-                var header = {};
 
+                var cleanPhoneNumber = this.state.phoneNumber;
+                cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
+                cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
+                cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
+                cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
 
-                header.userType = "COACH";
                 body.firstName = this.state.firstName;
                 body.lastName = this.state.lastName;
-                body.phoneNumber = this.state.phoneNumber;
+                body.phoneNumber = cleanPhoneNumber;
                 body.emailAddress = this.state.emailAddress;
                 body.password = this.state.password;
-                body.district = this.state.district;
 
+                //console.log(header);
                 console.log(body);
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser', 'POST', header, body).then(function (result) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH', 'POST', null, body ).then(function (result) {
                     console.log(result);
 
                 }).catch(function (error) {
