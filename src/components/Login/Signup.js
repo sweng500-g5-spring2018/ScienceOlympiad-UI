@@ -14,7 +14,8 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import InputMask from 'react-input-mask'
 import {Row, Col, Grid} from 'react-bootstrap';
-
+import HttpRequest from '../../adapters/httpRequest';
+import constants from '../../utils/constants';
 
 class Signup extends React.Component {
 
@@ -30,7 +31,8 @@ class Signup extends React.Component {
             emailAddress: '',
             password: '',
             confirm: '',
-            district: ''
+            district: '',
+            httpResponse: ''
         }
     }
 
@@ -46,14 +48,12 @@ class Signup extends React.Component {
 
     // Check if a passowrd is valid. 8 characters, uppercase, lowercase, and numbers
     validPassword(text) {
-        if (text.length < 8)
-            return false;
+        if (text.length < 8) return false;
         var hasUpperCase = /[A-Z]/.test(text);
         var hasLowerCase = /[a-z]/.test(text);
         var hasNumbers = /\d/.test(text);
         var hasNonalphas = /\W/.test(text);
-        if (hasUpperCase + hasLowerCase + hasNumbers + hasNonalphas < 3)
-            return false;
+        if (hasUpperCase + hasLowerCase + hasNumbers + hasNonalphas < 3) return false;
 
         return true;
     }
@@ -63,7 +63,7 @@ class Signup extends React.Component {
         const {stepIndex} = this.state;
 
         // Flag to indicate if we can proceed
-        var missingInfo = 0;
+        var missingInfo = false;
 
 
         // Form page 1
@@ -81,7 +81,7 @@ class Signup extends React.Component {
                     firstName: this.state.firstName.trim(),
                     firstNameRequired: "First name is required."
                 })
-                missingInfo = 1;
+                missingInfo = true;
             }
 
             // Checks last name
@@ -96,7 +96,7 @@ class Signup extends React.Component {
                     lastName: this.state.lastName.trim(),
                     lastNameRequired: "Last name is required."
                 })
-                missingInfo = 1;
+                missingInfo = true;
             }
 
             // Checks phone number
@@ -111,7 +111,7 @@ class Signup extends React.Component {
                     phoneNumber: this.state.phoneNumber.trim(),
                     phoneNumberRequired: "A phone number is required."
                 })
-                missingInfo = 1;
+                missingInfo = true;
             }
 
             // Checks emails address is not blank
@@ -124,21 +124,52 @@ class Signup extends React.Component {
                         emailAddressRequired: "A valid email address is required."
                     })
 
-                    missingInfo = 1;
+                    missingInfo = true;
                 }
                 else {
-                    this.setState({
-                        emailAddress: this.state.emailAddress.trim(),
-                        emailAddressRequired: undefined
+
+                    // Check to see if the email address already exists
+                    var _this = this;
+                    var body = {};
+                    body.email = this.state.emailAddress;
+
+                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body ).then(function (result) {
+                        console.log(result);
+
+                        _this.setState({
+                            emailAddress: _this.state.emailAddress.trim(),
+                            emailAddressRequired: "",
+                            httpResponse: result,
+                        })
+
+                        if (missingInfo === false)
+                        {
+                            _this.setState({
+                                stepIndex: stepIndex + 1
+                            })
+                        }
+
+                    }).catch(function (error) {
+                        console.log(error);
+
+                        if (_this.state.httpResponse.status !== 200)
+                            missingInfo = true;
+
+                        _this.setState({
+                            emailAddress: _this.state.emailAddress.trim(),
+                            emailAddressRequired: "This address has already been registered.",
+                            httpResponse: error
+                        })
                     })
                 }
+
             }
             else {
                 this.setState({
                     emailAddress: this.state.emailAddress.trim(),
                     emailAddressRequired: "An email address is required."
                 })
-                missingInfo = 1;
+                missingInfo = true;
             }
 
 
@@ -157,7 +188,7 @@ class Signup extends React.Component {
                     password: this.state.password.trim(),
                     passwordRequired: "A password is required."
                 })
-                missingInfo = 1;
+                missingInfo = true;
             }
 
             // Checks for blank confirmation password
@@ -172,7 +203,7 @@ class Signup extends React.Component {
                     confirm: this.state.confirm.trim(),
                     confirmRequired: "A password confirmation is required."
                 })
-                missingInfo = 1;
+                missingInfo = true;
             }
 
             // Checks to see if the passwords are equal to each other
@@ -187,7 +218,7 @@ class Signup extends React.Component {
                     "tr",
                     6
                 );
-                missingInfo = 1;
+                missingInfo = true;
             }
             else {
                 // Tests the password complexity
@@ -208,7 +239,8 @@ class Signup extends React.Component {
                         confirmRequired: "A complex password is required.",
                         passwordRequired: "A complex password is required."
                     })
-                    missingInfo = 1;
+
+                    missingInfo = true;
                 }
             }
 
@@ -218,24 +250,46 @@ class Signup extends React.Component {
                     districtRequired: "Please select your school district."
                 })
             }
-            else
-            {
-                this.setState({
-                    districtRequired: undefined
-                })
+            else {
+                this.setState({districtRequired: undefined})
             }
 
+            if (!missingInfo) {
+
+                this.setState({
+                    stepIndex: stepIndex + 1,
+                    finished: stepIndex >= 2,
+                });
+
+                // Create the user account
+                var _this = this;
+                var body = {};
+
+                var cleanPhoneNumber = this.state.phoneNumber;
+                cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
+                cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
+                cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
+                cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
+
+                body.firstName = this.state.firstName;
+                body.lastName = this.state.lastName;
+                body.phoneNumber = cleanPhoneNumber;
+                body.emailAddress = this.state.emailAddress;
+                body.password = this.state.password;
+
+                //console.log(header);
+                console.log(body);
+
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH', 'POST', null, body ).then(function (result) {
+                    console.log(result);
+
+                }).catch(function (error) {
+                    console.log(error);
+                })
+
+            }
 
         }
-
-        // Only proceeds if there is not missing info
-        if (!missingInfo) {
-            this.setState({
-                stepIndex: stepIndex + 1,
-                finished: stepIndex >= 2,
-            });
-        }
-
 
     };
 
@@ -246,6 +300,11 @@ class Signup extends React.Component {
             this.setState({stepIndex: stepIndex - 1});
         }
     };
+
+    keyPress(input){
+        if (input.key == "Enter")
+            console.log("Enter")
+    }
 
     render() {
         const {finished, stepIndex} = this.state;
@@ -268,6 +327,7 @@ class Signup extends React.Component {
                                                 floatingLabelText="First name"
                                                 onChange={(event, newValue) => this.setState({firstName: newValue})}
                                                 value={this.state.firstName}
+                                                onKeyDown={this.keyPress}
                                                 required={true}/>
                                         </Col>
                                         <Col xs={7} md={4}>
@@ -378,7 +438,7 @@ class Signup extends React.Component {
                             <div style={{marginTop: 12}}>
                                 <FlatButton
                                     label="Back"
-                                    disabled={stepIndex === 0}
+                                    disabled={stepIndex === 0 || stepIndex === 2}
                                     onClick={this.handlePrev}
                                     style={{marginRight: 12}}/>
                                 <RaisedButton
