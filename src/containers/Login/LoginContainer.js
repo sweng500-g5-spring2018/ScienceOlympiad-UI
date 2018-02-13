@@ -9,6 +9,9 @@ import mountainBackground from '../../assets/img/SmallerMountain.jpg';
 
 import {style} from "../../variables/Variables";
 
+import HttpRequest from '../../adapters/httpRequest';
+import constants from "../../utils/constants";
+
 const backgroundStyle = {
     background: 'url(' + mountainBackground + ') no-repeat center center fixed',
     backgroundSize: 'cover',
@@ -41,8 +44,16 @@ class LoginContainer extends Component {
                 $('#signup-container-slider').removeClass('collapse');
                 break;
             case 'forgot':
-                $('#login-container-slider').addClass('collapse');
-                $('#forgot-container-slider').removeClass('collapse');
+
+                HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/testSessionStart', 'GET', {withCredentials : 'include'}, null).then(function (result) {
+                    console.log(result);
+                }).catch(function (error) {
+                    console.log(error);
+                })
+
+
+                // $('#login-container-slider').addClass('collapse');
+                // $('#forgot-container-slider').removeClass('collapse');
                 break;
             case 'slogin':
                 $('#login-container-slider').removeClass('collapse');

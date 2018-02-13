@@ -22,8 +22,6 @@ class Login extends Component {
         }
 
         this.handleClick = this.handleClick.bind(this);
-
-        this.AuthService = new AuthService();
     }
 
     handleClick(event) {
@@ -32,23 +30,25 @@ class Login extends Component {
         if(this.state.username.trim()) {
             if(this.state.password.trim()) {
 
-                //TODO: STOP USING A TEST USER
-                if(this.state.username.toLowerCase() === 'testuser') {
-                    this.AuthService.login(this.state.username, this.state.password);
-                }
+                AuthService.login(this.state.username, this.state.password).then(function (result) {
 
-                if(this.AuthService.isLoggedIn()) {
-                    this.setState({
-                        redirect: true
-                    })
-                } else {
-                    this.props.notify(
-                        "ERROR: Please provide valid login credentials.",
-                        "error",
-                        "tr",
-                        6
-                    )
-                }
+                }).catch(function (error) {
+                    console.log(error);
+                }).then(() => {
+                        if (AuthService.isLoggedIn()) {
+                            this.setState({
+                                redirect: true
+                            })
+                        } else {
+                            this.props.notify(
+                                "ERROR: Please provide valid login credentials.",
+                                "error",
+                                "tr",
+                                6
+                            )
+                        }
+                    }
+                );
             } else {
                 this.setState({
                     userRequired: undefined,
@@ -65,7 +65,7 @@ class Login extends Component {
     }
 
     componentDidMount() {
-        if(this.AuthService.isLoggedIn()) {
+        if(AuthService.isLoggedIn()) {
             this.setState({
                 redirect: true
             })

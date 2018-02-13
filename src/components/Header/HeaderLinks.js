@@ -15,9 +15,14 @@ class HeaderLinks extends Component{
     onLogoutClick(event) {
         event.preventDefault();
 
-        var Auth = new AuthService();
-        Auth.logout();
-        window.location = '/';
+        AuthService.logout().then(function (result) {
+            console.log(result);
+        }).catch(function (error) {
+            console.log(error);
+        }).then( () => {
+            window.location = '/';
+        });
+
     }
 
     render(){
