@@ -131,7 +131,7 @@ class Signup extends React.Component {
                     // Check to see if the email address already exists
                     var _this = this;
                     var body = {};
-                    body.email = this.state.emailAddress;
+                    body.emailAddress = this.state.emailAddress;
 
                     _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body ).then(function (result) {
                         console.log(result);
@@ -280,7 +280,7 @@ class Signup extends React.Component {
                 //console.log(header);
                 console.log(body);
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH', 'POST', null, body ).then(function (result) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH', 'POST', constants.useCredentials(), body ).then(function (result) {
                     console.log(result);
 
                 }).catch(function (error) {
