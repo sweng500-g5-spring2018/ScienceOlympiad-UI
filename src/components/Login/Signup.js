@@ -280,7 +280,7 @@ class Signup extends React.Component {
                 //console.log(header);
                 console.log(body);
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH', 'POST', constants.useCredentials(), body ).then(function (result) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH', 'POST', null, body ).then(function (result) {
                     console.log(result);
 
                 }).catch(function (error) {
