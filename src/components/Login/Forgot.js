@@ -40,7 +40,7 @@ class Forgot extends Component {
     }
 
     componentDidMount() {
-        if(this.AuthService.isLoggedIn()) {
+        if(AuthService.isLoggedIn()) {
             this.setState({
                 redirect: true
             })
