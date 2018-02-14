@@ -14,27 +14,20 @@ export default class AuthService {
 
             //var _this = this;
             HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/auth/login', 'POST', constants.useCredentials() , body ).then(function (result) {
-                console.log(result);
-
-                console.log("" + username + " " + password);
                 let toEncode = {
                     emailAddress: result.body.emailAddress,
                     role: result.body.role,
                     expiration: moment().add(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS')
                 }
 
-                console.log(toEncode);
                 var encoded = jwt.encode(toEncode, result.body.session);
 
                 AuthService.setSession(result.body.session);
                 AuthService.setToken(encoded);
 
-                console.log("finished promise success");
                 resolve({status: result.status, message: "Authorized", emailAddress: result.body.emailAddress});
             }).catch(function (error) {
                 console.log(error);
-
-                console.log("finished promise failed");
                 reject(error);
             })
         });
@@ -84,7 +77,11 @@ export default class AuthService {
                     return false;
                 }
                 else {
-                    AuthService.updateTimeStamp(decoded);
+                    if(moment(decoded.expiration).isBefore(moment().add(15, 'minutes'))) {
+                        console.log("DID I GET HERE");
+                        AuthService.updateTimeStamp(decoded);
+                    }
+
                     return true;
                 }
             }
@@ -118,7 +115,7 @@ export default class AuthService {
         const token = AuthService.getToken();
 
         if(token && session) {
-            const sessionInfo = jwt.decode(token, session);
+            var sessionInfo = jwt.decode(token, session);
             return sessionInfo;
         } else {
             return undefined;
@@ -126,7 +123,6 @@ export default class AuthService {
     }
 
     static encodeAndSetToken(json) {
-        console.log(json);
         try {
             localStorage.setItem('id_token', jwt.encode(json, AuthService.getSession()));
             return true;
@@ -136,7 +132,7 @@ export default class AuthService {
     }
 
     static updateTimeStamp(decoded) {
-        decoded.timestamp = moment().add(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS');
+        decoded.timestamp = moment().add(20, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS');
         return AuthService.encodeAndSetToken(decoded);
     }
 

@@ -44,16 +44,8 @@ class LoginContainer extends Component {
                 $('#signup-container-slider').removeClass('collapse');
                 break;
             case 'forgot':
-
-                HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/testSessionStart', 'GET', {withCredentials : 'include'}, null).then(function (result) {
-                    console.log(result);
-                }).catch(function (error) {
-                    console.log(error);
-                })
-
-
-                // $('#login-container-slider').addClass('collapse');
-                // $('#forgot-container-slider').removeClass('collapse');
+                $('#login-container-slider').addClass('collapse');
+                $('#forgot-container-slider').removeClass('collapse');
                 break;
             case 'slogin':
                 $('#login-container-slider').removeClass('collapse');
