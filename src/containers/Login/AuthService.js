@@ -78,12 +78,13 @@ export default class AuthService {
         const session = AuthService.getSession();
         if (token && session) {
             try {
-                const decoded = jwt.decode(token, session);
-                if (moment(decoded.expiration).isBefore(moment())) { // Checking if token is expired.
+                var decoded = AuthService.decodeSessionVars();
+                if (!decoded || moment(decoded.expiration).isBefore(moment())) { // Checking if token is expired.
                     AuthService.revokeAuth();
                     return false;
                 }
                 else {
+                    AuthService.updateTimeStamp(decoded);
                     return true;
                 }
             }
@@ -97,6 +98,46 @@ export default class AuthService {
 
             return false;
         }
+    }
+
+    static revokeAuth() {
+        AuthService.revokeToken();
+        AuthService.endSession();
+    }
+
+    static getUserRole() {
+        return AuthService.decodeSessionVars().role;
+    }
+
+    static getUserEmail() {
+        return AuthService.decodeSessionVars().emailAddress;
+    }
+
+    static decodeSessionVars() {
+        const session = AuthService.getSession();
+        const token = AuthService.getToken();
+
+        if(token && session) {
+            const sessionInfo = jwt.decode(token, session);
+            return sessionInfo;
+        } else {
+            return undefined;
+        }
+    }
+
+    static encodeAndSetToken(json) {
+        console.log(json);
+        try {
+            localStorage.setItem('id_token', jwt.encode(json, AuthService.getSession()));
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    static updateTimeStamp(decoded) {
+        decoded.timestamp = moment().add(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS');
+        return AuthService.encodeAndSetToken(decoded);
     }
 
     static setSession(session) {
@@ -123,8 +164,4 @@ export default class AuthService {
         localStorage.removeItem('id_token');
     }
 
-    static revokeAuth() {
-        AuthService.revokeToken();
-        AuthService.endSession();
-    }
 }

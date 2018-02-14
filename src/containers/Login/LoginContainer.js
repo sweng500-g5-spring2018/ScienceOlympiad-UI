@@ -66,10 +66,6 @@ class LoginContainer extends Component {
         }
     }
 
-    isLoggedIn() {
-        return false;
-    }
-
     addNotification(message, level, position, autoDismiss) {
         this.state._notificationSystem.addNotification({
             title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
@@ -103,36 +99,32 @@ class LoginContainer extends Component {
 
     render() {
 
+        return (
+            <div id='login-container' className="animated fadeIn login-center"  style={backgroundStyle}>
+                <NotificationSystem ref="notificationSystem" style={style}/>
+                <div id='login-container-card' className="login-card row">
+                    <div id='login-container-slider' className="animated fadeIn">
+                        <Login notify={this.addNotification}/>
+                        <a data-Type={'forgot'} onClick={event => this.toggleLoginView(event)} className="col-sm-10">Forgot your password?</a>
+                        <br/>
+                        <a data-Type={'register'} onClick={event => this.toggleLoginView(event)} className="col-sm-10">Register for a new account</a>
+                        <br/>
 
-        if(this.isLoggedIn()) {
-            return <div id='logged-in-successful-yo'></div>
-        } else {
-            return (
-                <div id='login-container' className="animated fadeIn login-center"  style={backgroundStyle}>
-                    <NotificationSystem ref="notificationSystem" style={style}/>
-                    <div id='login-container-card' className="login-card row">
-                        <div id='login-container-slider' className="animated fadeIn">
-                            <Login notify={this.addNotification}/>
-                            <a data-Type={'forgot'} onClick={event => this.toggleLoginView(event)} className="col-sm-10">Forgot your password?</a>
-                            <br/>
-                            <a data-Type={'register'} onClick={event => this.toggleLoginView(event)} className="col-sm-10">Register for a new account</a>
-                            <br/>
-
-                        </div>
-                        <div id='signup-container-slider' className="animated collapse fadeIn">
-                            <Signup notify={this.addNotification}/>
-                            <br/>
-                            <a data-Type={'slogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Already have an account? Login</a>
-                        </div>
-                        <div id='forgot-container-slider' className="animated collapse fadeIn">
-                            <Forgot notify={this.addNotification}/>
-                            <br/>
-                            <a data-Type={'flogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Return to the login screen</a>
-                        </div>
+                    </div>
+                    <div id='signup-container-slider' className="animated collapse fadeIn">
+                        <Signup notify={this.addNotification}/>
+                        <br/>
+                        <a data-Type={'slogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Already have an account? Login</a>
+                    </div>
+                    <div id='forgot-container-slider' className="animated collapse fadeIn">
+                        <Forgot notify={this.addNotification}/>
+                        <br/>
+                        <a data-Type={'flogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Return to the login screen</a>
                     </div>
                 </div>
-            )
-        }
+            </div>
+        )
+
     }
 
 }
