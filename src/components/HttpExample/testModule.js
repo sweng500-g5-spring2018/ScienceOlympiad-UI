@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
+import AuthService from "../../containers/Login/AuthService";
 
 class NotFound extends Component {
 
@@ -30,27 +31,29 @@ class NotFound extends Component {
      */
     componentDidMount() {
         //Make call out to backend
-        var _this = this;
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/users", "get", null, null).then(function (result) {
-            var testResults = result.body;
+        if(AuthService.isAuthorized(true)) {
+            var _this = this;
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/users", "get", null, null).then(function (result) {
+                var testResults = result.body;
 
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/testCoachOnly", "get", constants.useCredentials(), null).then(function (result2) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/testCoachOnly", "get", constants.useCredentials(), null).then(function (result2) {
 
-                _this.setState({
-                    test: testResults,
-                    message: result2.body
-                });
-            }, _this, testResults).catch(function (error) {
-                _this.setState({
-                    message: error.message ? error.message : "Resource Not Found",
-                    test: testResults
-                });
+                    _this.setState({
+                        test: testResults,
+                        message: result2.body
+                    });
+                }, _this, testResults).catch(function (error) {
+                    _this.setState({
+                        message: error.message ? error.message : "Resource Not Found",
+                        test: testResults
+                    });
 
+                    console.log(error);
+                })
+            }).catch(function (error) {
                 console.log(error);
             })
-        }).catch(function (error) {
-            console.log(error);
-        })
+        }
     }
 
     /**
