@@ -64,10 +64,10 @@ class Events extends Component {
         //Make call out to backend
         var _this = this;
 
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/events", "get", null, null).then(function (result) {
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/events", "get", constants.useCredentials(), null).then(function (result) {
             console.log("execute");
             _this.setState({
-                test: result.data,
+                test: result.body,
                 loading: true
             })
 
