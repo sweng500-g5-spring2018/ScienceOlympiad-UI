@@ -22,25 +22,26 @@ function httpRequest(url, httpMethod, httpHeader, requestData) {
             axios.get(url, httpHeader).then( function (result) {
                 resolve({status: result.status, body: result.data});
             }).catch( function (error) {
-                reject({status: error.response.status, message: error.response.data});
+                console.log(error);
+                reject(errorHandler(error));
             })
         } else if (httpMethod.toLowerCase() === 'put') {
             axios.put(url, requestData, httpHeader).then( function (result) {
                 resolve({status: result.status, body: result.data});
             }).catch( function (error) {
-                reject({status: error.response.status, message: error.response.data});
+                reject(errorHandler(error));
             })
         } else if(httpMethod.toLowerCase() === 'post') {
             axios.post(url, requestData, httpHeader).then( function (result) {
                 resolve({status: result.status, body: result.data});
             }).catch( function (error) {
-                reject({status: error.response.status, message: error.response.data});
+                reject(errorHandler(error));
             })
         } else if(httpMethod.toLowerCase() === 'delete') {
             axios.delete(url, requestData, httpHeader).then( function (result) {
                 resolve({status: result.status, body: result.data});
             }).catch( function (error) {
-                reject({status: error.response.status, message: error.response.data});
+                reject(errorHandler(error));
             })
         } else {
             reject('ERROR: The requested HTTP method ' + httpMethod + ' is not supported');
@@ -50,4 +51,15 @@ function httpRequest(url, httpMethod, httpHeader, requestData) {
     return promise;
 }
 
+function errorHandler(error) {
+    if(error.response) {
+        if(error.response.status && error.response.data) {
+            return {status: error.response.status, message: error.response.data};
+        }
+    }
+
+    console.log(error);
+    //IMPLEMENT SOMETHING BETTER LATER
+    return {status: 500, message: "SOMETHING BAD HAPPENED WITH RESPONSE FROM BACKEND."};
+}
 module.exports.httpRequest = httpRequest;

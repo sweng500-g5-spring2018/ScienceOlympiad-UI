@@ -8,7 +8,8 @@ class NotFound extends Component {
         super(props);
 
         this.state = {
-            test: {}
+            test: {},
+            message: "Resource Not Found"
         };
 
     }
@@ -31,8 +32,21 @@ class NotFound extends Component {
         //Make call out to backend
         var _this = this;
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/users", "get", null, null).then(function (result) {
-            _this.setState({
-                test: result.body
+            var testResults = result.body;
+
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/testCoachOnly", "get", constants.useCredentials(), null).then(function (result2) {
+
+                _this.setState({
+                    test: testResults,
+                    message: result2.body
+                });
+            }, _this, testResults).catch(function (error) {
+                _this.setState({
+                    message: error.message ? error.message : "Resource Not Found",
+                    test: testResults
+                });
+
+                console.log(error);
             })
         }).catch(function (error) {
             console.log(error);
@@ -49,9 +63,30 @@ class NotFound extends Component {
     render() {
         return (
             <div key="notFound-key" className="notFoundClass">
-                {this.renderIfTestFound()}
+                <div key="if-test">
+                    {
+                        this.renderIfTestFound()
+                    }
+                </div>
+                <div key="coach-message">
+                    {
+                        this.renderCoachMessage()
+                    }
+                </div>
             </div>
         );
+    }
+
+    renderCoachMessage() {
+        if(this.state.message !== undefined && this.state.message !== null) {
+            return (
+                <h2>
+                    {"IF YOU SEE THIS MESSAGE\n..." + this.state.message}
+                </h2>
+            )
+        } else {
+            return <h1>Resource not found.</h1>
+        }
     }
 
     renderIfTestFound() {
@@ -60,7 +95,7 @@ class NotFound extends Component {
                 <div>
                     {
                         Object.keys(this.state.test).map(function (key) {
-                            if(key === 'firstName' || key === 'lastName' || key === 'id') {
+                            if(key === 'firstName' || key === 'lastName') {
                                 return (
                                     <div key={'test-' + key + '-key'}>
                                         <h3>{key}:</h3> {this.state.test[key]}
