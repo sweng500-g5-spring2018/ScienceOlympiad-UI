@@ -320,7 +320,7 @@ class Signup extends React.Component {
                             <StepContent>
                                 <Grid>
                                     <Row className="show-grid">
-                                        <Col xs={7} md={4}>
+                                        <Col xs={4} md={3}>
                                             <TextField
                                                 hintText="Enter your first name"
                                                 errorText={this.state.firstNameRequired}
@@ -328,37 +328,42 @@ class Signup extends React.Component {
                                                 onChange={(event, newValue) => this.setState({firstName: newValue})}
                                                 value={this.state.firstName}
                                                 onKeyDown={this.keyPress}
+                                                fullWidth={true}
                                                 required={true}/>
                                         </Col>
-                                        <Col xs={7} md={4}>
+                                        <Col xs={4} md={3}>
                                             <TextField
                                                 hintText="Enter your last name"
                                                 errorText={this.state.lastNameRequired}
                                                 floatingLabelText="Last name"
                                                 onChange={(event, newValue) => this.setState({lastName: newValue})}
                                                 value={this.state.lastName}
+                                                fullWidth={true}
                                                 required={true}/>
                                         </Col>
                                     </Row>
                                     <Row className="show-grid">
-                                        <Col xs={7} md={4}>
+                                        <Col xs={4} md={3}>
                                             <TextField
                                                 errorText={this.state.phoneNumberRequired}
                                                 floatingLabelText="Phone number"
                                                 onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
                                                 value={this.state.phoneNumber}
+                                                fullWidth={true}
                                                 required={true}>
+
                                                 <InputMask mask="1 (999) 999-9999" maskChar="#"
                                                            value={this.state.phoneNumber}/>
                                             </TextField>
                                         </Col>
-                                        <Col xs={7} md={4}>
+                                        <Col xs={4} md={3}>
                                             <TextField
                                                 hintText="Enter your email address"
                                                 errorText={this.state.emailAddressRequired}
                                                 floatingLabelText="Email address"
                                                 onChange={(event, newValue) => this.setState({emailAddress: newValue})}
                                                 value={this.state.emailAddress}
+                                                fullWidth={true}
                                                 required={true}/>
                                         </Col>
                                     </Row>
@@ -370,7 +375,7 @@ class Signup extends React.Component {
                             <StepContent>
                                 <Grid>
                                     <Row className="show-grid">
-                                        <Col xs={7} md={4}>
+                                        <Col xs={4} md={3}>
                                             <TextField
                                                 type="password"
                                                 hintText="Enter your password"
@@ -378,9 +383,10 @@ class Signup extends React.Component {
                                                 floatingLabelText="Password"
                                                 onChange={(event, newValue) => this.setState({password: newValue})}
                                                 value={this.state.password}
+                                                fullWidth={true}
                                                 required={true}/>
                                         </Col>
-                                        <Col xs={7} md={4}>
+                                        <Col xs={4} md={3}>
                                             <TextField
                                                 type="password"
                                                 hintText="Confirm your password"
@@ -388,11 +394,12 @@ class Signup extends React.Component {
                                                 floatingLabelText="Confirm your password"
                                                 onChange={(event, newValue) => this.setState({confirm: newValue})}
                                                 value={this.state.confirm}
+                                                fullWidth={true}
                                                 required={true}/>
                                         </Col>
                                     </Row>
                                     <Row className="show-grid">
-                                        <Col xs={7} md={4}>
+                                        <Col xs={4} md={3}>
                                             <SelectField
                                                 hintText="Select your district"
                                                 errorText={this.state.districtRequired}
