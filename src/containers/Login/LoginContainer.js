@@ -67,9 +67,9 @@ class LoginContainer extends Component {
                     {message}
                 </div>
             ),
-            level: 'error',
-            position: 'tc',
-            autoDismiss: 10,
+            level: level ? level : 'error',
+            position: position ? position : 'tc',
+            autoDismiss: autoDismiss ? autoDismiss : 10,
         });
     }
 

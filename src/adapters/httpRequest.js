@@ -22,7 +22,6 @@ function httpRequest(url, httpMethod, httpHeader, requestData) {
             axios.get(url, httpHeader).then( function (result) {
                 resolve({status: result.status, body: result.data});
             }).catch( function (error) {
-                console.log(error);
                 reject(errorHandler(error));
             })
         } else if (httpMethod.toLowerCase() === 'put') {

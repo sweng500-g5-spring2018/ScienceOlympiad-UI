@@ -17,7 +17,7 @@ export default class AuthService {
                 let toEncode = {
                     emailAddress: result.body.emailAddress,
                     role: result.body.role,
-                    expiration: moment().add(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS')
+                    expiration: moment().add(20, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS')
                 }
 
                 var encoded = jwt.encode(toEncode, result.body.session);
@@ -51,11 +51,13 @@ export default class AuthService {
 
                     resolve({status: result.status, message: result.body});
                 }).catch(function (error) {
+                    AuthService.revokeAuth();
                     console.log(error);
-                    reject({status: error.status, message: error});
+                    resolve({status: error.status, message: error});
                 })
             } else {
-                reject({status: 410, message: "Token is expired."});
+                AuthService.revokeAuth();
+                resolve({status: 410, message: "Token is expired."});
             }
         });
 
@@ -66,19 +68,18 @@ export default class AuthService {
         return AuthService.isAuthorized();
     }
 
-    static isAuthorized() {
+    static isAuthorized(isServerCall) {
         const token = AuthService.getToken();
         const session = AuthService.getSession();
         if (token && session) {
             try {
                 var decoded = AuthService.decodeSessionVars();
                 if (!decoded || moment(decoded.expiration).isBefore(moment())) { // Checking if token is expired.
-                    AuthService.revokeAuth();
+                    AuthService.revokeAuth(true);
                     return false;
                 }
                 else {
-                    if(moment(decoded.expiration).isBefore(moment().add(15, 'minutes'))) {
-                        console.log("DID I GET HERE");
+                    if(isServerCall) {
                         AuthService.updateTimeStamp(decoded);
                     }
 
@@ -86,20 +87,24 @@ export default class AuthService {
                 }
             }
             catch (err) {
-                AuthService.revokeAuth();
+                AuthService.revokeAuth(true);
                 return false;
             }
         } else {
-            if(session) AuthService.endSession();
-            if(token) AuthService.revokeToken();
-
+            if(session || token) { AuthService.revokeAuth(true); }
+            else { AuthService.revokeAuth();}
             return false;
         }
     }
 
-    static revokeAuth() {
+    static revokeAuth(withAlert) {
         AuthService.revokeToken();
         AuthService.endSession();
+
+        if(withAlert) {
+            //DO SOMETHING BETTER THAN THIS
+            alert("Your session has ended.  Please log back in to continue");
+        }
     }
 
     static getUserRole() {
