@@ -80,7 +80,7 @@ class Login extends Component {
                         <div>
                             <AppBar showMenuIconButton={false} title="Login"/>
                             <TextField
-                                hintText="Enter your Email Address"
+                                hintText="Enter your email address"
                                 errorText={this.state.emailRequired}
                                 floatingLabelText="Email Address"
                                 onChange={(event, newValue) => this.setState({emailAddress: newValue})}
@@ -89,7 +89,7 @@ class Login extends Component {
                             <br/>
                             <TextField
                                 type="password"
-                                hintText="Enter your Password"
+                                hintText="Enter your password"
                                 errorText={this.state.passRequired}
                                 floatingLabelText="Password"
                                 onChange={(event, newValue) => this.setState({password: newValue})}
