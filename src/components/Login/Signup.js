@@ -32,7 +32,8 @@ class Signup extends React.Component {
             password: '',
             confirm: '',
             district: '',
-            httpResponse: ''
+            httpResponse: '',
+            accountMessage: ''
         }
     }
 
@@ -285,6 +286,8 @@ class Signup extends React.Component {
 
                 }).catch(function (error) {
                     console.log(error);
+
+                    _this.state.accountMessage = "Error"
                 })
 
             }
@@ -307,9 +310,9 @@ class Signup extends React.Component {
     }
 
     render() {
+        console.log(this.state.stepIndex);
         const {finished, stepIndex} = this.state;
         const contentStyle = {margin: '0 16px'};
-
         return (
             <MuiThemeProvider>
                 <AppBar showMenuIconButton={false} title="Account Registration"/>
@@ -328,6 +331,7 @@ class Signup extends React.Component {
                                                 onChange={(event, newValue) => this.setState({firstName: newValue})}
                                                 value={this.state.firstName}
                                                 onKeyDown={this.keyPress}
+                                                fullWidth={true}
                                                 required={true}/>
                                         </Col>
                                         <Col xs={7} md={4}>
@@ -337,6 +341,7 @@ class Signup extends React.Component {
                                                 floatingLabelText="Last name"
                                                 onChange={(event, newValue) => this.setState({lastName: newValue})}
                                                 value={this.state.lastName}
+                                                fullWidth={true}
                                                 required={true}/>
                                         </Col>
                                     </Row>
@@ -347,6 +352,7 @@ class Signup extends React.Component {
                                                 floatingLabelText="Phone number"
                                                 onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
                                                 value={this.state.phoneNumber}
+                                                fullWidth={true}
                                                 required={true}>
                                                 <InputMask mask="1 (999) 999-9999" maskChar="#"
                                                            value={this.state.phoneNumber}/>
@@ -359,6 +365,7 @@ class Signup extends React.Component {
                                                 floatingLabelText="Email address"
                                                 onChange={(event, newValue) => this.setState({emailAddress: newValue})}
                                                 value={this.state.emailAddress}
+                                                fullWidth={true}
                                                 required={true}/>
                                         </Col>
                                     </Row>
@@ -378,6 +385,7 @@ class Signup extends React.Component {
                                                 floatingLabelText="Password"
                                                 onChange={(event, newValue) => this.setState({password: newValue})}
                                                 value={this.state.password}
+                                                fullWidth={true}
                                                 required={true}/>
                                         </Col>
                                         <Col xs={7} md={4}>
@@ -388,6 +396,7 @@ class Signup extends React.Component {
                                                 floatingLabelText="Confirm your password"
                                                 onChange={(event, newValue) => this.setState({confirm: newValue})}
                                                 value={this.state.confirm}
+                                                fullWidth={true}
                                                 required={true}/>
                                         </Col>
                                     </Row>
@@ -396,6 +405,7 @@ class Signup extends React.Component {
                                             <SelectField
                                                 hintText="Select your district"
                                                 errorText={this.state.districtRequired}
+
                                                 floatingLabelText="School District"
                                                 onChange={(event, index, value) => this.setState({district: value})}
                                                 maxHeight={200}
@@ -424,16 +434,10 @@ class Signup extends React.Component {
                         </Step>
                         <Step>
                             <StepLabel>Account Creation</StepLabel>
-                            <Grid>
-                                <Row className="show-grid">
-                                    <Col xs={7} md={4}>
-                                        <StepContent>Congratulations! Your account has been created.</StepContent>
-                                    </Col>
-                                </Row>
-                            </Grid>
+                            <StepContent><div style={contentStyle}>You account has been created... Or maybe it hasn't this variable won't display.{this.state.accountMessage}</div></StepContent>
                         </Step>
                     </Stepper>
-                    <div style={contentStyle}>
+                    <div style={contentStyle} class={stepIndex === 2 ? 'collapse' : ''}>
                         <div>
                             <div style={{marginTop: 12}}>
                                 <FlatButton

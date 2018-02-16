@@ -14,9 +14,9 @@ class Login extends Component {
         super(props);
 
         this.state = {
-            username: '',
+            emailAddress: '',
             password:'',
-            userRequired: undefined,
+            emailRequired: undefined,
             passRequired: undefined,
             redirect:false
         }
@@ -27,10 +27,10 @@ class Login extends Component {
     handleClick(event) {
         event.preventDefault();
 
-        if(this.state.username.trim()) {
+        if(this.state.emailAddress.trim()) {
             if(this.state.password.trim()) {
 
-                AuthService.login(this.state.username, this.state.password).then(function (result) {
+                AuthService.login(this.state.emailAddress, this.state.password).then(function (result) {
 
                 }).catch(function (error) {
                     console.log(error);
@@ -51,14 +51,14 @@ class Login extends Component {
                 );
             } else {
                 this.setState({
-                    userRequired: undefined,
+                    emailRequired: undefined,
                     passRequired: "Password is required."
                 })
             }
         } else {
             this.setState({
-                username: this.state.username.trim(),
-                userRequired: "Username is required.",
+                emailAddress: this.state.emailAddress.trim(),
+                emailRequired: "An email address is required.",
                 passRequired: undefined
             })
         }
@@ -80,10 +80,10 @@ class Login extends Component {
                         <div>
                             <AppBar showMenuIconButton={false} title="Login"/>
                             <TextField
-                                hintText="Enter your Username"
-                                errorText={this.state.userRequired}
-                                floatingLabelText="Username"
-                                onChange={(event, newValue) => this.setState({username: newValue})}
+                                hintText="Enter your Email Address"
+                                errorText={this.state.emailRequired}
+                                floatingLabelText="Email Address"
+                                onChange={(event, newValue) => this.setState({emailAddress: newValue})}
                                 required={true}
                             />
                             <br/>

@@ -107,7 +107,7 @@ class LoginContainer extends Component {
                     <div id='signup-container-slider' className="animated collapse fadeIn">
                         <Signup notify={this.addNotification}/>
                         <br/>
-                        <a data-Type={'slogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Already have an account? Login</a>
+                        <a data-Type={'slogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Return to the login screen</a>
                     </div>
                     <div id='forgot-container-slider' className="animated collapse fadeIn">
                         <Forgot notify={this.addNotification}/>
