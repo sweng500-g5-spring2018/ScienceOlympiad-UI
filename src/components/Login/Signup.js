@@ -346,20 +346,15 @@ class Signup extends React.Component {
         }
     };
 
-    keyPress(input){
-        if (input.key == "Enter")
-            console.log("Enter")
-    }
-
     render() {
         const {finished, stepIndex} = this.state;
         const contentStyle = {margin: '0 16px'};
         let myData = this.state.districtList;
         return (
             <MuiThemeProvider>
-                <AppBar showMenuIconButton={false} title="Account Registration"/>
-                <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
-                    <Stepper activeStep={stepIndex} orientation={'vertical'}>
+                <div>
+                    <AppBar showMenuIconButton={false} title="Account Registration"/>
+                    <Stepper activeStep={stepIndex} orientation={'vertical'} style={{maxWidth: 700, margin: '0',border: '1 solid black'}}>
                         <Step>
                             <StepLabel>Personal Information</StepLabel>
                             <StepContent>
@@ -372,7 +367,6 @@ class Signup extends React.Component {
                                                 floatingLabelText="First name"
                                                 onChange={(event, newValue) => this.setState({firstName: newValue})}
                                                 value={this.state.firstName}
-                                                onKeyDown={this.keyPress}
                                                 fullWidth={true}
                                                 required={true}/>
                                         </Col>
@@ -456,7 +450,7 @@ class Signup extends React.Component {
                             <StepContent><div style={contentStyle}>{this.state.accountMessage}</div></StepContent>
                         </Step>
                     </Stepper>
-                    <div style={contentStyle} class={stepIndex === 2 ? 'collapse' : ''}>
+                    <div style={contentStyle} className={stepIndex === 2 ? 'collapse' : ''}>
                         <div>
                             <div style={{marginTop: 12}}>
                                 <FlatButton
