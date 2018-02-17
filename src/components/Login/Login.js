@@ -4,6 +4,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import AppBar from 'material-ui/AppBar';
+import PasswordField from 'material-ui-password-field'
 
 import {Redirect} from 'react-router-dom';
 
@@ -43,7 +44,7 @@ class Login extends Component {
                             this.props.notify(
                                 "ERROR: Please provide valid login credentials.",
                                 "error",
-                                "tr",
+                                "tc",
                                 6
                             )
                         }
@@ -77,7 +78,7 @@ class Login extends Component {
             return (
                 <div id='login-div'>
                     <MuiThemeProvider>
-                        <div>
+                        <div style={{width:275}}>
                             <AppBar showMenuIconButton={false} title="Login"/>
                             <TextField
                                 hintText="Enter your email address"
@@ -85,14 +86,15 @@ class Login extends Component {
                                 floatingLabelText="Email Address"
                                 onChange={(event, newValue) => this.setState({emailAddress: newValue})}
                                 required={true}
+                                fullWidth={true}
                             />
                             <br/>
-                            <TextField
+                            <PasswordField
                                 type="password"
-                                hintText="Enter your password"
                                 errorText={this.state.passRequired}
                                 floatingLabelText="Password"
                                 onChange={(event, newValue) => this.setState({password: newValue})}
+                                fullWidth={true}
                                 required={true}
                             />
                             <br/>
