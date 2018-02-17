@@ -317,7 +317,7 @@ class Signup extends React.Component {
                 body.emailAddress = this.state.emailAddress;
                 body.phoneNumberString = cleanPhoneNumber;
                 body.password = this.state.password;
-                schoolID = this.state.district;
+                var schoolID = this.state.district;
 
                 _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/'+ schoolID +'/?userType=COACH', 'POST', null, body ).then(function (result) {
                     console.log(result);
