@@ -65,7 +65,7 @@ class Signup extends React.Component {
                     {
                         Object.keys(this.state.districtList).map(function (key) {
                             return (
-                                <MenuItem primaryText={this.state.districtList[key].schoolName} value={this.state.districtList[key].id}/>
+                                <MenuItem key={this.state.districtList[key].id} primaryText={this.state.districtList[key].schoolName} value={this.state.districtList[key].id}/>
                             )
                         }, this)
 
