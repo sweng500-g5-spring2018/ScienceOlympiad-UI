@@ -319,7 +319,7 @@ class Signup extends React.Component {
                 body.password = this.state.password;
                 var schoolID = this.state.district;
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/'+ schoolID +'/?userType=COACH', 'POST', null, body ).then(function (result) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH&schoolID=' + _this.state.district, 'POST', null, body ).then(function (result) {
                     console.log(result);
 
                     if (result.status === 200)
