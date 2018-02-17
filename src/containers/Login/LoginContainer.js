@@ -6,6 +6,7 @@ import $ from 'jquery';
 import NotificationSystem from 'react-notification-system';
 
 
+
 import mountainBackground from '../../assets/img/SmallerMountain.jpg';
 
 import {style} from "../../variables/Variables";
