@@ -44,7 +44,7 @@ class Login extends Component {
                             this.props.notify(
                                 "ERROR: Please provide valid login credentials.",
                                 "error",
-                                "tr",
+                                "tc",
                                 6
                             )
                         }
