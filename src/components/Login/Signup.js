@@ -256,7 +256,7 @@ class Signup extends React.Component {
                 this.props.notify(
                     "ERROR: Your passwords do not match.",
                     "error",
-                    "tr",
+                    "tc",
                     6
                 );
                 missingInfo = true;
@@ -364,7 +364,7 @@ class Signup extends React.Component {
                             <StepContent>
                                 <Grid>
                                     <Row className="show-grid">
-                                        <Col xs={4} md={3}>
+                                        <Col xs={7} md={3}>
                                             <TextField
                                                 hintText="Enter your first name"
                                                 errorText={this.state.firstNameRequired}
@@ -375,7 +375,7 @@ class Signup extends React.Component {
                                                 fullWidth={true}
                                                 required={true}/>
                                         </Col>
-                                        <Col xs={4} md={3}>
+                                        <Col xs={7} md={3}>
                                             <TextField
                                                 hintText="Enter your last name"
                                                 errorText={this.state.lastNameRequired}
@@ -387,7 +387,7 @@ class Signup extends React.Component {
                                         </Col>
                                     </Row>
                                     <Row className="show-grid">
-                                        <Col xs={4} md={3}>
+                                        <Col xs={7} md={3}>
                                             <TextField
                                                 errorText={this.state.phoneNumberRequired}
                                                 floatingLabelText="Phone number"
@@ -400,7 +400,7 @@ class Signup extends React.Component {
                                                            value={this.state.phoneNumber}/>
                                             </TextField>
                                         </Col>
-                                        <Col xs={4} md={3}>
+                                        <Col xs={7} md={3}>
                                             <TextField
                                                 hintText="Enter your email address"
                                                 errorText={this.state.emailAddressRequired}
@@ -419,7 +419,7 @@ class Signup extends React.Component {
                             <StepContent>
                                 <Grid>
                                     <Row className="show-grid">
-                                        <Col xs={4} md={3}>
+                                        <Col xs={7} md={3}>
                                             <PasswordField
                                                 type="password"
                                                 hintText="Enter your password"
@@ -430,7 +430,7 @@ class Signup extends React.Component {
                                                 fullWidth={true}
                                                 required={true}/>
                                         </Col>
-                                        <Col xs={4} md={3}>
+                                        <Col xs={7} md={3}>
                                             <PasswordField
                                                 type="password"
                                                 hintText="Confirm your password"
@@ -443,7 +443,7 @@ class Signup extends React.Component {
                                         </Col>
                                     </Row>
                                     <Row className="show-grid">
-                                        <Col xs={4} md={3}>
+                                        <Col xs={6} md={3}>
                                             {this.renderIfDistrictFound()}
                                         </Col>
                                     </Row>
