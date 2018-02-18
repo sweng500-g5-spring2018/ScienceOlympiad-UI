@@ -158,10 +158,10 @@ class Schools extends Component {
     renderIfSchoolsFound() {
         if (this.state.schoolList !== null && Object.keys(this.state.schoolList).length !== 0) {
             const columns = [{
-                Header: 'Name',
+                Header: 'School Name',
                 accessor: 'schoolName' // String-based value accessors!
             }, {
-                Header: 'Contact Name',
+                Header: 'School Contact',
                 accessor: 'schoolContactName' // String-based value accessors!
             }, {
                 Header: 'School Phone Number',
