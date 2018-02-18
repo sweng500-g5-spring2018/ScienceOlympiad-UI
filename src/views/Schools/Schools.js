@@ -11,6 +11,8 @@ import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import Card from '../../components/Card/Card.js';
 import InputMask from 'react-input-mask'
+import ReactTable from 'react-table'
+import "react-table/react-table.css";
 
 class Schools extends Component {
     constructor(props) {
@@ -155,35 +157,34 @@ class Schools extends Component {
     // Generate the table if the fetch was successful
     renderIfSchoolsFound() {
         if (this.state.schoolList !== null && Object.keys(this.state.schoolList).length !== 0) {
+            const columns = [{
+                Header: 'Name',
+                accessor: 'schoolName' // String-based value accessors!
+            }, {
+                Header: 'Contact Name',
+                accessor: 'schoolContactName' // String-based value accessors!
+            }, {
+                Header: 'School Phone Number',
+                accessor: 'schoolContactPhone' // String-based value accessors!
+            }, {
+                Header: 'Actions',
+                accessor: 'menuActions', // String-based value accessors!
+                style:{textAlign:'center'},
+                sortable: false
+            }];
+
+            for(let value in this.state.schoolList) {
+                this.state.schoolList[value].schoolContactPhone = this.formatPhoneNumber(this.state.schoolList[value].schoolContactPhone);
+                this.state.schoolList[value].menuActions = <a href=''>Edit</a>;
+            }
 
             return(
-                <Table striped hover>
-                    <thead>
-                    <tr>
-                        <th>School Name</th>
-                        <th>Contact</th>
-                        <th>Phone Number</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            Object.keys(this.state.schoolList).map(function (key) {
-                                return (
-                                    <tr key={this.state.schoolList[key].id}>
-                                        <td>{this.state.schoolList[key].schoolName}</td>
-                                        <td>{this.state.schoolList[key].schoolContactName}</td>
-                                        <td>{this.formatPhoneNumber(this.state.schoolList[key].schoolContactPhone)}</td>
-                                        <td>
-                                            <a href={''}>Edit</a>&nbsp;&nbsp;
-                                            <a href={''}>Delete</a>
-                                        </td>
-                                    </tr>
-                                )
-                            }, this)
-                        }
-                    </tbody>
-                </Table>
+                <ReactTable
+                    data={this.state.schoolList}
+                    columns={columns}
+                    defaultPageSize={10}
+                    className="-striped -highlight"
+                />
             )
 
         }
