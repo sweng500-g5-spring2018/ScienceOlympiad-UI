@@ -13,7 +13,8 @@ import Card from '../../components/Card/Card.js';
 import InputMask from 'react-input-mask'
 import ReactTable from 'react-table'
 import "react-table/react-table.css";
-import matchSorter from 'match-sorter'
+import matchSorter from 'match-sorter';
+import Dialog from 'material-ui/Dialog'
 
 class Schools extends Component {
     constructor(props) {
@@ -24,6 +25,10 @@ class Schools extends Component {
         this.state = {
             loading: false,
             modal: false,
+            confirmDialog: false,
+            confirmMessage: '',
+            formattedPhone: '',
+            deleteID: '',
             schoolName: '',
             schoolContactPhone: '',
             schoolContactName:'',
@@ -51,6 +56,29 @@ class Schools extends Component {
     closeModal() {
         this.setState({
             modal: false
+        })
+    }
+
+    // Delete school
+    confirmSchoolDelete = (s) => {
+        this.setState({deleteID: s.id});
+        this.setState({confirmMessage: "Are you sure you want to delete " + s.schoolName + "?", confirmDialog: true});
+    }
+
+    closeConfirmDialog  = () => {
+        this.setState({confirmDialog: false});
+    }
+
+    deleteSchool =()=> {
+
+        var id = this.state.deleteID;
+        var _this = this;
+
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/removeSchool/' + id, 'DELETE', null, null).then(function (result) {
+            console.log(result);
+
+        }).catch(function (error) {
+            console.log(error);
         })
     }
 
@@ -175,7 +203,7 @@ class Schools extends Component {
                 filterMethod: (filter, rows) =>
                     matchSorter(rows, filter.value, { keys: ["schoolContactPhone"] }),
                 filterAll: true,
-                accessor: 'schoolContactPhone' // String-based value accessors!
+                accessor: 'formattedPhone' // String-based value accessors!
             }, {
                 Header: 'Actions',
                 accessor: 'menuActions', // String-based value accessors!
@@ -185,8 +213,8 @@ class Schools extends Component {
             }];
 
             for(let value in this.state.schoolList) {
-                this.state.schoolList[value].schoolContactPhone = this.formatPhoneNumber(this.state.schoolList[value].schoolContactPhone);
-                this.state.schoolList[value].menuActions = <div><a href=''>Edit</a>&nbsp;&nbsp;&nbsp;<a href=''>Delete</a></div>;
+                this.state.schoolList[value].formattedPhone = this.formatPhoneNumber(this.state.schoolList[value].schoolContactPhone);
+                this.state.schoolList[value].menuActions = <div><a href=''>Edit</a>&nbsp;&nbsp;&nbsp;<a style={{cursor:'pointer'}} onClick={this.confirmSchoolDelete.bind(this,this.state.schoolList[value])}>Delete</a></div>;
             }
 
             return(
@@ -208,20 +236,33 @@ class Schools extends Component {
     }
 
     render() {
+
+        const actions = [
+            <FlatButton
+                label="Cancel"
+                primary={true}
+                onClick={this.closeConfirmDialog}
+            />,
+            <FlatButton
+                label="Delete"
+                primary={true}
+                onClick={this.deleteSchool}
+            />,
+        ];
+
         return (
             <MuiThemeProvider>
             <div className="content">
                 <Grid fluid>
                     <Row>
-                        <Col md={12} style={{textAlign:'center',marginBottom:10}}>
-                                <RaisedButton primary={true} label="Create a new school" onClick={this.openModal}/>
-                        </Col>
-                    </Row>
-                    <Row>
                         <Col md={12}>
                             <Card
                                 title="Registered Schools"
-                                category="These schools are registered with the Science Olympiad system. They will appear in the registration systems and reports."
+                                category={
+                                    <div>These schools are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
+                                        <br/><br/>
+                                    <RaisedButton primary={true} label="Create a new school" onClick={this.openModal}/>
+                                    </div>}
                                 ctTableFullWidth ctTableResponsive
                                 content={
                                     <Loader color="#3498db" loaded={this.state.loading}>
@@ -283,6 +324,14 @@ class Schools extends Component {
                                       onClick={this.addNewSchool}/>;
                     </Modal.Footer>
                 </Modal>
+                <Dialog
+                    actions={actions}
+                    modal={false}
+                    open={this.state.confirmDialog}
+                    onRequestClose={this.closeConfirmDialog}
+                >
+                    {this.state.confirmMessage}
+                </Dialog>
             </div>
             </MuiThemeProvider>
         );
