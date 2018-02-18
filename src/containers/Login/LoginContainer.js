@@ -6,6 +6,7 @@ import $ from 'jquery';
 import NotificationSystem from 'react-notification-system';
 
 
+
 import mountainBackground from '../../assets/img/SmallerMountain.jpg';
 
 import {style} from "../../variables/Variables";
@@ -37,7 +38,7 @@ class LoginContainer extends Component {
     toggleLoginView(event) {
         event.preventDefault();
 
-        var value = event.target.attributes.getNamedItem('data-Type').value;
+        var value = event.target.attributes.getNamedItem('data-type').value;
 
         switch (value) {
             case 'register':
@@ -98,21 +99,21 @@ class LoginContainer extends Component {
                 <div id='login-container-card' className="login-card row">
                     <div id='login-container-slider' className="animated fadeIn">
                         <Login notify={this.addNotification}/>
-                        <a data-Type={'forgot'} onClick={event => this.toggleLoginView(event)} className="col-sm-10">Forgot your password?</a>
+                        <a data-type={'forgot'} onClick={event => this.toggleLoginView(event)} className="col-sm-10">Forgot your password?</a>
                         <br/>
-                        <a data-Type={'register'} onClick={event => this.toggleLoginView(event)} className="col-sm-10">Register for a new account</a>
+                        <a data-type={'register'} onClick={event => this.toggleLoginView(event)} className="col-sm-10">Register for a new account</a>
                         <br/>
 
                     </div>
                     <div id='signup-container-slider' className="animated collapse fadeIn">
                         <Signup notify={this.addNotification}/>
                         <br/>
-                        <a data-Type={'slogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Return to the login screen</a>
+                        <a data-type={'slogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Return to the login screen</a>
                     </div>
                     <div id='forgot-container-slider' className="animated collapse fadeIn">
                         <Forgot notify={this.addNotification}/>
                         <br/>
-                        <a data-Type={'flogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Return to the login screen</a>
+                        <a data-type={'flogin'} onClick={event => this.toggleLoginView(event)} className="col-sm-9">Return to the login screen</a>
                     </div>
                 </div>
             </div>

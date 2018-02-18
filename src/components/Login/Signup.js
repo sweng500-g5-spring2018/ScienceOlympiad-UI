@@ -16,6 +16,7 @@ import InputMask from 'react-input-mask'
 import {Row, Col, Grid} from 'react-bootstrap';
 import HttpRequest from '../../adapters/httpRequest';
 import constants from '../../utils/constants';
+import PasswordField from 'material-ui-password-field'
 
 class Signup extends React.Component {
 
@@ -33,13 +34,51 @@ class Signup extends React.Component {
             confirm: '',
             district: '',
             httpResponse: '',
-            accountMessage: ''
+            accountMessage: '',
+            districtList: {}
+        };
+    }
+
+    componentDidMount() {
+        var _this = this;
+
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', null, null).then(function (result) {
+            console.log(result);
+            _this.state.districtList = result.body;
+
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    renderIfDistrictFound() {
+        if (this.state.test !== null && Object.keys(this.state.districtList).length !== 0) {
+            return(
+                <SelectField
+                    hintText="Select your district"
+                    errorText={this.state.districtRequired}
+                    floatingLabelText="School District"
+                    onChange={(event, index, value) => this.setState({district: value})}
+                    maxHeight={200}
+                    value={this.state.district}>
+                    {
+                        Object.keys(this.state.districtList).map(function (key) {
+                            return (
+                                <MenuItem key={this.state.districtList[key].id} primaryText={this.state.districtList[key].schoolName} value={this.state.districtList[key].id}/>
+                            )
+                        }, this)
+
+                    }
+                        <MenuItem primaryText="Berwick" value='1'/>
+                </SelectField>
+            )
         }
+        else
+            return("ERROR")
     }
 
     // Checks to see if an email has a host, @ symbols, and domain.
     validEmail(text) {
-        console.log(text);
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (reg.test(text) === false)
             return true;
@@ -216,7 +255,7 @@ class Signup extends React.Component {
                 this.props.notify(
                     "ERROR: Your passwords do not match.",
                     "error",
-                    "tr",
+                    "tc",
                     6
                 );
                 missingInfo = true;
@@ -233,7 +272,7 @@ class Signup extends React.Component {
                     this.props.notify(
                         "ERROR: Your password must be 8 or more characters, contain capital letters, lower case letters, and at least one number.",
                         "error",
-                        "tr",
+                        "tc",
                         10
                     );
                     this.setState({
@@ -274,20 +313,22 @@ class Signup extends React.Component {
 
                 body.firstName = this.state.firstName;
                 body.lastName = this.state.lastName;
-                body.phoneNumber = cleanPhoneNumber;
                 body.emailAddress = this.state.emailAddress;
+                body.phoneNumberString = cleanPhoneNumber;
                 body.password = this.state.password;
+                var schoolID = this.state.district;
 
-                //console.log(header);
-                console.log(body);
-
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH', 'POST', null, body ).then(function (result) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH&schoolID=' + _this.state.district, 'POST', null, body ).then(function (result) {
                     console.log(result);
+
+                    if (result.status === 200)
+                        _this.state.accountMessage = "Congratulations. Your account has been created. Please return to the login screen."
 
                 }).catch(function (error) {
                     console.log(error);
 
-                    _this.state.accountMessage = "Error"
+                    _this.state.accountMessage = "There was an error creating your account. Please try again later."
+
                 })
 
             }
@@ -304,37 +345,31 @@ class Signup extends React.Component {
         }
     };
 
-    keyPress(input){
-        if (input.key == "Enter")
-            console.log("Enter")
-    }
-
     render() {
-        console.log(this.state.stepIndex);
         const {finished, stepIndex} = this.state;
         const contentStyle = {margin: '0 16px'};
+        let myData = this.state.districtList;
         return (
             <MuiThemeProvider>
-                <AppBar showMenuIconButton={false} title="Account Registration"/>
-                <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
-                    <Stepper activeStep={stepIndex} orientation={'vertical'}>
+                <div>
+                    <AppBar showMenuIconButton={false} title="Account Registration"/>
+                    <Stepper activeStep={stepIndex} orientation={'vertical'} style={{maxWidth: 700, margin: '0',border: '1 solid black'}}>
                         <Step>
                             <StepLabel>Personal Information</StepLabel>
                             <StepContent>
                                 <Grid>
                                     <Row className="show-grid">
-                                        <Col xs={4} md={3}>
+                                        <Col xs={7} md={3}>
                                             <TextField
                                                 hintText="Enter your first name"
                                                 errorText={this.state.firstNameRequired}
                                                 floatingLabelText="First name"
                                                 onChange={(event, newValue) => this.setState({firstName: newValue})}
                                                 value={this.state.firstName}
-                                                onKeyDown={this.keyPress}
                                                 fullWidth={true}
                                                 required={true}/>
                                         </Col>
-                                        <Col xs={4} md={3}>
+                                        <Col xs={7} md={3}>
                                             <TextField
                                                 hintText="Enter your last name"
                                                 errorText={this.state.lastNameRequired}
@@ -346,7 +381,7 @@ class Signup extends React.Component {
                                         </Col>
                                     </Row>
                                     <Row className="show-grid">
-                                        <Col xs={4} md={3}>
+                                        <Col xs={7} md={3}>
                                             <TextField
                                                 errorText={this.state.phoneNumberRequired}
                                                 floatingLabelText="Phone number"
@@ -359,7 +394,7 @@ class Signup extends React.Component {
                                                            value={this.state.phoneNumber}/>
                                             </TextField>
                                         </Col>
-                                        <Col xs={4} md={3}>
+                                        <Col xs={7} md={3}>
                                             <TextField
                                                 hintText="Enter your email address"
                                                 errorText={this.state.emailAddressRequired}
@@ -378,8 +413,8 @@ class Signup extends React.Component {
                             <StepContent>
                                 <Grid>
                                     <Row className="show-grid">
-                                        <Col xs={4} md={3}>
-                                            <TextField
+                                        <Col xs={7} md={3}>
+                                            <PasswordField
                                                 type="password"
                                                 hintText="Enter your password"
                                                 errorText={this.state.passwordRequired}
@@ -389,8 +424,8 @@ class Signup extends React.Component {
                                                 fullWidth={true}
                                                 required={true}/>
                                         </Col>
-                                        <Col xs={4} md={3}>
-                                            <TextField
+                                        <Col xs={7} md={3}>
+                                            <PasswordField
                                                 type="password"
                                                 hintText="Confirm your password"
                                                 errorText={this.state.confirmRequired}
@@ -402,32 +437,8 @@ class Signup extends React.Component {
                                         </Col>
                                     </Row>
                                     <Row className="show-grid">
-                                        <Col xs={4} md={3}>
-                                            <SelectField
-                                                hintText="Select your district"
-                                                errorText={this.state.districtRequired}
-
-                                                floatingLabelText="School District"
-                                                onChange={(event, index, value) => this.setState({district: value})}
-                                                maxHeight={200}
-                                                value={this.state.district}>
-                                                <MenuItem primaryText="Berwick" value='1'/>
-                                                <MenuItem primaryText="Crestwood" value='2'/>
-                                                <MenuItem primaryText="Dallas" value='3'/>
-                                                <MenuItem primaryText="Greater Nanticoke" value='4'/>
-                                                <MenuItem primaryText="Hanover" value='5'/>
-                                                <MenuItem primaryText="Hazleton" value='6'/>
-                                                <MenuItem primaryText="Lake-Lehman" value='7'/>
-                                                <MenuItem primaryText="Northwest" value='8'/>
-                                                <MenuItem primaryText="Non-public" value='9'/>
-                                                <MenuItem primaryText="Pittston" value='10'/>
-                                                <MenuItem primaryText="Wilkes-Barre" value='11'/>
-                                                <MenuItem primaryText="Wyoming Area" value='12'/>
-                                                <MenuItem primaryText="Wyoming Valley West" value='13'/>
-                                                <MenuItem primaryText="CTC Hazleton" value='14'/>
-                                                <MenuItem primaryText="West Side Area Vocational" value='15'/>
-                                                <MenuItem primaryText="Wilkes-Barre Area Vocational" value='16'/>
-                                            </SelectField>
+                                        <Col xs={6} md={3}>
+                                            {this.renderIfDistrictFound()}
                                         </Col>
                                     </Row>
                                 </Grid>
@@ -435,10 +446,10 @@ class Signup extends React.Component {
                         </Step>
                         <Step>
                             <StepLabel>Account Creation</StepLabel>
-                            <StepContent><div style={contentStyle}>You account has been created... Or maybe it hasn't this variable won't display.{this.state.accountMessage}</div></StepContent>
+                            <StepContent><div style={contentStyle}>{this.state.accountMessage}</div></StepContent>
                         </Step>
                     </Stepper>
-                    <div style={contentStyle} class={stepIndex === 2 ? 'collapse' : ''}>
+                    <div style={contentStyle} className={stepIndex === 2 ? 'collapse' : ''}>
                         <div>
                             <div style={{marginTop: 12}}>
                                 <FlatButton

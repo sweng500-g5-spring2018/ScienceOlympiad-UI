@@ -10,7 +10,9 @@
     "jwt-simple": "^0.5.1",
     "less": "^2.7.3",
     "less-watch-compiler": "^1.10.2",
+    "match-sorter": "^2.2.0",
     "material-ui": "^0.20.0",
+    "material-ui-password-field": "^1.4.1",
     "moment": "^2.20.1",
     "npm-run-all": "^4.1.2",
     "prop-types": "^15.6.0",
@@ -25,6 +27,7 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.0",
+    "react-table": "^6.7.6",
     "react-tap-event-plugin": "^3.0.2",
     "sudoku-react-component": "0.0.5"
   },
