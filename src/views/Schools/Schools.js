@@ -13,6 +13,7 @@ import Card from '../../components/Card/Card.js';
 import InputMask from 'react-input-mask'
 import ReactTable from 'react-table'
 import "react-table/react-table.css";
+import matchSorter from 'match-sorter'
 
 class Schools extends Component {
     constructor(props) {
@@ -127,7 +128,7 @@ class Schools extends Component {
         }
     }
 
-    // Feth a list of schools
+    // Fetch a list of schools
     componentDidMount() {
         //Make call out to backend
         var _this = this;
@@ -159,18 +160,28 @@ class Schools extends Component {
         if (this.state.schoolList !== null && Object.keys(this.state.schoolList).length !== 0) {
             const columns = [{
                 Header: 'School Name',
+                filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ["schoolName"] }),
+                filterAll: true,
                 accessor: 'schoolName' // String-based value accessors!
             }, {
                 Header: 'School Contact',
+                filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ["schoolContactName"] }),
+                filterAll: true,
                 accessor: 'schoolContactName' // String-based value accessors!
             }, {
                 Header: 'School Phone Number',
+                filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ["schoolContactPhone"] }),
+                filterAll: true,
                 accessor: 'schoolContactPhone' // String-based value accessors!
             }, {
                 Header: 'Actions',
                 accessor: 'menuActions', // String-based value accessors!
                 style:{textAlign:'center'},
-                sortable: false
+                sortable: false,
+                filterable: false
             }];
 
             for(let value in this.state.schoolList) {
@@ -181,9 +192,13 @@ class Schools extends Component {
             return(
                 <ReactTable
                     data={this.state.schoolList}
+                    filterable
+                    defaultFilterMethod={(filter, row) =>
+                        String(row[filter.id]) === filter.value}
                     columns={columns}
                     defaultPageSize={10}
                     className="-striped -highlight"
+                    defaultSorted={[{id: "schoolName"}]}
                 />
             )
 
