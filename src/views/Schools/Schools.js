@@ -186,7 +186,7 @@ class Schools extends Component {
 
             for(let value in this.state.schoolList) {
                 this.state.schoolList[value].schoolContactPhone = this.formatPhoneNumber(this.state.schoolList[value].schoolContactPhone);
-                this.state.schoolList[value].menuActions = <a href=''>Edit</a>;
+                this.state.schoolList[value].menuActions = <div><a href=''>Edit</a>&nbsp;&nbsp;&nbsp;<a href=''>Delete</a></div>;
             }
 
             return(
