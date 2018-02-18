@@ -7,6 +7,7 @@ import {
     StepLabel,
     StepContent,
 } from 'material-ui/Stepper';
+import $ from 'jquery';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -23,6 +24,8 @@ import "react-table/react-table.css";
 import matchSorter from 'match-sorter'
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+
+import EventDetail from './EventDetail'
 
 
 
@@ -42,6 +45,8 @@ class Events extends Component {
             loading: false,
             modal: false,
             stepIndex: 0,
+            //used to send to event detail as a prop
+            eventId :'',
 
             eventName: '',
             eventDate: '',
@@ -185,9 +190,14 @@ class Events extends Component {
     }
 
     //go to the event page to show all of the information available to edit
-    eventDetails(eventId) {
-        alert(eventId);
-        Window.location = "/#/app/maps"
+    //will need a similar method to go back to event main page..
+    eventDetails(id) {
+        alert(id);
+        this.setState({
+            eventId:id
+        })
+        $('#eventDetails').removeClass('collapse');
+        $('#eventPage').addClass('collapse');
 
     }
 
@@ -253,47 +263,6 @@ class Events extends Component {
                     className="-striped -highlight"
                     defaultSorted={[{id: "name"}]}
                 />
-                /**
-                 <Col md={12}>
-                 <div>
-                 <Table striped bordered condensed hover>
-                 <thead>
-                 <tr>
-                 <th>Event Name</th>
-                 <th>Event Date</th>
-                 <th>Details</th>
-                 </tr>
-                 </thead>
-                 <tbody>
-
-                 {
-                     Object.keys(this.state.test).map(function (key) {
-                         //if(key === 'name' || key === 'id') {
-                         return (
-                             <tr>
-                                 <td>{this.state.test[key].name} </td>
-                                 <td>TBD</td>
-                                 <td>
-                                 <RaisedButton
-                                               primary={true} label="View Details"
-                                               onClick={(event) => this.eventDetails(this.state.test[key].id)}/>
-                                     <RaisedButton
-                                         secondary={true} label="Remove Event"
-                                         onClick={(event) => this.removeEvent(this.state.test[key].id)}/>
-                                 </td>
-                             </tr>
-                         )
-                         // }
-                     }, this)
-
-                 }
-
-                 </tbody>
-                 </Table>
-
-                 </div>
-                 </Col>
-                 */
             )
         } else {
 
@@ -326,7 +295,10 @@ class Events extends Component {
         return (
 
             <div className="content">
-                <div key="notFound-key" className="notFoundClass">
+                <div id='eventDetails' className='animated collapse fadeIn'>
+                    <EventDetail eventId={this.state.eventId}/>
+                </div>
+                <div id='eventPage' key="notFound-key" className="notFoundClass">
                     <MuiThemeProvider>
                         <Grid>
                             <Row className="show-grid">
