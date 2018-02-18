@@ -40,7 +40,6 @@ class Signup extends React.Component {
     }
 
     componentDidMount() {
-        // Check to see if the email address already exists
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', null, null).then(function (result) {
