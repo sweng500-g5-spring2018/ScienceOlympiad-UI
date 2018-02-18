@@ -31,16 +31,27 @@ class Schools extends Component {
         };
     }
 
-    //launch the modal to enter a school
+    // Open the modal
     openModal() {
         this.setState({
             modal: true,
             schoolContactName: '',
             schoolContactPhone: '',
-            schoolName: ''
+            schoolName: '',
+            schoolNameRequired: '',
+            schoolContactPhoneRequired: '',
+            schoolContactNameRequired:''
         })
     }
 
+    // Close the modal
+    closeModal() {
+        this.setState({
+            modal: false
+        })
+    }
+
+    // Check inputs and add a new school
     addNewSchool = () => {
 
         var blankInputs = false;
@@ -114,12 +125,7 @@ class Schools extends Component {
         }
     }
 
-    closeModal() {
-        this.setState({
-            modal: false
-        })
-    }
-
+    // Feth a list of schools
     componentDidMount() {
         //Make call out to backend
         var _this = this;
@@ -136,6 +142,7 @@ class Schools extends Component {
         })
     }
 
+    // Reformat the phone number
     formatPhoneNumber(str)
     {
         var part1 = str.substr(1, 3)
@@ -145,6 +152,7 @@ class Schools extends Component {
         return("(" + part1 + ") " + part2 + "-" + part3)
     }
 
+    // Generate the table if the fetch was successful
     renderIfSchoolsFound() {
         if (this.state.schoolList !== null && Object.keys(this.state.schoolList).length !== 0) {
 
@@ -208,8 +216,6 @@ class Schools extends Component {
                         </Col>
                     </Row>
                 </Grid>
-            </div>
-
                 <Modal show={this.state.modal} onHide={this.closeModal}>
                     <Modal.Header>
                         <Modal.Title> <AppBar
@@ -219,9 +225,7 @@ class Schools extends Component {
                             title="Create New School"
                         /></Modal.Title>
                     </Modal.Header>
-
                     <Modal.Body>
-
                         <TextField
                             id={"schoolName"}
                             floatingLabelText="School Name"
@@ -258,13 +262,12 @@ class Schools extends Component {
                             <InputMask mask="1 (999) 999-9999" maskChar="#" value={this.state.schoolContactPhone}/>
                         </TextField>
                     </Modal.Body>
-
                     <Modal.Footer>
                         <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label="Add School"
                                       onClick={this.addNewSchool}/>;
                     </Modal.Footer>
                 </Modal>
-
+            </div>
             </MuiThemeProvider>
         );
     }
