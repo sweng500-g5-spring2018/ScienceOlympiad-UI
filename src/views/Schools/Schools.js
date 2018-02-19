@@ -318,13 +318,10 @@ class Schools extends Component {
         return (
             <MuiThemeProvider>
             <div className="content">
-                <Grid fluid>
-                    <Row>
-                        <Col md={12}>
                             <Card
                                 title="Registered Schools"
                                 category={
-                                    <div>These schools are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
+                                    <div>These schools are registered in the system.<br/>They will be used in the registration systems and reports.
                                         <br/><br/>
                                     <RaisedButton primary={true} label="Create a new school" onClick={this.openModal.bind(this,status)}/>
                                     </div>}
@@ -335,9 +332,6 @@ class Schools extends Component {
                                     </Loader>
                                 }
                             />
-                        </Col>
-                    </Row>
-                </Grid>
                 <Modal show={this.state.modal} onHide={this.closeModal}>
                     <Modal.Header>
                         <Modal.Title> <AppBar
