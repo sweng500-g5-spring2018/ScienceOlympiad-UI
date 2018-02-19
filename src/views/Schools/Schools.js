@@ -1,20 +1,20 @@
 import React, {Component} from 'react';
-import {Grid, Col, Row, Button, Modal, Table} from 'react-bootstrap';
+import {Grid, Col, Row, Modal} from 'react-bootstrap';
 import Loader from 'react-loader'
 import HttpRequest from "../../adapters/httpRequest";
-import constants from "../../utils/constants";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import AppBar from 'material-ui/AppBar'
+import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import Card from '../../components/Card/Card.js';
-import InputMask from 'react-input-mask'
-import ReactTable from 'react-table'
-import "react-table/react-table.css";
+import InputMask from 'react-input-mask';
+import ReactTable from 'react-table';
+import '../../react-table.css';
 import matchSorter from 'match-sorter';
-import Dialog from 'material-ui/Dialog'
+import Dialog from 'material-ui/Dialog';
+import constants from "../../utils/constants";
 
 class Schools extends Component {
     constructor(props) {
@@ -25,10 +25,15 @@ class Schools extends Component {
         this.state = {
             loading: false,
             modal: false,
+            modalTitle: '',
+            modalAction: '',
+            modalButton: '',
+            editModal: false,
             confirmDialog: false,
             confirmMessage: '',
             formattedPhone: '',
             deleteID: '',
+            schoolID: '',
             schoolName: '',
             schoolContactPhone: '',
             schoolContactName:'',
@@ -40,16 +45,39 @@ class Schools extends Component {
     }
 
     // Open the modal
-    openModal() {
-        this.setState({
-            modal: true,
-            schoolContactName: '',
-            schoolContactPhone: '',
-            schoolName: '',
-            schoolNameRequired: '',
-            schoolContactPhoneRequired: '',
-            schoolContactNameRequired:''
-        })
+    openModal = (mode) => {
+
+        if (mode.status === "add")
+        {
+            this.setState({
+                modal: true,
+                modalAction: 'add',
+                modalTitle: "Add New School",
+                modalButton: "Add School",
+                schoolContactName: '',
+                schoolContactPhone: '',
+                schoolName: '',
+                schoolNameRequired: '',
+                schoolContactPhoneRequired: '',
+                schoolContactNameRequired:''
+            })
+        }
+        else if (mode.status === "edit")
+        {
+            this.setState({
+                modal: true,
+                modalAction: 'edit',
+                modalTitle: "Edit School",
+                modalButton: "Edit School",
+                schoolContactName: mode.schoolContactName,
+                schoolContactPhone: mode.schoolContactPhone,
+                schoolName: mode.schoolName,
+                schoolID: mode.id,
+                schoolNameRequired: '',
+                schoolContactPhoneRequired: '',
+                schoolContactNameRequired:''
+            })
+        }
     }
 
     // Close the modal
@@ -74,16 +102,22 @@ class Schools extends Component {
         var id = this.state.deleteID;
         var _this = this;
 
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/removeSchool/' + id, 'DELETE', null, null).then(function (result) {
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/removeSchool/' + id, 'DELETE', constants.useCredentials(), null).then(function (result) {
             console.log(result);
+
+            _this.setState({confirmDialog: false});
+
+            if (result.status === 200)
+                _this.componentDidMount();
 
         }).catch(function (error) {
             console.log(error);
+            _this.setState({confirmDialog: false});
         })
     }
 
     // Check inputs and add a new school
-    addNewSchool = () => {
+    handleSubmit = () => {
 
         var blankInputs = false;
         var schoolName = this.state.schoolName.trim();
@@ -120,39 +154,70 @@ class Schools extends Component {
         // If no information is missing we can add the school
         if (!blankInputs)
         {
+
             var _this = this;
+
             var body = {};
 
             var cleanPhoneNumber = this.state.schoolContactPhone.trim();
             cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
-            cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
-            cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
+            cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g, '');       // Remove ( and )
+            cleanPhoneNumber = cleanPhoneNumber.replace(/-/g, "");           // Remove -
 
             body.schoolName = this.state.schoolName.trim();
             body.schoolContactName = this.state.schoolContactName.trim();
             body.schoolContactPhone = cleanPhoneNumber;
 
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addSchool', 'POST', null, body ).then(function (result) {
-                console.log(result);
+            if (this.state.modalAction === "add") {
 
-                if (result.status === 200){
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addSchool', 'POST', constants.useCredentials(), body).then(function (result) {
+                    console.log(result);
 
-                    // Close the modal and show a success message
-                    _this.setState({
-                        modal: false,
-                    })
+                    if (result.status === 200) {
 
-                    _this.componentDidMount();
+                        // Close the modal and show a success message
+                        _this.setState({
+                            modal: false,
+                        })
 
-                }
+                        _this.componentDidMount();
 
-            }).catch(function (error) {
-                console.log(error);
+                    }
 
-                // Close the modal and show a failed message
-                _this.setState({modal: false})
+                }).catch(function (error) {
+                    console.log(error);
 
-            })
+                    // Close the modal and show a failed message
+                    _this.setState({modal: false})
+
+                })
+            }
+            else if (this.state.modalAction === "edit")
+            {
+                console.log(this.state.schoolID);
+
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateSchool/'+ this.state.schoolID, 'POST', constants.useCredentials(), body).then(function (result) {
+                    console.log(result);
+
+                    if (result.status === 200) {
+
+                        // Close the modal and show a success message
+                        _this.setState({
+                            modal: false,
+                        })
+
+                        _this.componentDidMount();
+
+                    }
+
+                }).catch(function (error) {
+                    console.log(error);
+
+                    // Close the modal and show a failed message
+                    _this.setState({modal: false})
+
+                })
+            }
         }
     }
 
@@ -161,7 +226,7 @@ class Schools extends Component {
         //Make call out to backend
         var _this = this;
 
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', null, null).then(function (result) {
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', constants.useCredentials(), null).then(function (result) {
             console.log(result);
             _this.setState({
                 schoolList: result.body,
@@ -214,7 +279,8 @@ class Schools extends Component {
 
             for(let value in this.state.schoolList) {
                 this.state.schoolList[value].formattedPhone = this.formatPhoneNumber(this.state.schoolList[value].schoolContactPhone);
-                this.state.schoolList[value].menuActions = <div><a href=''>Edit</a>&nbsp;&nbsp;&nbsp;<a style={{cursor:'pointer'}} onClick={this.confirmSchoolDelete.bind(this,this.state.schoolList[value])}>Delete</a></div>;
+                this.state.schoolList[value].status = "edit";
+                this.state.schoolList[value].menuActions = <div><a style={{cursor:'pointer'}} onClick={this.openModal.bind(this,this.state.schoolList[value])}>Edit</a>&nbsp;&nbsp;&nbsp;<a style={{cursor:'pointer'}} onClick={this.confirmSchoolDelete.bind(this,this.state.schoolList[value])}>Delete</a></div>;
             }
 
             return(
@@ -249,7 +315,7 @@ class Schools extends Component {
                 onClick={this.deleteSchool}
             />,
         ];
-
+        var status = {"status" : "add"};
         return (
             <MuiThemeProvider>
             <div className="content">
@@ -261,7 +327,7 @@ class Schools extends Component {
                                 category={
                                     <div>These schools are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
                                         <br/><br/>
-                                    <RaisedButton primary={true} label="Create a new school" onClick={this.openModal}/>
+                                    <RaisedButton primary={true} label="Create a new school" onClick={this.openModal.bind(this,status)}/>
                                     </div>}
                                 ctTableFullWidth ctTableResponsive
                                 content={
@@ -279,7 +345,7 @@ class Schools extends Component {
                             iconElementRight={<FlatButton label="Close"/>}
                             showMenuIconButton={false}
                             onRightIconButtonClick={(event) => this.closeModal()}
-                            title="Create New School"
+                            title={this.state.modalTitle}
                         /></Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -320,8 +386,8 @@ class Schools extends Component {
                         </TextField>
                     </Modal.Body>
                     <Modal.Footer>
-                        <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label="Add School"
-                                      onClick={this.addNewSchool}/>;
+                        <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label={this.state.modalButton}
+                                      onClick={this.handleSubmit}/>
                     </Modal.Footer>
                 </Modal>
                 <Dialog
