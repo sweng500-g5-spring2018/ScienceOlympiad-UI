@@ -40,7 +40,6 @@ class Signup extends React.Component {
     }
 
     componentDidMount() {
-        // Check to see if the email address already exists
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', null, null).then(function (result) {
@@ -362,6 +361,7 @@ class Signup extends React.Component {
                                     <Row className="show-grid">
                                         <Col xs={7} md={3}>
                                             <TextField
+                                                name="fname"
                                                 hintText="Enter your first name"
                                                 errorText={this.state.firstNameRequired}
                                                 floatingLabelText="First name"
@@ -372,6 +372,7 @@ class Signup extends React.Component {
                                         </Col>
                                         <Col xs={7} md={3}>
                                             <TextField
+                                                name="lname"
                                                 hintText="Enter your last name"
                                                 errorText={this.state.lastNameRequired}
                                                 floatingLabelText="Last name"
@@ -384,6 +385,7 @@ class Signup extends React.Component {
                                     <Row className="show-grid">
                                         <Col xs={7} md={3}>
                                             <TextField
+                                                name="phone"
                                                 errorText={this.state.phoneNumberRequired}
                                                 floatingLabelText="Phone number"
                                                 onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
@@ -397,6 +399,7 @@ class Signup extends React.Component {
                                         </Col>
                                         <Col xs={7} md={3}>
                                             <TextField
+                                                name="email"
                                                 hintText="Enter your email address"
                                                 errorText={this.state.emailAddressRequired}
                                                 floatingLabelText="Email address"
