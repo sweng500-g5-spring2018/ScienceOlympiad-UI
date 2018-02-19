@@ -51,7 +51,7 @@ class Schools extends Component {
 
     addNotification(message, level, position, autoDismiss, optionalTitle){
         this.state._notificationSystem.addNotification({
-            title: optionalTitle ? optionalTitle : (<span data-notify="icon" className="pe-7s-gift"></span>),
+            title: optionalTitle ? optionalTitle : (<span data-notify="icon" className="pe-7s-home"></span>),
             message: (
                 <div>
                     {message}
@@ -87,7 +87,7 @@ class Schools extends Component {
                 modal: true,
                 modalAction: 'edit',
                 modalTitle: "Edit School",
-                modalButton: "Edit School",
+                modalButton: "Update School",
                 schoolContactName: mode.schoolContactName,
                 schoolContactPhone: mode.schoolContactPhone,
                 schoolName: mode.schoolName,
@@ -126,11 +126,29 @@ class Schools extends Component {
 
             _this.setState({confirmDialog: false});
 
-            if (result.status === 200)
+            if (result.status === 200) {
+
+                _this.addNotification(
+                    "Success: The school has been deleted.",
+                    "info",
+                    "tc",
+                    6
+                );
+
                 _this.componentDidMount();
+            }
 
         }).catch(function (error) {
             console.log(error);
+
+            _this.addNotification(
+                "Error: The school has not been deleted.",
+                "error",
+                "tc",
+                6
+            );
+
+
             _this.setState({confirmDialog: false});
         })
     }
@@ -194,17 +212,31 @@ class Schools extends Component {
 
                     if (result.status === 200) {
 
-                        // Close the modal and show a success message
-                        _this.setState({
-                            modal: false,
-                        })
+                        // Post a notification
+                        _this.addNotification(
+                            "Success: The school has been added.",
+                            "info",
+                            "tc",
+                            6
+                        );
 
+                        // Close the modal and show a success message
+                        _this.setState({modal: false})
+
+                        // Update the component
                         _this.componentDidMount();
 
                     }
 
                 }).catch(function (error) {
                     console.log(error);
+
+                    _this.addNotification(
+                        "Error: The school has not been added.",
+                        "error",
+                        "tc",
+                        6
+                    );
 
                     // Close the modal and show a failed message
                     _this.setState({modal: false})
@@ -225,12 +257,26 @@ class Schools extends Component {
                             modal: false,
                         })
 
+                        _this.addNotification(
+                            "Success: The school has been updated.",
+                            "info",
+                            "tc",
+                            6
+                        );
+
                         _this.componentDidMount();
 
                     }
 
                 }).catch(function (error) {
                     console.log(error);
+
+                    _this.addNotification(
+                        "Error: The school has not been updated.",
+                        "error",
+                        "tc",
+                        6
+                    );
 
                     // Close the modal and show a failed message
                     _this.setState({modal: false})
@@ -272,13 +318,6 @@ class Schools extends Component {
     // Generate the table if the fetch was successful
     renderIfSchoolsFound() {
         if (this.state.schoolList !== null && Object.keys(this.state.schoolList).length !== 0) {
-
-this.addNotification(
-    "YO YO YO YO YO YO YO",
-    "info",
-    "tc",
-    6
-);
 
             const columns = [{
                 Header: 'School Name',
