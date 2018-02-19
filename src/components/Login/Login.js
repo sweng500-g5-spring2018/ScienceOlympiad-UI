@@ -26,7 +26,7 @@ class Login extends Component {
     }
 
     handleClick(event) {
-        event.preventDefault();
+        if(event) { event.preventDefault(); }
 
         if(this.state.emailAddress.trim()) {
             if(this.state.password.trim()) {
