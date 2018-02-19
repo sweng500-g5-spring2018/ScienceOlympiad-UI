@@ -11,7 +11,6 @@ import FontIcon from 'material-ui/FontIcon';
 import Card from '../../components/Card/Card.js';
 import InputMask from 'react-input-mask';
 import ReactTable from 'react-table';
-import '../../react-table.css';
 import matchSorter from 'match-sorter';
 import Dialog from 'material-ui/Dialog';
 import constants from "../../utils/constants";
@@ -386,6 +385,8 @@ class Schools extends Component {
                         </TextField>
                     </Modal.Body>
                     <Modal.Footer>
+                        <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} primary={true} label="Cancel"
+                                      onClick={this.closeModal}/>&nbsp;&nbsp;
                         <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label={this.state.modalButton}
                                       onClick={this.handleSubmit}/>
                     </Modal.Footer>
