@@ -14,12 +14,16 @@ import ReactTable from 'react-table';
 import matchSorter from 'match-sorter';
 import Dialog from 'material-ui/Dialog';
 import constants from "../../utils/constants";
+import NotificationSystem from 'react-notification-system';
+import {style} from "../../variables/Variables";
+
 
 class Schools extends Component {
     constructor(props) {
         super(props);
         this.closeModal = this.closeModal.bind(this);
         this.openModal = this.openModal.bind(this);
+        this.addNotification = this.addNotification.bind(this);
 
         this.state = {
             loading: false,
@@ -39,8 +43,24 @@ class Schools extends Component {
             schoolNameRequired: '',
             schoolContactPhoneRequired: '',
             schoolContactNameRequired:'',
-            schoolList:{}
+            schoolList:{},
+            _notificationSystem: null
+
         };
+    }
+
+    addNotification(message, level, position, autoDismiss, optionalTitle){
+        this.state._notificationSystem.addNotification({
+            title: optionalTitle ? optionalTitle : (<span data-notify="icon" className="pe-7s-gift"></span>),
+            message: (
+                <div>
+                    {message}
+                </div>
+            ),
+            level: level ? level : 'info',
+            position: position ? position : 'tc',
+            autoDismiss: autoDismiss ? autoDismiss : 10,
+        });
     }
 
     // Open the modal
@@ -222,6 +242,8 @@ class Schools extends Component {
 
     // Fetch a list of schools
     componentDidMount() {
+        this.setState({_notificationSystem: this.refs.notificationSystem});
+
         //Make call out to backend
         var _this = this;
 
@@ -250,6 +272,14 @@ class Schools extends Component {
     // Generate the table if the fetch was successful
     renderIfSchoolsFound() {
         if (this.state.schoolList !== null && Object.keys(this.state.schoolList).length !== 0) {
+
+this.addNotification(
+    "YO YO YO YO YO YO YO",
+    "info",
+    "tc",
+    6
+);
+
             const columns = [{
                 Header: 'School Name',
                 filterMethod: (filter, rows) =>
@@ -317,8 +347,9 @@ class Schools extends Component {
         var status = {"status" : "add"};
         return (
             <MuiThemeProvider>
-            <div className="content">
-                <Grid fluid>
+                <div className="content">
+                    <NotificationSystem ref="notificationSystem" style={style}/>
+                    <Grid fluid>
                     <Row>
                         <Col md={12}>
                             <Card
