@@ -21,42 +21,26 @@ class App extends Component {
     constructor(props){
         super(props);
         this.componentDidMount = this.componentDidMount.bind(this);
-        this.handleNotificationClick = this.handleNotificationClick.bind(this);
+        this.notify = this.notify.bind(this);
         this.state = {
             _notificationSystem: null
         };
     }
-    handleNotificationClick(position){
-        var color = Math.floor((Math.random() * 4) + 1);
-        var level;
-        switch (color) {
-            case 1:
-                level = 'success';
-                break;
-            case 2:
-                level = 'warning';
-                break;
-            case 3:
-                level = 'error';
-                break;
-            case 4:
-                level = 'info';
-                break;
-            default:
-                break;
-        }
+
+    notify(message, level, position, autoDismiss, optionalTitle){
         this.state._notificationSystem.addNotification({
-            title: (<span data-notify="icon" className="pe-7s-gift"></span>),
+            title: optionalTitle ? optionalTitle : (<span data-notify="icon" className="pe-7s-gift"></span>),
             message: (
                 <div>
-                    Welcome to <b>Science Olympiad Dashboard</b> - a central hub for Science Olympiad Compititions.
+                    {message}
                 </div>
             ),
-            level: level,
-            position: position,
-            autoDismiss: 15,
+            level: level ? level : 'info',
+            position: position ? position : 'tc',
+            autoDismiss: autoDismiss ? autoDismiss : 10,
         });
     }
+
     componentDidMount(){
         this.setState({_notificationSystem: this.refs.notificationSystem});
         var _notificationSystem = this.refs.notificationSystem;
@@ -111,7 +95,7 @@ class App extends Component {
                                                 <Redirect from={prop.path} to={prop.to} key={key}/>
                                             );
                                         return (
-                                            <AuthenticatedRoute path={prop.path} component={prop.component} key={key}/>
+                                            <AuthenticatedRoute path={prop.path} component={prop.component} key={key} notify={this.notify}/>
                                         );
                                     })
                                 }
