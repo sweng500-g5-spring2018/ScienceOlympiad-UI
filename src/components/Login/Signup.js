@@ -361,6 +361,7 @@ class Signup extends React.Component {
                                     <Row className="show-grid">
                                         <Col xs={7} md={3}>
                                             <TextField
+                                                name="fname"
                                                 hintText="Enter your first name"
                                                 errorText={this.state.firstNameRequired}
                                                 floatingLabelText="First name"
@@ -371,6 +372,7 @@ class Signup extends React.Component {
                                         </Col>
                                         <Col xs={7} md={3}>
                                             <TextField
+                                                name="lname"
                                                 hintText="Enter your last name"
                                                 errorText={this.state.lastNameRequired}
                                                 floatingLabelText="Last name"
@@ -383,6 +385,7 @@ class Signup extends React.Component {
                                     <Row className="show-grid">
                                         <Col xs={7} md={3}>
                                             <TextField
+                                                name="phone"
                                                 errorText={this.state.phoneNumberRequired}
                                                 floatingLabelText="Phone number"
                                                 onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
@@ -396,6 +399,7 @@ class Signup extends React.Component {
                                         </Col>
                                         <Col xs={7} md={3}>
                                             <TextField
+                                                name="email"
                                                 hintText="Enter your email address"
                                                 errorText={this.state.emailAddressRequired}
                                                 floatingLabelText="Email address"
