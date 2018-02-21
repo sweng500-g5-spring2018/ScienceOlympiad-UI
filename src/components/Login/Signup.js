@@ -10,13 +10,12 @@ import FlatButton from 'material-ui/FlatButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import AppBar from 'material-ui/AppBar';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 import InputMask from 'react-input-mask'
 import {Row, Col, Grid} from 'react-bootstrap';
 import HttpRequest from '../../adapters/httpRequest';
 import constants from '../../utils/constants';
-import PasswordField from 'material-ui-password-field'
+import PasswordField from 'material-ui-password-field';
+import SchoolSelector from '../Schools/SchoolSelector';
 
 class Signup extends React.Component {
 
@@ -32,11 +31,13 @@ class Signup extends React.Component {
             emailAddress: '',
             password: '',
             confirm: '',
-            district: '',
+            school: '',
             httpResponse: '',
             accountMessage: '',
-            districtList: {}
+            schoolList: {}
         };
+
+        this.callBack = this.callBack.bind(this);
     }
 
     componentDidMount() {
@@ -44,37 +45,11 @@ class Signup extends React.Component {
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', null, null).then(function (result) {
             console.log(result);
-            _this.state.districtList = result.body;
+            _this.state.schoolList = result.body;
 
         }).catch(function (error) {
             console.log(error);
         })
-    }
-
-    renderIfDistrictFound() {
-        if (this.state.test !== null && Object.keys(this.state.districtList).length !== 0) {
-            return(
-                <SelectField
-                    hintText="Select your district"
-                    errorText={this.state.districtRequired}
-                    floatingLabelText="School District"
-                    onChange={(event, index, value) => this.setState({district: value})}
-                    maxHeight={200}
-                    value={this.state.district}>
-                    {
-                        Object.keys(this.state.districtList).map(function (key) {
-                            return (
-                                <MenuItem key={this.state.districtList[key].id} primaryText={this.state.districtList[key].schoolName} value={this.state.districtList[key].id}/>
-                            )
-                        }, this)
-
-                    }
-                        <MenuItem primaryText="Berwick" value='1'/>
-                </SelectField>
-            )
-        }
-        else
-            return("ERROR")
     }
 
     // Checks to see if an email has a host, @ symbols, and domain.
@@ -98,9 +73,16 @@ class Signup extends React.Component {
         return true;
     }
 
+    callBack(event, index, value) {
+
+        this.setState({school: value});
+    }
+
     // Handles the next button
     handleNext = () => {
         const {stepIndex} = this.state;
+        var _this = this;
+        var body = {};
 
         // Flag to indicate if we can proceed
         var missingInfo = false;
@@ -169,8 +151,7 @@ class Signup extends React.Component {
                 else {
 
                     // Check to see if the email address already exists
-                    var _this = this;
-                    var body = {};
+
                     body.emailAddress = this.state.emailAddress;
 
                     _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body ).then(function (result) {
@@ -284,14 +265,14 @@ class Signup extends React.Component {
                 }
             }
 
-            if (this.state.district.trim() === '')
+            if (this.state.school.trim() === '')
             {
                 this.setState({
-                    districtRequired: "Please select your school district."
+                    schoolRequired: "Please select your school district."
                 })
             }
             else {
-                this.setState({districtRequired: undefined})
+                this.setState({schoolRequired: undefined})
             }
 
             if (!missingInfo) {
@@ -302,32 +283,32 @@ class Signup extends React.Component {
                 });
 
                 // Create the user account
-                var _this = this;
-                var body = {};
-
                 var cleanPhoneNumber = this.state.phoneNumber;
                 cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
                 cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
                 cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
                 cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
 
+                body = {};
+
                 body.firstName = this.state.firstName;
                 body.lastName = this.state.lastName;
                 body.emailAddress = this.state.emailAddress;
                 body.phoneNumberString = cleanPhoneNumber;
                 body.password = this.state.password;
-                var schoolID = this.state.district;
+                var schoolID = this.state.school;
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH&schoolID=' + _this.state.district, 'POST', null, body ).then(function (result) {
+
+               _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH&schoolID=' + _this.state.school, 'POST', null, body ).then(function (result) {
                     console.log(result);
 
                     if (result.status === 200)
-                        _this.state.accountMessage = "Congratulations. Your account has been created. Please return to the login screen."
+                        _this.setState({accountMessage: "Congratulations! Your account has been created. Please return to the login screen."})
 
                 }).catch(function (error) {
                     console.log(error);
 
-                    _this.state.accountMessage = "There was an error creating your account. Please try again later."
+                    _this.setState({accountMessage:"There was an error creating your account. Please try again later."})
 
                 })
 
@@ -348,7 +329,6 @@ class Signup extends React.Component {
     render() {
         const {finished, stepIndex} = this.state;
         const contentStyle = {margin: '0 16px'};
-        let myData = this.state.districtList;
         return (
             <MuiThemeProvider>
                 <div>
@@ -441,8 +421,9 @@ class Signup extends React.Component {
                                         </Col>
                                     </Row>
                                     <Row className="show-grid">
-                                        <Col xs={6} md={3}>
-                                            {this.renderIfDistrictFound()}
+                                        <Col xs={7} md={3}>
+                                            <SchoolSelector selected={this.state.school} errorMsg={this.state.schoolRequired}
+                                                            callBack={this.callBack} labelText={"School"} hintText={"Select your school"}/>
                                         </Col>
                                     </Row>
                                 </Grid>
@@ -450,7 +431,15 @@ class Signup extends React.Component {
                         </Step>
                         <Step>
                             <StepLabel>Account Creation</StepLabel>
-                            <StepContent><div style={contentStyle}>{this.state.accountMessage}</div></StepContent>
+                            <StepContent>
+                                <Grid>
+                                    <Row className="show-grid">
+                                        <Col>
+                                            <div>{this.state.accountMessage}</div>
+                                       </Col>
+                                    </Row>
+                                </Grid>
+                            </StepContent>
                         </Step>
                     </Stepper>
                     <div style={contentStyle} className={stepIndex === 2 ? 'collapse' : ''}>
