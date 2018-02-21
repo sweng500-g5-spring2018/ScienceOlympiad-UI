@@ -39,6 +39,7 @@ class Events extends Component {
         this.nextStep = this.nextStep.bind(this);
         this.previousStep = this.previousStep.bind(this);
         this.eventDetails = this.eventDetails.bind(this);
+        this.showEvents = this.showEvents.bind(this);
 
         this.state = {
             test: {},
@@ -80,7 +81,9 @@ class Events extends Component {
             //this is a date object
             eventDate: '',
             startTime: '',
-            endTime: ''
+            endTime: '',
+
+            renderDetails : false
 
         })
     }
@@ -192,13 +195,23 @@ class Events extends Component {
     //go to the event page to show all of the information available to edit
     //will need a similar method to go back to event main page..
     eventDetails(id) {
-        alert(id);
+        //alert(id);
         this.setState({
+            renderDetails:true,
             eventId:id
         })
         $('#eventDetails').removeClass('collapse');
         $('#eventPage').addClass('collapse');
 
+    }
+    //called from the subclass to go back to events
+    showEvents(event) {
+        event.preventDefault();
+        this.setState({
+            renderDetails:false
+        })
+        $('#eventDetails').addClass('collapse');
+        $('#eventPage').removeClass('collapse')
     }
 
     removeEvent(eventId) {
@@ -292,12 +305,15 @@ class Events extends Component {
             actionButton = <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true} label="Create Event"
                                          onClick={this.createEventPost}/>;
         }
+        if(this.state.renderDetails){
+            return (
+            <EventDetail showEvents={this.showEvents} eventId={this.state.eventId}/>
+            )
+        }
         return (
 
             <div className="content">
-                <div id='eventDetails' className='animated collapse fadeIn'>
-                    <EventDetail eventId={this.state.eventId}/>
-                </div>
+
                 <div id='eventPage' key="notFound-key" className="notFoundClass">
                     <MuiThemeProvider>
                         <Grid>
