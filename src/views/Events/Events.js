@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Grid, Col, Row, Modal} from 'react-bootstrap';
+import {Alert,Grid, Col, Row, Modal} from 'react-bootstrap';
 import Loader from 'react-loader'
 import {
     Step,
@@ -26,6 +26,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
 import EventDetail from './EventDetail'
+import FormInputs from "../../components/FormInputs/FormInputs";
 
 
 
@@ -40,6 +41,7 @@ class Events extends Component {
         this.previousStep = this.previousStep.bind(this);
         this.eventDetails = this.eventDetails.bind(this);
         this.showEvents = this.showEvents.bind(this);
+        this.addJudgeInputs = this.addJudgeInputs.bind(this);
 
         this.state = {
             test: {},
@@ -55,6 +57,12 @@ class Events extends Component {
             endTime: '',
             eventLocation:'',
             eventDescription: '',
+            //for adding judges
+            judgeInputs : [],
+
+            judgeCount :0,
+            existingJudgeValues:[],
+            existingJudgeEmails:[]
 
         };
     }
@@ -102,89 +110,102 @@ class Events extends Component {
 
     nextStep() {
         //validate event entries here
+
         var _this = this;
         var missingInfo = false;
+        const {eventName, stepIndex} = this.state;
         // Checks first name
-        if (this.state.eventName.length < 1) {
-            missingInfo = true;
-            this.setState({
-                eventName: this.state.eventName.trim(),
-                eventNameError: "Event name is required"
-            })
-        } else {
-            this.setState({
-                eventNameError: undefined
-            })
-        }
-        if (this.state.eventDate.length < 1) {
-            missingInfo = true;
-            this.setState({
-                eventDateError: "Event date is required"
-            })
-        } else {
-            this.setState({
-                eventDateError: undefined
-            })
-        }
-        if (this.state.startTime.length < 1) {
-            missingInfo = true;
-            this.setState({
-                startTimeError: "Event description is required"
-            })
-        } else {
-            this.setState({
-                startTimeError: undefined
-            })
-        }
-        if (this.state.endTime.length < 1) {
-            missingInfo = true;
-            this.setState({
-                endTimeError: "Event description is required"
-            })
-        } else {
-            this.setState({
-                endTimeError: undefined
-            })
-        }
-        if (this.state.eventLocation.length < 1) {
-            missingInfo = true;
-            this.setState({
-                eventLocationError: "Event description is required"
-            })
-        } else {
-            this.setState({
-                eventLocationError: undefined
-            })
-        }
-        if (this.state.eventDescription.length < 1) {
-            missingInfo = true;
-            this.setState({
-                eventDescriptionError: "Event description is required"
-            })
-        } else {
-            this.setState({
-                eventDescriptionError: undefined
-            })
-        }
-
-        if (!missingInfo) {
-            const {eventName, stepIndex} = this.state;
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null).then(function (result) {
-                console.log("verify event");
-                alert(result.status);
-                _this.setState({
-                    stepIndex: stepIndex + 1
+        if(stepIndex==0) {
+            if (this.state.eventName.length < 1) {
+                missingInfo = true;
+                this.setState({
+                    eventName: this.state.eventName.trim(),
+                    eventNameError: "Event name is required"
                 })
+            } else {
+                this.setState({
+                    eventNameError: undefined
+                })
+            }
+            if (this.state.eventDate.length < 1) {
+                missingInfo = true;
+                this.setState({
+                    eventDateError: "Event date is required"
+                })
+            } else {
+                this.setState({
+                    eventDateError: undefined
+                })
+            }
+            if (this.state.startTime.length < 1) {
+                missingInfo = true;
+                this.setState({
+                    startTimeError: "Event description is required"
+                })
+            } else {
+                this.setState({
+                    startTimeError: undefined
+                })
+            }
+            if (this.state.endTime.length < 1) {
+                missingInfo = true;
+                this.setState({
+                    endTimeError: "Event description is required"
+                })
+            } else {
+                this.setState({
+                    endTimeError: undefined
+                })
+            }
+            if (this.state.eventLocation.length < 1) {
+                missingInfo = true;
+                this.setState({
+                    eventLocationError: "Event description is required"
+                })
+            } else {
+                this.setState({
+                    eventLocationError: undefined
+                })
+            }
+            if (this.state.eventDescription.length < 1) {
+                missingInfo = true;
+                this.setState({
+                    eventDescriptionError: "Event description is required"
+                })
+            } else {
+                this.setState({
+                    eventDescriptionError: undefined
+                })
+            }
 
-            }).catch(function (error) {
-                _this.setState({
-                    eventNameError: "Event Name already exists"
-                });
-                console.log(error);
+            if (!missingInfo) {
+
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null).then(function (result) {
+                    console.log("verify event");
+                    alert(result.status);
+                    _this.setState({
+                        stepIndex: stepIndex + 1
+                    })
+
+                }).catch(function (error) {
+                    _this.setState({
+                        eventNameError: "Event Name already exists"
+                    });
+                    console.log(error);
+                })
+            }
+        } else if(stepIndex == 1) {
+            _this.setState({
+                stepIndex: stepIndex + 1
             })
+        } else {
+            //make sure the
         }
+
+
     }
 
+    //go back a step while creating event
     previousStep() {
         const {stepIndex} = this.state;
         this.setState({
@@ -218,17 +239,62 @@ class Events extends Component {
         alert("Removing " + eventId);
     }
 
+    //dynamically add in new input fields when clicked
+    addJudgeInputs() {
+        //get a local copy so we dont set state here and re-render, update state after
+        this.judgeCnt = this.state.judgeCount;
+        this.judgeCnt++;
+        alert(this.judgeCnt);
+        const newproperties = [
+                {
+                    id:"judgefname"+this.judgeCnt,
+                    label : "First Name",
+                    type : "text",
+                    bsClass : "form-control",
+                    placeholder : "",
+                    defaultValue : "",
+                },
+        {
+            id:"judgelname"+this.judgeCnt,
+            label : "Last Name",
+                type : "text",
+            bsClass : "form-control",
+            placeholder : "Last Name",
+            defaultValue : ""
+        },
+        {
+            id:"judgemail"+this.judgeCnt,
+            label : "Email address",
+                type : "email",
+            bsClass : "form-control",
+            placeholder : "Email"
+        }
+    ]
+        this.setState({
+            judgeCount : this.state.judgeCount + 1,
+            //add judges class to use jquery to loop over reach one
+            judgeInputs : this.state.judgeInputs.concat(<FormInputs ncols = {["col-md-3 judges" , "col-md-3 judges" , "col-md-3 judges"]}
+                                      proprieties = {newproperties}/>)
+        });
+
+    }
+
     componentDidMount() {
         //Make call out to backend
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/events", "get", constants.useCredentials(), null).then(function (result) {
-            console.log("execute");
-            _this.setState({
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/getJudges", "get", constants.useCredentials(), null).then(function (judgeResult) {
+                _this.setState({
                 test: result.body,
+
+                existingJudgeEmails : judgeResult.body,
                 loading: true
             })
 
+            }).catch(function (error) {
+                console.log(error);
+            })
 
         }).catch(function (error) {
             console.log(error);
@@ -297,10 +363,18 @@ class Events extends Component {
         if (this.state.stepIndex == 0) {
             actionButton =
                 <RaisedButton icon={<FontIcon className="pe-7s-angle-down-circle"/>} primary={true} label="Judges"
-                              onClick={this.nextStep}/>;
-        } else {
+                              onClick={this.nextStep}
+                />;
+        } else if(this.state.stepIndex == 1) {
             backButton =
                 <RaisedButton icon={<FontIcon className="pe-7s-angle-up-circle"/>} primary={true} label="Back to Info"
+                              onClick={this.previousStep}/>;
+            actionButton = <RaisedButton icon={<FontIcon className="pe-7s-angle-down-circle"/>} primary={true} label="Add new judges"
+                                         onClick={this.nextStep}/>;
+
+        }else {
+            backButton =
+                <RaisedButton icon={<FontIcon className="pe-7s-angle-up-circle"/>} primary={true} label="Back to Existing"
                               onClick={this.previousStep}/>;
             actionButton = <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true} label="Create Event"
                                          onClick={this.createEventPost}/>;
@@ -339,7 +413,7 @@ class Events extends Component {
 
                 </div>
                 <MuiThemeProvider>
-                    <Modal show={this.state.modal} onHide={this.closeModal}>
+                    <Modal bsSize="large" show={this.state.modal} onHide={this.closeModal}>
                         <Modal.Header>
                             <Modal.Title> <AppBar
                                 iconElementRight={<FlatButton label="Close"/>}
@@ -357,7 +431,7 @@ class Events extends Component {
                                         <StepContent>
 
                                             <Row className="show-grid">
-                                                <Col md={2} xs={2}>
+                                                <Col md={3} mdOffset={1} xs={7}>
                                                     <TextField
                                                         id={"eventName"}
                                                         floatingLabelText="Event Name"
@@ -369,7 +443,7 @@ class Events extends Component {
                                                         fullWidth={true}
                                                     />
                                                 </Col>
-                                                <Col md={2} mdOffset={1} xs={2}>
+                                                <Col md={3} mdOffset={1} xs={7}>
                                                     <DatePicker
                                                         errorText={this.state.eventDateError}
                                                         onChange={(event, newValue) => this.setState({eventDate: newValue})}
@@ -388,7 +462,7 @@ class Events extends Component {
                                             </Row>
                                             <br/>
                                             <Row className="show-grid">
-                                                <Col md={2} xs={3}>
+                                                <Col md={3} mdOffset={1} xs={7}>
                                                     <TimePicker
                                                         errorText={this.state.startTimeError}
                                                         floatingLabelText="Start Time"
@@ -399,7 +473,7 @@ class Events extends Component {
                                                         autoOk={true}
                                                     />
                                                 </Col>
-                                                <Col md={2} mdOffset={1} xs={3}>
+                                                <Col md={3} mdOffset={1} xs={7}>
                                                     <TimePicker
                                                         errorText={this.state.endTimeError}
                                                         floatingLabelText="End Time"
@@ -412,12 +486,12 @@ class Events extends Component {
                                                 </Col>
                                             </Row>
                                             <Row className={"show-grid"}>
-                                                <Col md={5}>
+                                                <Col md={5} mdOffset={1} xs={7}>
                                                     <SelectField
                                                         floatingLabelText="Event Location"
                                                         value={this.state.eventLocation}
                                                         onChange={(event, newValue) => this.setState({eventLocation: newValue})}
-                                                        autoWidth={true}
+                                                        fullWidth={true}
                                                     >
                                                         <MenuItem value={5} primaryText="Testing" />
                                                     </SelectField>
@@ -426,7 +500,7 @@ class Events extends Component {
 
                                             </Row>
                                             <Row className={"show-grid"}>
-                                                <Col md={5}>
+                                                <Col md={5} mdOffset={1}>
                                                     <TextField
                                                         id={"eventDescription"}
                                                         floatingLabelText="Event Description"
@@ -447,9 +521,38 @@ class Events extends Component {
                                         </StepContent>
                                     </Step>
                                     <Step>
-                                        <StepLabel>Assign Judges</StepLabel>
+                                        <StepLabel>Assign Existing Judges</StepLabel>
                                         <StepContent>
-                                            <h1>Hello judge</h1>
+                                            <Row>
+                                                <Col md={7}>
+                                                    <Alert bsStyle="info">
+                                                        Select an existing judge or move to next step to
+                                                        create new judges
+                                                    </Alert>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                              <Col md={7}>
+                                            <SelectField
+                                                multiple={true}
+                                                fullWidth={true}
+                                                autoWidth={true}
+                                                hintText="Existing judges"
+                                                value={this.state.existingJudgeValues}
+                                                onChange={this.judgeMenuClick}
+                                            >
+                                                {this.judgeMenuItems(this.state.existingJudgeValues)}
+                                            </SelectField>
+                                              </Col>
+                                            </Row>
+                                        </StepContent>
+                                    </Step>
+                                    <Step>
+                                        <StepLabel>Create New Judges</StepLabel>
+                                        <StepContent>
+                                            {this.state.judgeInputs}
+                                            <RaisedButton icon={<FontIcon className="pe-7s-angle-down-circle"/>} primary={true} label="Add new judge"
+                                                          onClick={this.addJudgeInputs}/>
                                         </StepContent>
                                     </Step>
                                 </Stepper>
@@ -466,6 +569,25 @@ class Events extends Component {
             </div>
         );
     }
+
+    //adds in the menu items for existing judges
+    judgeMenuItems = (existingJudgeValues) => {
+        if (this.state.existingJudgeEmails != null) {
+            return this.state.existingJudgeEmails.map((obj) => (
+                <MenuItem
+                    key={obj.emailAddress}
+                    insetChildren={true}
+                    targetOrigin={{horizontal:"right",vertical:"bottom"}}
+                    checked={existingJudgeValues && existingJudgeValues.indexOf(obj.emailAddress) > -1}
+                    value={obj.emailAddress}
+                    primaryText={obj.firstName + "     " + obj.lastName + "  --   "  +obj.emailAddress}
+                />
+            ));
+        }
+    }
+
+    //allows the check mark to be applied next to the selections
+    judgeMenuClick = (event, index, values) => this.setState({existingJudgeValues:values});
 }
 
 export default Events;
