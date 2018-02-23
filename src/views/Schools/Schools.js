@@ -348,7 +348,9 @@ class Schools extends Component {
             for(let value in this.state.schoolList) {
                 this.state.schoolList[value].formattedPhone = this.formatPhoneNumber(this.state.schoolList[value].schoolContactPhone);
                 this.state.schoolList[value].status = "edit";
-                this.state.schoolList[value].menuActions = <div><a style={{cursor:'pointer'}} onClick={this.openModal.bind(this,this.state.schoolList[value])}>Edit</a>&nbsp;&nbsp;&nbsp;<a style={{cursor:'pointer'}} onClick={this.confirmSchoolDelete.bind(this,this.state.schoolList[value])}>Delete</a></div>;
+                this.state.schoolList[value].menuActions = <div><RaisedButton
+                    primary={true} onClick={this.openModal.bind(this,this.state.schoolList[value])} label="Edit"/>&nbsp;&nbsp;&nbsp;<RaisedButton
+                    secondary={true} onClick={this.confirmSchoolDelete.bind(this,this.state.schoolList[value])} label="Delete"/></div>;
             }
 
             return(
