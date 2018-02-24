@@ -4,6 +4,9 @@ import sinon from 'sinon';
 import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
 
+/* Test Helpers */
+import helper from '../../../test/helpers/helper';
+
 //CHILDREN COMPONENTS OF COMPONENT IN TEST
 import AuthService from "../../containers/Login/AuthService";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -19,9 +22,6 @@ import Login from "./Login";
 describe('Login Component Tests', function () {
 
     const notify = sinon.spy();
-
-    //Test Data declarations
-    let chuckData;
 
     //Set up test data before running any tests
     beforeAll(function () {
@@ -95,8 +95,72 @@ describe('Login Component Tests', function () {
 
         expect(fakeRedirect.calledOnce).to.equal(true);
         expect(component.state().redirect).to.equal(true);
+
+        Login.prototype.handleClick.restore();
+        AuthService.login.restore();
     });
 
+    // Test 5
+    test('Should invoke handleClick(), check email (not provided), and updates state with message', async () => {
+
+        sinon.stub(AuthService, 'isLoggedIn').returns(false);
+
+        const component = shallow(<Login notify = {notify}/>);
+
+
+        expect(component.find(RaisedButton)).to.have.length(1);
+        expect(component.find(RaisedButton).simulate('click'));
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().emailRequired).to.equal("An email address is required.");
+        expect(component.state().passwordRequired).to.equal(undefined);
+    });
+
+    // Test 6
+    test('Should invoke handleClick(), check email (provided) & password (not provided), and update state with message', async () => {
+
+        sinon.stub(AuthService, 'isLoggedIn').returns(false);
+
+        const component = shallow(<Login notify = {notify}/>);
+
+        component.instance().setState({emailAddress: "HELLO@HELLO.COM"});
+        expect(component.find(RaisedButton)).to.have.length(1);
+        expect(component.find(RaisedButton).simulate('click'));
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().emailRequired).to.equal(undefined);
+        expect(component.state().passRequired).to.equal("Password is required.");
+    });
+
+    // Test 7
+    test('Should update state of emailAddress & password onChange of Text/Pass Fields', async () => {
+
+        sinon.stub(AuthService, 'isLoggedIn').returns(false);
+        sinon.stub(AuthService, 'login').rejects();
+
+        const component = shallow(<Login notify = {notify}/>);
+
+        var textField = component.find(TextField);
+        var passField = component.find(PasswordField);
+
+        expect(textField).to.have.length(1);
+        expect(passField).to.have.length(1);
+        expect(textField.simulate('change', {target: {value: 'email'}}, 'email'));
+        expect(passField.simulate('change', {target: {value: 'password'}}, 'password'));
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().emailRequired).to.equal(undefined);
+        expect(component.state().passRequired).to.equal(undefined);
+        expect(component.state().emailAddress).to.equal('email');
+        expect(component.state().password).to.equal('password');
+
+    });
 
     //GOOD EXAMPLE
     // const wrapper = shallow(<MyForm {...props}/>)
