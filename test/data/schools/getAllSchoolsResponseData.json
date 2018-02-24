@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "id":"5a87826425acab41344f08aa",
+      "schoolName":"Dallas",
+      "schoolContactName":"Seymour Skinner",
+      "schoolContactPhone":"15554343867"
+    },
+    {
+      "id":"5a87860d25acab41344f08ab",
+      "schoolName":"Hanover",
+      "schoolContactName":"Hal Jordan",
+      "schoolContactPhone":"15552984711"
+    }
+  ]
+}

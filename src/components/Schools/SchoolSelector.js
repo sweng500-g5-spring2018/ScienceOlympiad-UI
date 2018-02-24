@@ -11,7 +11,7 @@ class SchoolSelector extends React.Component {
 
         this.state = {
             errorMsg: this.props.errorMsg,
-            schoolList: {},
+            schoolList: [],
         }
 
     }
@@ -27,7 +27,6 @@ class SchoolSelector extends React.Component {
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', null, null).then(function (result) {
-            console.log(result)
             _this.setState({schoolList: _this.sortByKey(result.body, "schoolName")})
         }).catch(function (error) {
             console.log(error);
