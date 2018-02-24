@@ -138,6 +138,8 @@ describe('Login Component Tests', function () {
 
     // Test 7
     test('Should update state of emailAddress & password onChange of Text/Pass Fields', async () => {
+        const consoleSpy = sinon.spy();
+        console.log = consoleSpy;
 
         sinon.stub(AuthService, 'isLoggedIn').returns(false);
         sinon.stub(AuthService, 'login').rejects();
@@ -160,6 +162,62 @@ describe('Login Component Tests', function () {
         expect(component.state().emailAddress).to.equal('email');
         expect(component.state().password).to.equal('password');
 
+        expect(component.find(RaisedButton).simulate('click'));
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(consoleSpy.called).to.equal(true);
+        expect(notify.called).to.equal(true);
+        AuthService.login.restore();
+    });
+
+
+    // Test 7
+    test('Should update state of emailAddress & password onChange of Text/Pass Fields and attempt login', async () => {
+        //STUB: console logs in component and spy on them if called
+        const consoleSpy = sinon.spy();
+        console.log = consoleSpy;
+
+        //STUB: AuthService methods being run
+        sinon.stub(AuthService, 'isLoggedIn').returns(false);
+        sinon.stub(AuthService, 'login').rejects();
+
+        //RENDER component
+        const component = shallow(<Login notify = {notify}/>);
+
+        //FIND children components being rendered
+        var textField = component.find(TextField);
+        var passField = component.find(PasswordField);
+
+        //CHECK components found & simulate on change event
+        expect(textField).to.have.length(1);
+        expect(passField).to.have.length(1);
+        expect(textField.simulate('change', {target: {value: 'email'}}, 'email'));
+        expect(passField.simulate('change', {target: {value: 'password'}}, 'password'));
+
+        //FLUSH promises and update component
+        await helper.flushPromises();
+        component.update();
+
+        //CHECK that state has been successfully changed based on the simulated onchange events
+        expect(component.state().emailRequired).to.equal(undefined);
+        expect(component.state().passRequired).to.equal(undefined);
+        expect(component.state().emailAddress).to.equal('email');
+        expect(component.state().password).to.equal('password');
+
+        //CHECK that simulate on click of submit button is successful
+        expect(component.find(RaisedButton).simulate('click', {preventDefault: () => {}}));
+
+        //FLUSH promises and update component again
+        await helper.flushPromises();
+        component.update();
+
+        //CHECK that console.log was called AND notificiation called because the login attempt failed
+        expect(consoleSpy.called).to.equal(true);
+        expect(notify.called).to.equal(true);
+
+        AuthService.login.restore();
     });
 
     //GOOD EXAMPLE
