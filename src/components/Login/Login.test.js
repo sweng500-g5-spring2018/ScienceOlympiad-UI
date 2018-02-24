@@ -217,6 +217,19 @@ describe('Login Component Tests', function () {
         expect(consoleSpy.called).to.equal(true);
         expect(notify.called).to.equal(true);
 
+        //STUB AuthService.isLoggedIn to return true to set redirect state
+        AuthService.isLoggedIn.restore();
+        sinon.stub(AuthService, 'isLoggedIn').returns(true);
+
+        //CHECK that simulating another button click occurs
+        expect(component.find(RaisedButton).simulate('click', {preventDefault: () => {}}));
+
+        //FLUSH promises and update component again
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().redirect).to.equal(true);
+
         AuthService.login.restore();
     });
 
