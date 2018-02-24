@@ -219,7 +219,9 @@ describe('Login Component Tests', function () {
 
         //STUB AuthService.isLoggedIn to return true to set redirect state
         AuthService.isLoggedIn.restore();
+        AuthService.login.restore();
         sinon.stub(AuthService, 'isLoggedIn').returns(true);
+        sinon.stub(AuthService, 'login').resolves();
 
         //CHECK that simulating another button click occurs
         expect(component.find(RaisedButton).simulate('click', {preventDefault: () => {}}));
