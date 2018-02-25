@@ -97,6 +97,14 @@ export default class AuthService {
         }
     }
 
+    static isUserRoleAllowed(listOfAllowedRoles) {
+        if(listOfAllowedRoles && listOfAllowedRoles.length > 0){
+            return listOfAllowedRoles.indexOf(AuthService.getUserRole()) > -1;
+        }
+
+        return true;
+    }
+
     static revokeAuth(withAlert) {
         AuthService.revokeToken();
         AuthService.endSession();

@@ -3,7 +3,7 @@ import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import AuthService from "../../containers/Login/AuthService";
 
-class NotFound extends Component {
+class TestModule extends Component {
 
     constructor(props) {
         super(props);
@@ -115,4 +115,4 @@ class NotFound extends Component {
     }
 
 }
-export default NotFound;
+export default TestModule;
