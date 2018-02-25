@@ -43,7 +43,7 @@ class Schools extends Component {
             schoolNameRequired: '',
             schoolContactPhoneRequired: '',
             schoolContactNameRequired:'',
-            schoolList:{},
+            schoolList:[],
             _notificationSystem: null
 
         };
@@ -287,7 +287,7 @@ class Schools extends Component {
     }
 
     // Fetch a list of schools
-    componentDidMount() {
+    componentWillMount() {
         this.setState({_notificationSystem: this.refs.notificationSystem});
 
         //Make call out to backend
@@ -368,7 +368,7 @@ class Schools extends Component {
 
         }
         else
-            return("Error loading school list.")
+            return("ERROR LOADING SCHOOLS")
     }
 
     render() {

@@ -15,7 +15,7 @@ class Forgot extends Component {
         super(props);
 
         this.state = {
-            email: '',
+            email: ''
         }
 
         this.handleClick = this.handleClick.bind(this);
@@ -24,17 +24,18 @@ class Forgot extends Component {
     }
 
     handleClick(event) {
-        event.preventDefault();
 
         if(this.state.email.trim()) {
 
-            // received an email address
-
+            this.setState({
+                email: this.state.email.trim(),
+                emailRequired: null
+            })
 
         } else {
             this.setState({
                 email: this.state.email.trim(),
-                emailRequired: "Email address is required."
+                emailRequired: "An email address is required."
             })
         }
     }
