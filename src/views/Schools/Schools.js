@@ -390,26 +390,26 @@ class Schools extends Component {
             <MuiThemeProvider>
                 <div className="content">
                     <NotificationSystem ref="notificationSystem" style={style}/>
-                    <Grid fluid>
-                        <Row>
-                            <Col md={12}>
-                                <Card
-                                    title="Registered Schools"
-                                    category={
-                                        <div>These schools are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
-                                            <br/><br/>
-                                            <RaisedButton primary={true} label="Create a new school" onClick={this.openModal.bind(this,status)}/>
-                                        </div>}
-                                    ctTableFullWidth ctTableResponsive
-                                    content={
-                                        <Loader color="#3498db" loaded={this.state.loading}>
-                                            {this.renderIfSchoolsFound()}
-                                        </Loader>
-                                    }
-                                />
-                            </Col>
-                        </Row>
-                    </Grid>
+                        <Grid fluid>
+                            <Row>
+                                <Col md={12}>
+                                    <Card
+                                        style={{margin:10}}
+                                        title="Registered Schools"
+                                        category={
+                                            <div>These schools are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
+                                                <br/><br/>
+                                                <RaisedButton primary={true} label="Create a new school" onClick={this.openModal.bind(this,status)}/>
+                                            </div>}
+                                        ctTableFullWidth ctTableResponsive
+                                        content={
+                                    <Loader color="#3498db" loaded={this.state.loading}>
+                                        {this.renderIfSchoolsFound()}
+                                    </Loader>
+                                    }/>
+                                </Col>
+                            </Row>
+                         </Grid>
                     <Modal show={this.state.modal} onHide={this.closeModal}>
                         <Modal.Header>
                             <Modal.Title> <AppBar

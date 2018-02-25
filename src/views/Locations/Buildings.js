@@ -395,14 +395,14 @@ class Buildings extends Component {
                             <Row>
                                 <Col md={12}>
                                     <Card
-                                    title="Registered Buildings"
-                                    category={
-                                        <div>These locations are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
-                                        <br/><br/>
-                                         <RaisedButton primary={true} label="Add a new building" onClick={this.openModal.bind(this,status)}/>
-                                        </div>}
-                                    ctTableFullWidth ctTableResponsive
-                                    content={
+                                        title="Registered Buildings"
+                                        category={
+                                            <div>These locations are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
+                                                <br/><br/>
+                                                <RaisedButton primary={true} label="Add a new building" onClick={this.openModal.bind(this,status)}/>
+                                            </div>}
+                                        ctTableFullWidth ctTableResponsive
+                                        content={
                                     <Loader color="#3498db" loaded={this.state.loading}>
                                         {this.renderIfBuildingsFound()}
                                     </Loader>
