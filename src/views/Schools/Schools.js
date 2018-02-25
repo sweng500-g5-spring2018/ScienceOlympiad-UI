@@ -390,88 +390,88 @@ class Schools extends Component {
             <MuiThemeProvider>
                 <div className="content">
                     <NotificationSystem ref="notificationSystem" style={style}/>
-                    <Grid fluid>
-                    <Row>
-                        <Col md={12}>
-                            <Card
-                                title="Registered Schools"
-                                category={
-                                    <div>These schools are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
-                                        <br/><br/>
-                                    <RaisedButton primary={true} label="Create a new school" onClick={this.openModal.bind(this,status)}/>
-                                    </div>}
-                                ctTableFullWidth ctTableResponsive
-                                content={
+                        <Grid fluid>
+                            <Row>
+                                <Col md={12}>
+                                    <Card
+                                        style={{margin:10}}
+                                        title="Registered Schools"
+                                        category={
+                                            <div>These schools are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
+                                                <br/><br/>
+                                                <RaisedButton primary={true} label="Create a new school" onClick={this.openModal.bind(this,status)}/>
+                                            </div>}
+                                        ctTableFullWidth ctTableResponsive
+                                        content={
                                     <Loader color="#3498db" loaded={this.state.loading}>
                                         {this.renderIfSchoolsFound()}
                                     </Loader>
-                                }
+                                    }/>
+                                </Col>
+                            </Row>
+                         </Grid>
+                    <Modal show={this.state.modal} onHide={this.closeModal}>
+                        <Modal.Header>
+                            <Modal.Title> <AppBar
+                                iconElementRight={<FlatButton label="Close"/>}
+                                showMenuIconButton={false}
+                                onRightIconButtonClick={(event) => this.closeModal()}
+                                title={this.state.modalTitle}
+                            /></Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <TextField
+                                id={"schoolName"}
+                                floatingLabelText="School Name"
+                                onChange={(event, newValue) => this.setState({schoolName: newValue})}
+                                value={this.state.schoolName}
+                                required={true}
+                                autoFocus={true}
+                                fullWidth={true}
+                                hintText="Enter a name for the school"
+                                errorText={this.state.schoolNameRequired}
                             />
-                        </Col>
-                    </Row>
-                </Grid>
-                <Modal show={this.state.modal} onHide={this.closeModal}>
-                    <Modal.Header>
-                        <Modal.Title> <AppBar
-                            iconElementRight={<FlatButton label="Close"/>}
-                            showMenuIconButton={false}
-                            onRightIconButtonClick={(event) => this.closeModal()}
-                            title={this.state.modalTitle}
-                        /></Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <TextField
-                            id={"schoolName"}
-                            floatingLabelText="School Name"
-                            onChange={(event, newValue) => this.setState({schoolName: newValue})}
-                            value={this.state.schoolName}
-                            required={true}
-                            autoFocus={true}
-                            fullWidth={true}
-                            hintText="Enter a name for the school"
-                            errorText={this.state.schoolNameRequired}
-                        />
-                        <br/>
-                        <TextField
-                            id={"schoolContactName"}
-                            floatingLabelText="Contact Name"
-                            onChange={(event, newValue) => this.setState({schoolContactName: newValue})}
-                            value={this.state.schoolContactName}
-                            required={true}
-                            fullWidth={true}
-                            hintText="Enter a first and last name for the school contact"
-                            errorText={this.state.schoolContactNameRequired}
-                        />
-                        <br/>
-                        <TextField
-                            id={"schoolContactPhone"}
-                            floatingLabelText="Phone Number"
-                            onChange={(event, newValue) => this.setState({schoolContactPhone: newValue})}
-                            value={this.state.schoolContactPhone}
-                            required={true}
-                            fullWidth={true}
-                            hintText="Enter the school's phone numer"
-                            errorText={this.state.schoolContactPhoneRequired}
-                        >
-                            <InputMask mask="1 (999) 999-9999" maskChar="#" value={this.state.schoolContactPhone}/>
-                        </TextField>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} primary={true} label="Cancel"
-                                      onClick={this.closeModal}/>&nbsp;&nbsp;
-                        <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label={this.state.modalButton}
-                                      onClick={this.handleSubmit}/>
-                    </Modal.Footer>
-                </Modal>
-                <Dialog
-                    actions={actions}
-                    modal={false}
-                    open={this.state.confirmDialog}
-                    onRequestClose={this.closeConfirmDialog}
-                >
-                    {this.state.confirmMessage}
-                </Dialog>
-            </div>
+                            <br/>
+                            <TextField
+                                id={"schoolContactName"}
+                                floatingLabelText="Contact Name"
+                                onChange={(event, newValue) => this.setState({schoolContactName: newValue})}
+                                value={this.state.schoolContactName}
+                                required={true}
+                                fullWidth={true}
+                                hintText="Enter a first and last name for the school contact"
+                                errorText={this.state.schoolContactNameRequired}
+                            />
+                            <br/>
+                            <TextField
+                                id={"schoolContactPhone"}
+                                floatingLabelText="Phone Number"
+                                onChange={(event, newValue) => this.setState({schoolContactPhone: newValue})}
+                                value={this.state.schoolContactPhone}
+                                required={true}
+                                fullWidth={true}
+                                hintText="Enter the school's phone numer"
+                                errorText={this.state.schoolContactPhoneRequired}
+                            >
+                                <InputMask mask="1 (999) 999-9999" maskChar="#" value={this.state.schoolContactPhone}/>
+                            </TextField>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} primary={true} label="Cancel"
+                                          onClick={this.closeModal}/>&nbsp;&nbsp;
+                            <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label={this.state.modalButton}
+                                          onClick={this.handleSubmit}/>
+                        </Modal.Footer>
+                    </Modal>
+                    <Dialog
+                        actions={actions}
+                        modal={false}
+                        open={this.state.confirmDialog}
+                        onRequestClose={this.closeConfirmDialog}
+                    >
+                        {this.state.confirmMessage}
+                    </Dialog>
+                </div>
             </MuiThemeProvider>
         );
     }
