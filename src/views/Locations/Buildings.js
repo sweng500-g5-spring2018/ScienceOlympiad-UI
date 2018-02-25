@@ -86,9 +86,6 @@ class Buildings extends Component {
     // Open the modal
     openModal = (mode) => {
 
-        console.log(mode);
-        console.log(mode['latitude']);
-
         // Change from add to edit mode
         if (mode.status === "add")
         {
@@ -111,8 +108,8 @@ class Buildings extends Component {
                 modalAction: 'edit',
                 modalTitle: "Edit Building",
                 modalButton: "Update Building",
-                latitude: this.state.buildingList[mode.position].latitude,
-                longitude: this.state.buildingList[mode.position].longitude,
+                latitude: mode.lat,
+                longitude: mode.lng,
                 building: mode.building,
                 buildingID: mode.id,
                 buildingRequired: '',
