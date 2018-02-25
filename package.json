@@ -53,6 +53,9 @@
   },
   "jest-junit": {
     "output": "./coverage/junit/junit.xml",
-    "classNameTemplate": "{filepath}"
+    "classNameTemplate": "{filepath}",
+    "globals": {
+      "window": true
+    }
   }
 }

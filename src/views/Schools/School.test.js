@@ -10,17 +10,11 @@ import helper from '../../../test/helpers/helper';
 import HttpRequest from '../../adapters/httpRequest';
 import constants from '../../utils/constants';
 import Card from '../../components/Card/Card.js';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import AppBar from 'material-ui/AppBar';
-import Loader from 'react-loader'
 import {Grid, Col, Row, Modal} from 'react-bootstrap';
 
 /* Component under test */
 import Schools from './Schools';
-import ReactTable from 'react-table';
-import SelectField from "material-ui/SelectField/index";
 
 describe('School Component Tests', function () {
 
@@ -111,7 +105,5 @@ describe('School Component Tests', function () {
 
         expect(component.find(TextField)).to.have.length(3);
     });
-
-
 
 });
