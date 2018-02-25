@@ -60,7 +60,8 @@ class Header extends Component{
             <Navbar fluid>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a href="#pablo">{this.getBrand()}</a>
+                        {/*<a href="#">{this.getBrand()}</a>*/}
+                        <div>{this.getBrand()}</div>
                     </Navbar.Brand>
                     <Navbar.Toggle onClick={this.mobileSidebarToggle}/>
                 </Navbar.Header>
