@@ -6,6 +6,7 @@ import {
     Redirect
 } from 'react-router-dom';
 import AuthenticatedRoute from  '../../routes/AuthenticatedRoute';
+import AuthService from '../Login/AuthService';
 
 
 import Header from '../../components/Header/Header';
@@ -94,6 +95,13 @@ class App extends Component {
                                             return (
                                                 <Redirect from={prop.path} to={prop.to} key={key}/>
                                             );
+
+                                        //DO NOT RENDER ROUTE IF USER DOES NOT HAVE ACCESS
+                                        if(prop.users) {
+                                            if(!AuthService.isUserRoleAllowed(prop.users)) {
+                                                return;
+                                            }
+                                        }
                                         return (
                                             <AuthenticatedRoute path={prop.path} component={prop.component} key={key} notify={this.notify}/>
                                         );
