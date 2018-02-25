@@ -14,7 +14,6 @@ import MenuItem from 'material-ui/MenuItem';
 
 /* Component under test */
 import SchoolSelector from "./SchoolSelector";
-import Login from "../Login/Login";
 
 describe('School Selector Component Tests', function () {
 

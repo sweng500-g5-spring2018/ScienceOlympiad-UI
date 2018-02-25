@@ -197,36 +197,6 @@ class Signup extends React.Component {
         } // Form page 2
         else if (stepIndex === 1) {
 
-            // Checks for blank password
-            if (this.state.password.trim()) {
-                this.setState({
-                    password: this.state.password.trim(),
-                    passwordRequired: undefined
-                })
-            }
-            else {
-                this.setState({
-                    password: this.state.password.trim(),
-                    passwordRequired: "A password is required."
-                })
-                missingInfo = true;
-            }
-
-            // Checks for blank confirmation password
-            if (this.state.confirm.trim()) {
-                this.setState({
-                    confirm: this.state.confirm.trim(),
-                    confirmRequired: undefined
-                })
-            }
-            else {
-                this.setState({
-                    confirm: this.state.confirm.trim(),
-                    confirmRequired: "A password confirmation is required."
-                })
-                missingInfo = true;
-            }
-
             // Checks to see if the passwords are equal to each other
             if (this.state.password.trim() !== this.state.confirm.trim()) {
                 this.setState({
