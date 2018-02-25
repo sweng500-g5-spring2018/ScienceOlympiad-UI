@@ -82,6 +82,7 @@ class Login extends Component {
                             <AppBar showMenuIconButton={false} title="Login"/>
                             <TextField
                                 name={"email"}
+                                type="Email Address"
                                 hintText="Enter your email address"
                                 errorText={this.state.emailRequired}
                                 floatingLabelText="Email Address"

@@ -66,7 +66,7 @@ class App extends Component {
             title: (<span data-notify="icon" className="pe-7s-gift"></span>),
             message: (
                 <div>
-                    Welcome to <b>Science Olympiad Dashboard</b> - a central hub for Science Olympiad Compititions.
+                    Welcome to <b>Science Olympiad Dashboard</b> - a central hub for Science Olympiad Competitions.
                 </div>
             ),
             level: level,
