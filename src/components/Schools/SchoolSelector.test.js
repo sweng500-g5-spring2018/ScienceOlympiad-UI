@@ -14,6 +14,9 @@ import MenuItem from 'material-ui/MenuItem';
 
 /* Component under test */
 import SchoolSelector from "./SchoolSelector";
+import RaisedButton from "material-ui/RaisedButton/index";
+import AuthService from "../../containers/Login/AuthService";
+import TextField from "material-ui/TextField/index";
 
 describe('School Selector Component Tests', function () {
 
@@ -64,5 +67,17 @@ describe('School Selector Component Tests', function () {
         SchoolSelector.prototype.componentWillMount.restore();
     });
 
+    // Test 3
+    test('Test that props updates', async () => {
 
+        const component = shallow(<SchoolSelector errorMsg={"error"} />);
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        component.setProps({ "errorMsg":"error2" });
+
+        expect(component.state().errorMsg).to.equal("error2");
+    });
 });
