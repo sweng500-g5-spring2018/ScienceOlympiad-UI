@@ -47,6 +47,7 @@ class SchoolSelector extends React.Component {
         if (Object.keys(this.state.schoolList).length !== 0) {
             return (
                 <SelectField
+                    name={"schools"}
                     hintText={this.props.hintText}
                     errorText={this.state.errorMsg}
                     floatingLabelText={this.props.labelText}

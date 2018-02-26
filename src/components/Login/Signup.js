@@ -369,6 +369,7 @@ class Signup extends React.Component {
                                     <Row className="show-grid">
                                         <Col xs={7} md={3}>
                                             <PasswordField
+                                                name={"password"}
                                                 type="password"
                                                 hintText="Enter your password"
                                                 errorText={this.state.passwordRequired}
@@ -380,6 +381,7 @@ class Signup extends React.Component {
                                         </Col>
                                         <Col xs={7} md={3}>
                                             <PasswordField
+                                                name={"confirm"}
                                                 type="password"
                                                 hintText="Confirm your password"
                                                 errorText={this.state.confirmRequired}

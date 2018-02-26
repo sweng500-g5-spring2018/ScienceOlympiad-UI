@@ -15,6 +15,7 @@ import {Grid, Col, Row, Modal} from 'react-bootstrap';
 
 /* Component under test */
 import Schools from './Schools';
+import AuthService from "../../containers/Login/AuthService";
 
 describe('School Component Tests', function () {
 
@@ -29,12 +30,20 @@ describe('School Component Tests', function () {
         )
 
         //STUB: Constants function used as argument to HttpRequest
-        sinon.stub(constants, 'getServerUrl').returns("wow tests are stupid");
+        sinon.stub(constants, 'getServerUrl').returns("wow tests are stupid")
     })
 
+    afterEach(function () {
+        //Always unstub AuthService.isLoggedIn() in case we want it to return different values
+        AuthService.isLoggedIn.restore();
+    })
 
     // Test 1
     test('Should render school when data is fetched', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+
         const component = shallow(<Schools />);
 
         //Wait for setState's to finish and re-render component
@@ -47,6 +56,9 @@ describe('School Component Tests', function () {
 
     // Test 2
     test('Should not render schools when no schools are found', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
 
         //STUB: componentWillMount so that no content is fetched
         sinon.stub(Schools.prototype, 'componentWillMount').returns(true);
@@ -66,6 +78,9 @@ describe('School Component Tests', function () {
     // Test 3
     test('Test to render the modal', async () => {
 
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+
         const component = shallow(<Schools />);
 
         //Wait for setState's to finish and re-render component
@@ -78,6 +93,9 @@ describe('School Component Tests', function () {
 
     // Test 4
     test('Test add school modal renders 3 TextFields', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
 
         const component = shallow(<Schools />);
 
@@ -93,6 +111,9 @@ describe('School Component Tests', function () {
 
     // Test 5
     test('Test edit school modal renders 3 TextFields', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
 
         const component = shallow(<Schools />);
 
