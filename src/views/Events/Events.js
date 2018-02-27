@@ -37,6 +37,7 @@ class Events extends Component {
         this.closeModal = this.closeModal.bind(this);
         this.createNewEvent = this.createNewEvent.bind(this);
         this.createEventPost = this.createEventPost.bind(this);
+        this.removeEvent=this.removeEvent.bind(this);
         this.nextStep = this.nextStep.bind(this);
         this.previousStep = this.previousStep.bind(this);
         this.eventDetails = this.eventDetails.bind(this);
@@ -62,24 +63,67 @@ class Events extends Component {
 
             judgeCount :0,
             existingJudgeValues:[],
-            existingJudgeEmails:[]
+            existingJudgeEmails:[],
+            newJudgeFnameErr:''
 
         };
     }
 
     //launch the modal to enter an event
     createNewEvent() {
-        console.log("got here");
-        //alert("create");
         this.setState({
             modal: true
         })
     }
 
     createEventPost() {
-        alert(this.state.eventName + " --- " + this.state.eventDate);
-        alert("make ajax call to create the event from the fields");
+        var _this = this;
+        var body ={};
+        var newJudges ={};
+        var gatherjudges = {};
+        var newJudgeList=[];
+        var i;
+        for(i = 1; i <= this.state.judgeCount;i++) {
+            var tempFname = "#judgefname" +i;
+            var tempLname = "#judgelname" +i;
+            var tempEmail = "#judgemail" +i;
+           // alert($(tempFname).val() + "     " + $(tempLname).val() +  "     " + $(tempEmail).val());
+            gatherjudges.fname=$(tempFname).val();
+            gatherjudges.lname=$(tempLname).val();
+            gatherjudges.email=$(tempEmail).val();
+
+            newJudgeList.push(gatherjudges);
+            gatherjudges={};
+
+        }
+       // newJudges.newjudges= newJudgeList;
+        //alert(newJudges);
+        var event ={};
+
+        event.name = this.state.eventName;
+        event.description = this.state.eventDescription;
+        event.eventDate = this.state.eventDate;
+        event.startTime = this.state.startTime;
+        event.endTime = this.state.endTime;
+
+        //the actual string
+        body.eventJson = event;
+        body.existingJudgeValues= this.state.existingJudgeValues;
+        body.newJudgeValues= newJudgeList;
+        console.log(JSON.stringify(body));
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/addEvent/", "POST", constants.useCredentials(), body).then(function (result) {
+            //console.log(result.state);
+                //eventually add notification system
+                alert("The event was added!");
+            _this.componentDidMount();
+
+        }).catch(function (error) {
+            alert("There was a problem creating the event")
+            console.log(error);
+        })
         //show some success and then clear the fields
+        //TODO refresh after an add to show new event in table
+       // _this.componentDidMount();
         this.setState({
             modal: false,
             stepIndex: 0,
@@ -90,10 +134,14 @@ class Events extends Component {
             eventDate: '',
             startTime: '',
             endTime: '',
-
+            judgeInputs : [],
+            judgeCount :0,
+            existingJudgeValues:[],
+            existingJudgeEmails:[],
             renderDetails : false
 
         })
+
     }
 
     closeModal() {
@@ -157,16 +205,19 @@ class Events extends Component {
                     endTimeError: undefined
                 })
             }
+            /** COMMENT OUT FOR NOW, need to add building
             if (this.state.eventLocation.length < 1) {
                 missingInfo = true;
                 this.setState({
                     eventLocationError: "Event description is required"
                 })
-            } else {
+            }
+             else {
                 this.setState({
                     eventLocationError: undefined
                 })
             }
+             */
             if (this.state.eventDescription.length < 1) {
                 missingInfo = true;
                 this.setState({
@@ -182,7 +233,7 @@ class Events extends Component {
 
                 _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null).then(function (result) {
                     console.log("verify event");
-                    alert(result.status);
+                   // alert(result.status);
                     _this.setState({
                         stepIndex: stepIndex + 1
                     })
@@ -195,6 +246,7 @@ class Events extends Component {
                 })
             }
         } else if(stepIndex == 1) {
+            //alert(this.state.existingJudgeValues);
             _this.setState({
                 stepIndex: stepIndex + 1
             })
@@ -236,7 +288,19 @@ class Events extends Component {
     }
 
     removeEvent(eventId) {
-        alert("Removing " + eventId);
+        var _this = this;
+        //just making remove a post for now
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/removeEvent/" + eventId, "post", constants.useCredentials(), null).then(function (result) {
+
+            alert("Removed the event!");
+            _this.componentDidMount();
+        }).catch(function (error) {
+            _this.setState({
+                eventNameError: "Event Name already exists"
+            });
+            console.log(error);
+        })
+
     }
 
     //dynamically add in new input fields when clicked
@@ -244,14 +308,15 @@ class Events extends Component {
         //get a local copy so we dont set state here and re-render, update state after
         this.judgeCnt = this.state.judgeCount;
         this.judgeCnt++;
-        alert(this.judgeCnt);
+       // alert(this.judgeCnt);
         const newproperties = [
                 {
                     id:"judgefname"+this.judgeCnt,
                     label : "First Name",
                     type : "text",
                     bsClass : "form-control",
-                    placeholder : "",
+                    placeholder : "First Name",
+                    errorText: this.state.newJudgeFnameErr,
                     defaultValue : "",
                 },
         {
@@ -486,20 +551,6 @@ class Events extends Component {
                                                 </Col>
                                             </Row>
                                             <Row className={"show-grid"}>
-                                                <Col md={5} mdOffset={1} xs={7}>
-                                                    <SelectField
-                                                        floatingLabelText="Event Location"
-                                                        value={this.state.eventLocation}
-                                                        onChange={(event, newValue) => this.setState({eventLocation: newValue})}
-                                                        fullWidth={true}
-                                                    >
-                                                        <MenuItem value={5} primaryText="Testing" />
-                                                    </SelectField>
-
-                                                </Col>
-
-                                            </Row>
-                                            <Row className={"show-grid"}>
                                                 <Col md={5} mdOffset={1}>
                                                     <TextField
                                                         id={"eventDescription"}
@@ -524,7 +575,7 @@ class Events extends Component {
                                         <StepLabel>Assign Existing Judges</StepLabel>
                                         <StepContent>
                                             <Row>
-                                                <Col md={7}>
+                                                <Col md={7} xs={5}>
                                                     <Alert bsStyle="info">
                                                         Select an existing judge or move to next step to
                                                         create new judges
@@ -532,7 +583,7 @@ class Events extends Component {
                                                 </Col>
                                             </Row>
                                             <Row>
-                                              <Col md={7}>
+                                              <Col md={7} xs={5}>
                                             <SelectField
                                                 multiple={true}
                                                 fullWidth={true}
@@ -575,11 +626,11 @@ class Events extends Component {
         if (this.state.existingJudgeEmails != null) {
             return this.state.existingJudgeEmails.map((obj) => (
                 <MenuItem
-                    key={obj.emailAddress}
+                    key={obj.id}
                     insetChildren={true}
                     targetOrigin={{horizontal:"right",vertical:"bottom"}}
-                    checked={existingJudgeValues && existingJudgeValues.indexOf(obj.emailAddress) > -1}
-                    value={obj.emailAddress}
+                    checked={existingJudgeValues && existingJudgeValues.indexOf(obj.id) > -1}
+                    value={obj.id}
                     primaryText={obj.firstName + "     " + obj.lastName + "  --   "  +obj.emailAddress}
                 />
             ));
