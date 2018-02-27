@@ -264,7 +264,7 @@ class Schools extends Component {
                             6
                         );
 
-                        _this.componentWillMount();
+                        _this.componentWDidMount();
 
                     }
 
@@ -287,7 +287,7 @@ class Schools extends Component {
     }
 
     // Fetch a list of schools
-    componentWillMount() {
+    componentDidMount() {
         this.setState({_notificationSystem: this.refs.notificationSystem});
 
         //Make call out to backend
