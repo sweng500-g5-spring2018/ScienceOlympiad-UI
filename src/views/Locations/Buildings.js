@@ -144,6 +144,9 @@ class Buildings extends Component {
         var id = this.state.deleteID;
         var _this = this;
 
+
+        console.log(constants.useCredentials())
+
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/removeBuilding/' + id, 'DELETE', constants.useCredentials(), null).then(function (result) {
             console.log(result);
 
