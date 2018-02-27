@@ -40,7 +40,7 @@
     "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js",
     "test": "react-scripts test --env=jsdom",
-    "test:ci": "CI=true react-scripts test --testResultsProcessor ./node_modules/jest-junit",
+    "test:ci": "CI=true react-scripts test --env=jsdom --testResultsProcessor ./node_modules/jest-junit",
     "test:coverage": "npm run test -- --coverage",
     "eject": "react-scripts eject"
   },
