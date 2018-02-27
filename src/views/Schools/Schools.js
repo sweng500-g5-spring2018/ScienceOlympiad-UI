@@ -264,7 +264,7 @@ class Schools extends Component {
                             6
                         );
 
-                        _this.componentDidMount();
+                        _this.componentWillMount();
 
                     }
 
