@@ -44,11 +44,11 @@ class Signup extends React.Component {
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', null, null).then(function (result) {
-            console.log(result);
+
             _this.state.schoolList = result.body;
 
         }).catch(function (error) {
-            console.log(error);
+
         })
     }
 
@@ -155,7 +155,7 @@ class Signup extends React.Component {
                     body.emailAddress = this.state.emailAddress;
 
                     _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body ).then(function (result) {
-                        console.log(result);
+
 
                         _this.setState({
                             emailAddress: _this.state.emailAddress.trim(),
@@ -171,7 +171,7 @@ class Signup extends React.Component {
                         }
 
                     }).catch(function (error) {
-                        console.log(error);
+
 
                         if (_this.state.httpResponse.status !== 200)
                             missingInfo = true;
@@ -270,13 +270,11 @@ class Signup extends React.Component {
 
 
                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH&schoolID=' + _this.state.school, 'POST', null, body ).then(function (result) {
-                    console.log(result);
 
                     if (result.status === 200)
                         _this.setState({accountMessage: "Congratulations! Your account has been created. Please return to the login screen."})
 
                 }).catch(function (error) {
-                    console.log(error);
 
                     _this.setState({accountMessage:"There was an error creating your account. Please try again later."})
 
