@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
     Grid, Row, Col,
     FormGroup, ControlLabel, FormControl
@@ -14,63 +15,94 @@ import avatar from "../../assets/img/faces/face-0.jpg";
 import {TextField} from "material-ui";
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
+import AuthService from "../../containers/Login/AuthService";
+import NotificationSystem from 'react-notification-system';
+import {style} from "../../variables/Variables";
+
 
 class UserProfile extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.handleChange = this.handleChange.bind(this);
         this.updateProfile = this.updateProfile.bind(this);
         this.changePassword = this.changePassword.bind(this);
         this.validPassword = this.validPassword.bind(this);
 
         this.state = {
-            id                  : "id12034",
-            firstName           : "Kyle",
-            lastName            : "Kevin",
-            emailAddress        : "KyleKevin@momsbasement.com",
-            phoneNumber         : "18005263277",
-            receiveText         : true,
-            minutesBeforeEvent  : 10
+            user : {},
+            _notificationSystem : null,
+            currentPassword : "",
+            newPassword : "",
+            confirmNewPassword : ""
         }
+
     }
 
-    handleChange(e) {
-        this.setState({ receiveText: !this.state.receiveText });
+    componentWillMount() {
+        var _this = this;
+        //This is good shit to remember for later
+            // AuthService.getUserEmail();
+            // AuthService.getUserRole();
+        //This sends our credentials in the header
+
+        HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getUserProfile', 'GET',
+            constants.useCredentials(), null).then(function (result) {
+                console.log(result);
+                _this.setState({
+                    user: result.body
+                })
+
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    componentDidMount() {
+        this.setState({_notificationSystem: this.refs.notificationSystem});
+    }
+
+    notify(message, level, position, autoDismiss) {
+        this.state._notificationSystem.addNotification({
+            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
+            message: (
+                <div>
+                    {message}
+                </div>
+            ),
+            level: level ? level : 'error',
+            position: position ? position : 'tc',
+            autoDismiss: autoDismiss ? autoDismiss : 10,
+        });
     }
 
     updateProfile(e) {
         var body = {};
         var _this = this;
 
-        body.firstName = this.state.firstName;
-        body.lastName = this.state.lastName;
-        body.emailAddress = this.state.emailAddress;
-        body.phoneNumberString = this.state.phoneNumber;
-        body.password = this.state.password;
-        body.receiveText = this.state.receiveText;
-        body.minutesBeforeEvent = this.state.minutesBeforeEvent;
-
+        body.user = this.state.user;
 
         if (this.state.password !== "") {
             //check to ensure the password matches
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate?_id=' + this.state.id, 'POST', null, body).then(function (result) {
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate?_id=' +
+                this.state.id, 'POST', null, body).then(function (result) {
 
                 if (result.status === 200) {
-                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser?_id=' + this.state.id, 'POST', null, body).then(function (result) {
+                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser?_id=' +
+                        this.state.id, 'POST', null, body).then(function (result) {
+
                         console.log(result);
 
                         if (result.status === 200) {
                             //use the app.notify to put something on the screen
-                            this.props.notify(
+                            this.notify(
                                 "Profile Successfully Updated",
                                 "success",
                                 "tc",
                                 5
                             )
                         }else if(result.status === 409) {
-                            this.props.notify(
+                            this.notify(
                                 "Could not update",
                                 "error",
                                 "tc",
@@ -82,7 +114,7 @@ class UserProfile extends React.Component {
                         console.log(error);
                     })
                 } else if(result.status === 401) {
-                    this.props.notify(
+                    this.notify(
                         "Incorrect password",
                         "error",
                         "tc",
@@ -94,7 +126,7 @@ class UserProfile extends React.Component {
                 console.log(error);
             })
         } else {
-            this.props.notify(
+            this.notify(
                 "Enter your current password",
                 "error",
                 "tc",
@@ -137,14 +169,14 @@ class UserProfile extends React.Component {
                                 console.log(result);
 
                                 if (result.status === 200) {
-                                    this.props.notify(
+                                    this.notify(
                                         "Password Changed",
                                         "success",
                                         "tc",
                                         5
                                     )
                                 }else if(result.status === 409) {
-                                    this.props.notify(
+                                    this.notify(
                                         "Could not update",
                                         "error",
                                         "tc",
@@ -156,7 +188,7 @@ class UserProfile extends React.Component {
                                 console.log(error);
                             })
                         } else if (result.status === 401) {
-                            this.props.notify(
+                            this.notify(
                                 "Incorrect current password",
                                 "error",
                                 "tc",
@@ -168,7 +200,7 @@ class UserProfile extends React.Component {
                     })
                 } else {
                     //put up a notify
-                    this.props.notify(
+                    this.notify(
                         "ERROR: Your password must be 8 or more characters, contain capital letters, lower case letters, and at least one number.",
                         "error",
                         "tc",
@@ -177,7 +209,7 @@ class UserProfile extends React.Component {
                 }
             } else {
                 //put up a notify
-                this.props.notify(
+                this.notify(
                     "New passwords do not match",
                     "error",
                     "tc",
@@ -193,6 +225,7 @@ class UserProfile extends React.Component {
     render() {
         return (
             <div className="content">
+                <NotificationSystem ref="notificationSystem" style={style}/>
                 <Grid fluid>
                     <Row>
                         {/*<Col md={4}>*/}
@@ -242,7 +275,7 @@ class UserProfile extends React.Component {
                                                     bsClass : "form-control",
                                                     placeholder : "Email",
                                                     defaultValue : "KyleKevin@momsbasement.com",
-                                                    value : this.state.emailAddress,
+                                                    value : this.state.user.emailAddress ? this.state.user.emailAddress : "",
                                                     disabled: true
                                                 }
                                             ]}
@@ -255,18 +288,20 @@ class UserProfile extends React.Component {
                                                     type : "text",
                                                     bsClass : "form-control",
                                                     placeholder : "First name",
-                                                    value : this.state.firstName,
-                                                    onChange : (event, newValue) => {this.setState({ firstName: newValue })},
-                                                    defaultValue : "Kyle"
+                                                    value : this.state.user.firstName,
+                                                    onChange : (event, newValue) => {var ryanRocks = this.state.user;
+                                                        ryanRocks.firstName = event.target.value;
+                                                        this.setState({user : ryanRocks})}
                                                 },
                                                 {
                                                     label : "Last name",
                                                     type : "text",
                                                     bsClass : "form-control",
                                                     placeholder : "Last name",
-                                                    value : this.state.lastName,
-                                                    onChange : (event, newValue) => {this.setState({ lastName: newValue })},
-                                                    defaultValue : "Kevin"
+                                                    value : this.state.user.lastName ? this.state.user.lastName : "",
+                                                    onChange : (event, newValue) => {var ryanRocks = this.state.user;
+                                                        ryanRocks.lastName = event.target.value;
+                                                        this.setState({user : ryanRocks})}
                                                 }
                                             ]}
                                         />
@@ -278,29 +313,34 @@ class UserProfile extends React.Component {
                                                     type: "text",
                                                     bsClass: "form-control",
                                                     placeholder: "Phone Number",
-                                                    defaultValue: "+1-555-555-5555",
-                                                    onChange : (event, newValue) => {this.setState({ phoneNumber: newValue })},
-                                                    value : this.state.phoneNumber
+                                                    onChange : (event, newValue) => {var ryanRocks = this.state.user;
+                                                        ryanRocks.phone = event.target.value;
+                                                        this.setState({user : ryanRocks})},
+                                                    value : this.state.user.phoneNumber //? this.state.user.phoneNumber : ""
                                                 },
                                                 {
                                                     label : "Receive Texts",
                                                     type : "checkbox",
                                                     bsClass : "form-control",
-                                                    placeholder : "Receive Text Messages",
-                                                    checked: this.state.receiveText ? 'checked' : '',
-                                                    onChange : event => {this.setState({ receiveText: !this.state.receiveText })},
-                                                    value: this.state.receiveText
+                                                    placeholder : "Receive Texts",
+                                                    checked: this.state.user.receiveText ? 'checked' : '',
+                                                    onChange : (event, newValue) => {var ryanRocks = this.state.user;
+                                                        console.log(event.target.value);
+                                                        ryanRocks.receiveText = event.target.value;
+                                                        this.setState({user : ryanRocks})},
+                                                    // onChange : event => {this.setState({ receiveText: !this.state.user.receiveText })},
+                                                    value: this.state.user.receiveText
                                                 },
                                                 {
-                                                    ref : "Time Before Event",
                                                     label : "Time Before Event",
                                                     type : "number",
                                                     bsClass : "form-control",
                                                     placeholder : "Time Before Event",
                                                     tooltip : "Time before event to receive test, in minutes",
-                                                    value : this.state.minutesBeforeEvent,
-                                                    onChange : (event, newValue) => {this.setState({ minutesBeforeEvent: newValue })},
-                                                    defaultValue : 10
+                                                    value : this.state.user.minutesBeforeEvent,
+                                                    onChange : (event, newValue) => {var ryanRocks = this.state.user;
+                                                        ryanRocks.minutesBeforeEvent = event.target.value;
+                                                        this.setState({user : ryanRocks})}
                                                 }
                                             ]}
                                         />
@@ -395,13 +435,13 @@ class UserProfile extends React.Component {
                                 }
                             />
                         </Col>
-
-
                     </Row>
                 </Grid>
             </div>
         );
     }
 }
+
+
 
 export default UserProfile;
