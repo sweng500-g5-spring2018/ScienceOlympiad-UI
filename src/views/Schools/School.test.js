@@ -190,16 +190,13 @@ describe('School Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        //sinon.stub(Schools, 'addNotification').returns('some stuffs');
 
         const component = shallow(<Schools/>);
+        await helper.flushPromises();
+        component.update();
 
-        //sinon.stub(Schools.prototype,'addNotification').returns('some stufffs');
-
-
-
-
-
-        //sinon.stub(Schools.prototype, 'addNotification').returns("Yum")
+        component.instance().addNotification = sinon.spy();
 
         component.instance().setState({Modal: true})
         component.instance().setState({modalAction: 'add'})
@@ -211,8 +208,7 @@ describe('School Component Tests', function () {
         await helper.flushPromises();
         component.update();
 
-        //expect(component.find(RaisedButton).at(1).simulate('click'));
-
+        expect(component.find(RaisedButton).at(1).simulate('click'));
 
     });
 
