@@ -109,7 +109,7 @@ class Schools extends Component {
     // Delete school
     confirmSchoolDelete = (s) => {
         this.setState({deleteID: s.id});
-        this.setState({confirmMessage: "Are you sure you want to delete " + s.schoolName + "?", confirmDialog: true});
+        this.setState({confirmMessage: "Are you sure you want to delete" + s.schoolName + "?", confirmDialog: true});
     }
 
     closeConfirmDialog  = () => {
