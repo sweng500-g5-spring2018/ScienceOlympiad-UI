@@ -5,8 +5,6 @@
 
 var axios = require('axios');
 
-// axios.defaults.withCredentials = true;
-
 var emptyHeader = {};
 
 function httpRequest(url, httpMethod, httpHeader, requestData) {
@@ -37,7 +35,7 @@ function httpRequest(url, httpMethod, httpHeader, requestData) {
                 reject(errorHandler(error));
             })
         } else if(httpMethod.toLowerCase() === 'delete') {
-            axios.delete(url, requestData, httpHeader).then( function (result) {
+            axios.delete(url, httpHeader).then( function (result) {
                 resolve({status: result.status, body: result.data});
             }).catch( function (error) {
                 reject(errorHandler(error));
