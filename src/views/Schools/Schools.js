@@ -122,7 +122,6 @@ class Schools extends Component {
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/removeSchool/' + id, 'DELETE', constants.useCredentials(), null).then(function (result) {
-            console.log(result);
 
             _this.setState({confirmDialog: false});
 
@@ -139,7 +138,6 @@ class Schools extends Component {
             }
 
         }).catch(function (error) {
-            console.log(error);
 
             _this.addNotification(
                 "Error: The school has not been deleted.",
@@ -184,7 +182,7 @@ class Schools extends Component {
             this.setState({schoolContactPhoneRequired: undefined})
         }
         else {
-            this.setState({schoolContactPhoneRequired: "School phone number is required."})
+            this.setState({schoolContactPhoneRequired: "School phone number is required"})
             blankInputs = true;
         }
 
@@ -208,7 +206,6 @@ class Schools extends Component {
             if (this.state.modalAction === "add") {
 
                 _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addSchool', 'POST', constants.useCredentials(), body).then(function (result) {
-                    console.log(result);
 
                     if (result.status === 200) {
 
@@ -229,7 +226,6 @@ class Schools extends Component {
                     }
 
                 }).catch(function (error) {
-                    console.log(error);
 
                     _this.addNotification(
                         "Error: The school has not been added.",
@@ -245,10 +241,7 @@ class Schools extends Component {
             }
             else if (this.state.modalAction === "edit")
             {
-                console.log(this.state.schoolID);
-
                 _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateSchool/'+ this.state.schoolID, 'POST', constants.useCredentials(), body).then(function (result) {
-                    console.log(result);
 
                     if (result.status === 200) {
 
@@ -264,12 +257,11 @@ class Schools extends Component {
                             6
                         );
 
-                        _this.componentWDidMount();
+                        _this.componentDidMount();
 
                     }
 
                 }).catch(function (error) {
-                    console.log(error);
 
                     _this.addNotification(
                         "Error: The school has not been updated.",
@@ -294,14 +286,12 @@ class Schools extends Component {
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', constants.useCredentials(), null).then(function (result) {
-            console.log(result);
             _this.setState({
                 schoolList: result.body,
                 loading: true
             })
 
         }).catch(function (error) {
-            console.log(error);
         })
     }
 

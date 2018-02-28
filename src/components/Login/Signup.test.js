@@ -224,9 +224,6 @@ describe('School Component Tests', function () {
 
     // Test 10
     test('Test on change of page 1', async () => {
-        //STUB: console logs in component and spy on them if called
-        const consoleSpy = sinon.spy();
-        console.log = consoleSpy;
 
         //RENDER component
         const component = shallow(<Signup notify = {notify}/>);
@@ -248,12 +245,8 @@ describe('School Component Tests', function () {
         expect(component.find(RaisedButton).simulate('click'));
     });
 
-    // Test 10
+    // Test 11
     test('Test on change of page 2', async () => {
-        //STUB: console logs in component and spy on them if called
-        const consoleSpy = sinon.spy();
-        console.log = consoleSpy;
-
 
         //RENDER component
         const component = shallow(<Signup notify = {notify}/>);

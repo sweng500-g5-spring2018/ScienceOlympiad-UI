@@ -29,7 +29,7 @@ class SchoolSelector extends React.Component {
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', null, null).then(function (result) {
             _this.setState({schoolList: _this.sortByKey(result.body, "schoolName")})
         }).catch(function (error) {
-            console.log(error);
+
         })
     }
 
