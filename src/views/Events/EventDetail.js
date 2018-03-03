@@ -45,9 +45,10 @@ class EventDetail extends Component {
             }).catch(function (error) {
                 console.log(error);
             })
-        /**
+
         _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/judges/" + _this.state.eventId, "get", constants.useCredentials(), null).then(function (judgeResult) {
             console.log("getting judges");
+            console.log(judgeResult.body);
             _this.setState({
                 judgesDetail: judgeResult.body,
             })
@@ -56,7 +57,7 @@ class EventDetail extends Component {
         }).catch(function (error) {
             console.log(error);
         })
-         */
+
 
 
 

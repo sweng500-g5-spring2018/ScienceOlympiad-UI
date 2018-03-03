@@ -105,9 +105,10 @@ class Events extends Component {
         event.eventDate = this.state.eventDate;
         event.startTime = this.state.startTime;
         event.endTime = this.state.endTime;
-
         //the actual string
         body.eventJson = event;
+        //exiting judge values has an extra pair of quotes around each item in the list...
+        alert(this.state.existingJudgeValues);
         body.existingJudgeValues= this.state.existingJudgeValues;
         body.newJudgeValues= newJudgeList;
         console.log(JSON.stringify(body));
@@ -314,16 +315,15 @@ class Events extends Component {
                     id:"judgefname"+this.judgeCnt,
                     label : "First Name",
                     type : "text",
-                    bsClass : "form-control",
+                    bsClass : "form-control col-xs-7",
                     placeholder : "First Name",
-                    errorText: this.state.newJudgeFnameErr,
                     defaultValue : "",
                 },
         {
             id:"judgelname"+this.judgeCnt,
             label : "Last Name",
                 type : "text",
-            bsClass : "form-control",
+            bsClass : "form-control col-xs-7",
             placeholder : "Last Name",
             defaultValue : ""
         },
@@ -331,7 +331,7 @@ class Events extends Component {
             id:"judgemail"+this.judgeCnt,
             label : "Email address",
                 type : "email",
-            bsClass : "form-control",
+            bsClass : "form-control col-xs-7",
             placeholder : "Email"
         }
     ]
@@ -551,7 +551,7 @@ class Events extends Component {
                                                 </Col>
                                             </Row>
                                             <Row className={"show-grid"}>
-                                                <Col md={5} mdOffset={1}>
+                                                <Col md={5} mdOffset={1} xs={7}>
                                                     <TextField
                                                         id={"eventDescription"}
                                                         floatingLabelText="Event Description"
@@ -638,7 +638,7 @@ class Events extends Component {
     }
 
     //allows the check mark to be applied next to the selections
-    judgeMenuClick = (event, index, values) => this.setState({existingJudgeValues:values});
+    judgeMenuClick = (event, index, values) => {this.setState({existingJudgeValues:values});}
 }
 
 export default Events;
