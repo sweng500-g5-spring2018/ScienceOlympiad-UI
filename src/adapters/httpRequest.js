@@ -69,8 +69,10 @@ export default class HttpRequest {
 
         if (error.response) {
             if (error.response.status === 401) {
-                AuthService.revokeAuth(true);
-                window.location = '/#/login';
+                if(!error.response.data.includes("incorrect")) {
+                    AuthService.revokeAuth(true);
+                    window.location = '/#/login';
+                }
             }
 
             if (error.response.status) {
