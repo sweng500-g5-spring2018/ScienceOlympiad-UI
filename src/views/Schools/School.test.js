@@ -17,7 +17,7 @@ import NotificationSystem from 'react-notification-system';
 
 /* Component under test */
 import Schools from './Schools';
-import AuthService from "../../containers/Login/AuthService";
+import AuthService from "../../utils/AuthService";
 import PasswordField from "material-ui-password-field";
 import RaisedButton from "material-ui/RaisedButton/index";
 import Dialog from 'material-ui/Dialog';

@@ -34,7 +34,7 @@ class EventDetail extends Component {
         console.log("component did mount")
         var _this = this;
 
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + this.state.eventId, "get", constants.useCredentials(), null).then(function (result) {
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + this.state.eventId, "get", constants.useCredentials(), null, true).then(function (result) {
                 console.log("getting event");
                 _this.setState({
                     eventDetail: result.body

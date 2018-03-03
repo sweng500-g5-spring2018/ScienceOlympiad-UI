@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { NavItem, Nav, NavDropdown, MenuItem } from 'react-bootstrap';
 
-import AuthService from '../../containers/Login/AuthService';
+import AuthService from '../../utils/AuthService';
 
 
 class HeaderLinks extends Component{

@@ -4,7 +4,7 @@ import {
     Redirect
 } from 'react-router-dom';
 
-import AuthService from "../containers/Login/AuthService";
+import AuthService from "../utils/AuthService";
 
 /**
  * We have to make our own Authenticated Route.... So here it is -_-
@@ -15,7 +15,7 @@ import AuthService from "../containers/Login/AuthService";
  */
 const AuthenticatedRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={props => (
-        AuthService.isAuthorized() ? (
+        AuthService.isLoggedIn() ? (
             <Component {...props}/>
         ) : (
             <Redirect to={{

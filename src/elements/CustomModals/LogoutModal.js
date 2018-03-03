@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import AuthService from "../../containers/Login/AuthService";
+import AuthService from "../../utils/AuthService";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';

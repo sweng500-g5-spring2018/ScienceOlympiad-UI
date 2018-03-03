@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
-import AuthService from "../../containers/Login/AuthService";
+import AuthService from "../../utils/AuthService";
 
 class TestModule extends Component {
 
