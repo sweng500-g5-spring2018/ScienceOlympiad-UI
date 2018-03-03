@@ -36,7 +36,7 @@ class TestModule extends Component {
             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/users", "get", null, null).then(function (result) {
                 var testResults = result.body;
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/testCoachOnly", "get", constants.useCredentials(), null).then(function (result2) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/testCoachOnly", "get", constants.useCredentials(), null, true).then(function (result2) {
 
                     _this.setState({
                         test: testResults,
@@ -104,6 +104,8 @@ class TestModule extends Component {
                                         <h3>{key}:</h3> {this.state.test[key]}
                                     </div>
                                 )
+                            } else {
+                                return null;
                             }
                         }, this)
                     }

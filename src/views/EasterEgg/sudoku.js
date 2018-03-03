@@ -4,11 +4,6 @@ import Sudoku from 'sudoku-react-component';
 
 class EasterEgg extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
-
     render() {
         return (
             <div id='sudoku-container'>

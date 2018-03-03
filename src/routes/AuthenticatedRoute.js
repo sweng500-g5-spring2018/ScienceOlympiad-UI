@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
     Route,
     Redirect
@@ -15,7 +15,7 @@ import AuthService from "../utils/AuthService";
  */
 const AuthenticatedRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={props => (
-        AuthService.isLoggedIn() ? (
+        AuthService.isLoggedIn() && AuthService.isUserRoleAllowed(rest.users)? (
             <Component {...props}/>
         ) : (
             <Redirect to={{

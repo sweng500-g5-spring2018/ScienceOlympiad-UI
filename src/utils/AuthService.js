@@ -91,8 +91,7 @@ export default class AuthService {
                 return false;
             }
         } else {
-            if(session || token) { AuthService.revokeAuth(true); }
-            else { AuthService.revokeAuth();}
+            AuthService.revokeAuth();
             return false;
         }
     }

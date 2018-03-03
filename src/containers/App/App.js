@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import NotificationSystem from 'react-notification-system';
 import {
-    Route,
     Switch,
     Redirect
 } from 'react-router-dom';
 import AuthenticatedRoute from  '../../routes/AuthenticatedRoute';
 import AuthService from '../../utils/AuthService';
-
 
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
@@ -83,34 +81,28 @@ class App extends Component {
     render() {
         return (
 
-                <div className="wrapper">
-                    <NotificationSystem ref="notificationSystem" style={style}/>
-                    <Sidebar {...this.props} />
-                    <div id="main-panel" className="main-panel">
-                        <Header {...this.props}/>
-                            <Switch>
-                                {
-                                    appRoutes.map((prop,key) => {
-                                        if(prop.redirect)
-                                            return (
-                                                <Redirect from={prop.path} to={prop.to} key={key}/>
-                                            );
-
-                                        //DO NOT RENDER ROUTE IF USER DOES NOT HAVE ACCESS
-                                        // if(prop.users) {
-                                        //     if(!AuthService.isUserRoleAllowed(prop.users)) {
-                                        //         return;
-                                        //     }
-                                        // }
+            <div className="wrapper">
+                <NotificationSystem ref="notificationSystem" style={style}/>
+                <Sidebar {...this.props} />
+                <div id="main-panel" className="main-panel">
+                    <Header {...this.props}/>
+                        <Switch>
+                            {
+                                appRoutes.map((prop,key) => {
+                                    if(prop.redirect)
                                         return (
-                                            <AuthenticatedRoute path={prop.path} component={prop.component} key={key} notify={this.notify}/>
+                                            <Redirect from={prop.path} to={prop.to} key={key}/>
                                         );
-                                    })
-                                }
-                            </Switch>
-                        <Footer />
-                    </div>
+
+                                    return (
+                                        <AuthenticatedRoute path={prop.path} component={prop.component} users={prop.users} key={key} notify={this.notify}/>
+                                    );
+                                })
+                            }
+                        </Switch>
+                    <Footer />
                 </div>
+            </div>
         );
     }
 }
