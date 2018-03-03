@@ -8,7 +8,7 @@ import {shallow, mount} from 'enzyme';
 import helper from '../../../test/helpers/helper';
 
 //CHILDREN COMPONENTS OF COMPONENT IN TEST
-import AuthService from "../../containers/Login/AuthService";
+import AuthService from "../../utils/AuthService";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';

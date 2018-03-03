@@ -7,7 +7,7 @@ import imagine from '../../assets/img/Mountain.jpg';
 import logo from '../../assets/img/reactlogo.png';
 
 import appRoutes from '../../routes/app.js';
-import AuthService from "../../containers/Login/AuthService";
+import AuthService from "../../utils/AuthService";
 
 class Sidebar extends Component{
     constructor(props){

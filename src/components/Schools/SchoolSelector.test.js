@@ -15,7 +15,7 @@ import MenuItem from 'material-ui/MenuItem';
 /* Component under test */
 import SchoolSelector from "./SchoolSelector";
 import RaisedButton from "material-ui/RaisedButton/index";
-import AuthService from "../../containers/Login/AuthService";
+import AuthService from "../../utils/AuthService";
 import TextField from "material-ui/TextField/index";
 
 describe('School Selector Component Tests', function () {

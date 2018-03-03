@@ -15,7 +15,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 /* Component under test */
 import Forgot from './Forgot';
-import AuthService from "../../containers/Login/AuthService";
+import AuthService from "../../utils/AuthService";
 import PasswordField from "material-ui-password-field";
 
 describe('School Component Tests', function () {

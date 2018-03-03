@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
@@ -7,8 +6,7 @@ import AppBar from 'material-ui/AppBar';
 
 import {Redirect} from 'react-router-dom';
 
-import AuthService from '../../containers/Login/AuthService';
-import HttpRequest from '../../adapters/httpRequest';
+import AuthService from '../../utils/AuthService';
 
 class Forgot extends Component {
     constructor(props) {

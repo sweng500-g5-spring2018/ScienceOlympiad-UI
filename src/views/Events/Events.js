@@ -112,7 +112,7 @@ class Events extends Component {
         body.existingJudgeValues= this.state.existingJudgeValues;
         body.newJudgeValues= newJudgeList;
         console.log(JSON.stringify(body));
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/addEvent/", "POST", constants.useCredentials(), body).then(function (result) {
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/addEvent/", "POST", constants.useCredentials(), body, true).then(function (result) {
             //console.log(result.state);
                 //eventually add notification system
                 alert("The event was added!");
@@ -232,7 +232,7 @@ class Events extends Component {
 
             if (!missingInfo) {
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null).then(function (result) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null, true).then(function (result) {
                     console.log("verify event");
                    // alert(result.status);
                     _this.setState({
@@ -291,7 +291,7 @@ class Events extends Component {
     removeEvent(eventId) {
         var _this = this;
         //just making remove a post for now
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/removeEvent/" + eventId, "post", constants.useCredentials(), null).then(function (result) {
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/removeEvent/" + eventId, "post", constants.useCredentials(), null, true).then(function (result) {
 
             alert("Removed the event!");
             _this.componentDidMount();
@@ -348,8 +348,8 @@ class Events extends Component {
         //Make call out to backend
         var _this = this;
 
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/events", "get", constants.useCredentials(), null).then(function (result) {
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/getJudges", "get", constants.useCredentials(), null).then(function (judgeResult) {
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/events", "get", constants.useCredentials(), null, true).then(function (result) {
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/getJudges", "get", constants.useCredentials(), null, true).then(function (judgeResult) {
                 _this.setState({
                 test: result.body,
 

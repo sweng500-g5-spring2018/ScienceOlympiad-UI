@@ -17,7 +17,7 @@ import PasswordField from 'material-ui-password-field';
 
 /* Component under test */
 import Signup from './Signup';
-import AuthService from "../../containers/Login/AuthService";
+import AuthService from "../../utils/AuthService";
 
 describe('School Component Tests', function () {
 

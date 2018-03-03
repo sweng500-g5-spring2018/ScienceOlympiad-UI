@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
 
-import ChuckNorris from "../components/HttpExample/chuckNorris";
+import ChuckNorris from "./chuckNorris";
 
 describe('chuckNorris Component', function () {
 

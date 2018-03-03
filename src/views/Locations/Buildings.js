@@ -147,7 +147,7 @@ class Buildings extends Component {
 
         console.log(constants.useCredentials())
 
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/removeBuilding/' + id, 'DELETE', constants.useCredentials(), null).then(function (result) {
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/removeBuilding/' + id, 'DELETE', constants.useCredentials(), null, true).then(function (result) {
             console.log(result);
 
             _this.setState({confirmDialog: false});
@@ -221,7 +221,7 @@ class Buildings extends Component {
 
             if (this.state.modalAction === "add") {
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addBuilding', 'POST', constants.useCredentials(), body).then(function (result) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addBuilding', 'POST', constants.useCredentials(), body, true).then(function (result) {
                     console.log(result);
 
                     if (result.status === 200) {
@@ -260,7 +260,7 @@ class Buildings extends Component {
             {
                 console.log(this.state.buildingID);
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateBuilding/'+ this.state.buildingID, 'POST', constants.useCredentials(), body).then(function (result) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateBuilding/'+ this.state.buildingID, 'POST', constants.useCredentials(), body, true).then(function (result) {
                     console.log(result);
 
                     if (result.status === 200) {
@@ -306,7 +306,7 @@ class Buildings extends Component {
         //Make call out to backend
         var _this = this;
 
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getBuildings', 'GET', constants.useCredentials(), null).then(function (result) {
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getBuildings', 'GET', constants.useCredentials(), null, true).then(function (result) {
             console.log(result);
             _this.setState({
                 buildingList: result.body,
