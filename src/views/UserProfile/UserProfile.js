@@ -34,7 +34,9 @@ class UserProfile extends React.Component {
             _notificationSystem : null,
             currentPassword : "",
             newPassword : "",
-            confirmNewPassword : ""
+            confirmNewPassword : "",
+            imageUrl : "",
+            desc : ""
         }
 
     }
@@ -42,20 +44,34 @@ class UserProfile extends React.Component {
     componentWillMount() {
         var _this = this;
         //This is good shit to remember for later
-            // AuthService.getUserEmail();
-            // AuthService.getUserRole();
+        // AuthService.getUserEmail();
+        // AuthService.getUserRole();
         //This sends our credentials in the header
 
         HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getUserProfile', 'GET',
             constants.useCredentials(), null).then(function (result) {
-                console.log(result);
-                _this.setState({
-                    user: result.body
-                })
+            console.log(result);
+            _this.setState({
+                user: result.body
+            })
 
         }).catch(function (error) {
             console.log(error);
         })
+        //here we will get the user type
+        const userType = AuthService.getUserRole();
+        console.log(userType);
+        if (userType === "ADMIN") {
+            this.state.imageUrl = "https://telegram.org/file/811140509/b45/dQTLEwKZ9gs.22232.gif/4580677d940852f30e";
+        } else if (userType === "COACH") {
+            this.state.imageUrl = "https://baseballmomstuff.com/wp-content/uploads/2016/02/coach-cartoon.jpg";
+            this.state.desc = "School: " + this.state.user.school;
+        } else if (userType === "JUDGE") {
+            this.state.imageUrl = "https://www.how-to-draw-funny-cartoons.com/image-files/cartoon-judge-010.jpg";
+        } else if (userType === "STUDENT") {
+            this.state.imageUrl = "https://classroomclipart.com/images/gallery/Clipart/Science/TN_female-student-holding-flask-and-test-tube-in-science-lab-science-clipart.jpg";
+            this.state.desc = "Coach: " + this.state.user.coach;
+        }
     }
 
     componentDidMount() {
@@ -228,58 +244,66 @@ class UserProfile extends React.Component {
                 <NotificationSystem ref="notificationSystem" style={style}/>
                 <Grid fluid>
                     <Row>
-                        {/*<Col md={4}>*/}
-                        {/*<UserCard*/}
-                        {/*bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"*/}
-                        {/*avatar={avatar}*/}
-                        {/*name= {this.state.firstName + " " + this.state.lastName}*/}
-                        {/*//maybe in description put the events they are doing? or school information?*/}
-                        {/*description={*/}
-                        {/*<span>*/}
-                        {/*"I am*/}
-                        {/*<br />*/}
-                        {/*the worst person*/}
-                        {/*<br />*/}
-                        {/*you have ever met"*/}
-                        {/*</span>*/}
-                        {/*}*/}
-                        {/*socials={*/}
-                        {/*<div>*/}
-                        {/*<Button simple><i className="fa fa-facebook-square"></i></Button>*/}
-                        {/*<Button simple><i className="fa fa-twitter"></i></Button>*/}
-                        {/*<Button simple><i className="fa fa-google-plus-square"></i></Button>*/}
-                        {/*</div>*/}
-                        {/*}*/}
-                        {/*/>*/}
-                        {/*</Col>*/}
+                        <Col md={4}>
+                            <UserCard
+                                bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
+                                //avatar={avatar}
+                                avatar= {this.state.imageUrl}
+                                name= {this.state.user.firstName + " " + this.state.user.lastName}
+                                userName={this.state.user.emailAddress}
+                                //maybe in description put the events they are doing? or school information?
+                                description={<span> {this.state.desc} </span> }
+                         //           <span>
+                         //               "I is
+                         //               <br />
+                         //               the worst person
+                         //               <br />
+                         //               you have ever met"
+                         //           </span>
+
+
+                                // socials={
+                                //     <div>
+                                //         <Button
+                                //             bsStyle="info"
+                                //             fill
+                                //             type="submit"
+                                //             onClick={"http:www.facebook.com"}>
+                                //             <i className="fa fa-facebook-square"></i></Button>
+                                //         <Button simple><i className="fa fa-twitter"></i></Button>
+                                //         <Button simple><i className="fa fa-google-plus-square"></i></Button>
+                                //     </div>
+                                // }
+                            />
+                        </Col>
                         <Col md={8}>
                             <Card
                                 title="Edit Profile"
                                 content={
                                     <form>
-                                        <FormInputs
-                                            ncols = {["col-md-5" , "col-md-7"]}
-                                            proprieties = {[
-                                                {
-                                                    label : "School Name ",
-                                                    type : "text",
-                                                    bsClass : "form-control",
-                                                    placeholder : "Company",
-                                                    defaultValue : "Penn State Univ.",
-                                                    //onChange : {(event, newValue) => this.setState({firstName: newValue})}
-                                                    disabled : true
-                                                },
-                                                {
-                                                    label : "Email address",
-                                                    type : "email",
-                                                    bsClass : "form-control",
-                                                    placeholder : "Email",
-                                                    defaultValue : "KyleKevin@momsbasement.com",
-                                                    value : this.state.user.emailAddress ? this.state.user.emailAddress : "",
-                                                    disabled: true
-                                                }
-                                            ]}
-                                        />
+                                        {/*<FormInputs*/}
+                                        {/*ncols = {["col-md-5" , "col-md-7"]}*/}
+                                        {/*proprieties = {[*/}
+                                        {/*{*/}
+                                        {/*label : "School Name ",*/}
+                                        {/*type : "text",*/}
+                                        {/*bsClass : "form-control",*/}
+                                        {/*placeholder : "Company",*/}
+                                        {/*defaultValue : "Penn State Univ.",*/}
+                                        {/*//onChange : {(event, newValue) => this.setState({firstName: newValue})}*/}
+                                        {/*disabled : true*/}
+                                        {/*},*/}
+                                        {/*{*/}
+                                        {/*label : "Email address",*/}
+                                        {/*type : "email",*/}
+                                        {/*bsClass : "form-control",*/}
+                                        {/*placeholder : "Email",*/}
+                                        {/*defaultValue : "KyleKevin@momsbasement.com",*/}
+                                        {/*value : this.state.user.emailAddress ? this.state.user.emailAddress : "",*/}
+                                        {/*disabled: true*/}
+                                        {/*}*/}
+                                        {/*]}*/}
+                                        {/*/>*/}
                                         <FormInputs
                                             ncols = {["col-md-6" , "col-md-6"]}
                                             proprieties = {[
@@ -323,12 +347,11 @@ class UserProfile extends React.Component {
                                                     type : "checkbox",
                                                     bsClass : "form-control",
                                                     placeholder : "Receive Texts",
-                                                    checked: this.state.user.receiveText ? 'checked' : '',
+                                                    // checked: this.state.user.receiveText ? 'checked' : '',
                                                     onChange : (event, newValue) => {var ryanRocks = this.state.user;
-                                                        console.log(event.target.value);
-                                                        ryanRocks.receiveText = event.target.value;
+                                                        // console.log(event.target.value);
+                                                        ryanRocks.receiveText = !ryanRocks.receiveText; //; ?  true : false);
                                                         this.setState({user : ryanRocks})},
-                                                    // onChange : event => {this.setState({ receiveText: !this.state.user.receiveText })},
                                                     value: this.state.user.receiveText
                                                 },
                                                 {
