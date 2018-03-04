@@ -48,7 +48,10 @@ class Contact extends Component {
         return (
             <div key="contact-key" id="contact-id" className="contactClass">
                 <span><h1>Contact Us</h1></span>
-                <ChuckNorris chuckNorrisFromParent={this.state.chuckNorris} callChuckNorris={this.callChuckNorris}></ChuckNorris>
+                <ChuckNorris
+                    chuckNorrisFromParent={this.state.chuckNorris}
+                    callChuckNorris={this.callChuckNorris}>
+                </ChuckNorris>
                 <br />
                 <TestModule/>
             </div>

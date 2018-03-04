@@ -1,161 +1,429 @@
 import React, { Component } from 'react';
 import {
     Grid, Row, Col,
-    FormGroup, ControlLabel, FormControl
 } from 'react-bootstrap';
 
-import {Card} from '../../components/Card/Card.js';
-import {FormInputs} from '../../components/FormInputs/FormInputs.js';
 import {UserCard} from '../../components/UserCard/UserCard.js';
+import InputMask from 'react-input-mask';
 import Button from '../../elements/CustomButton/CustomButton.js';
 
-import avatar from "../../assets/img/faces/face-0.jpg";
+import {TextField} from "material-ui";
+import HttpRequest from "../../adapters/httpRequest";
+import constants from "../../utils/constants";
+import AuthService from "../../containers/Login/AuthService";
+import NotificationSystem from 'react-notification-system';
+import {style} from "../../variables/Variables";
+import AppBar from 'material-ui/AppBar';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import PasswordField from 'material-ui-password-field';
 
-class UserProfile extends Component {
+class UserProfile extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.updateProfile = this.updateProfile.bind(this);
+        this.changePassword = this.changePassword.bind(this);
+        this.validPassword = this.validPassword.bind(this);
+
+        this.state = {
+            user : {},
+            _notificationSystem : null,
+            currentPassword : "",
+            newPassword : "",
+            confirmNewPassword : "",
+            imageUrl : "",
+            desc : ""
+        }
+
+    }
+
+    componentWillMount() {
+        var _this = this;
+        //This is good shit to remember for later
+        // AuthService.getUserEmail();
+        // AuthService.getUserRole();
+        //This sends our credentials in the header
+
+        HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getUserProfile', 'GET',
+            constants.useCredentials(), null).then(function (result) {
+            console.log(result);
+            _this.setState({
+                user: result.body
+            })
+
+        }).catch(function (error) {
+            console.log(error);
+        })
+        //here we will get the user type
+        const userType = AuthService.getUserRole();
+        console.log(userType);
+        if (userType === "ADMIN") {
+            this.state.imageUrl = "https://telegram.org/file/811140509/b45/dQTLEwKZ9gs.22232.gif/4580677d940852f30e";
+        } else if (userType === "COACH") {
+            this.state.imageUrl = "https://baseballmomstuff.com/wp-content/uploads/2016/02/coach-cartoon.jpg";
+            this.state.desc = "School: " + this.state.user.school;
+        } else if (userType === "JUDGE") {
+            this.state.imageUrl = "https://www.how-to-draw-funny-cartoons.com/image-files/cartoon-judge-010.jpg";
+        } else if (userType === "STUDENT") {
+            this.state.imageUrl = "https://classroomclipart.com/images/gallery/Clipart/Science/TN_female-student-holding-flask-and-test-tube-in-science-lab-science-clipart.jpg";
+            this.state.desc = "Coach: " + this.state.user.coach;
+        }
+    }
+
+    componentDidMount() {
+        this.setState({_notificationSystem: this.refs.notificationSystem});
+    }
+
+    notify(message, level, position, autoDismiss) {
+        this.state._notificationSystem.addNotification({
+            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
+            message: (
+                <div>
+                    {message}
+                </div>
+            ),
+            level: level ? level : 'error',
+            position: position ? position : 'tc',
+            autoDismiss: autoDismiss ? autoDismiss : 10,
+        });
+    }
+
+    updateProfile(e) {
+        var body = {};
+        var _this = this;
+
+        body.user = this.state.user;
+
+        if (this.state.password !== "") {
+            //check to ensure the password matches
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate?_id=' +
+                this.state.id, 'POST', null, body).then(function (result) {
+
+                if (result.status === 200) {
+
+                    //update the user, first clean the phone number
+                    var cleanPhoneNumber = this.state.user.phoneNumber;
+                    cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
+                    cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
+                    cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
+                    cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
+
+                    this.state.user.phoneNumber = cleanPhoneNumber;
+
+                    //submit the http request
+                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser?_id=' +
+                        this.state.id, 'POST', null, body).then(function (result) {
+
+                        console.log(result);
+
+                        if (result.status === 200) {
+                            //use the app.notify to put something on the screen
+                            this.notify(
+                                "Profile Successfully Updated",
+                                "success",
+                                "tc",
+                                5
+                            )
+                        }else if(result.status === 409) {
+                            this.notify(
+                                "Could not update",
+                                "error",
+                                "tc",
+                                10
+                            )
+                        }
+
+                    }).catch(function (error) {
+                        console.log(error);
+                    })
+                } else if(result.status === 401) {
+                    this.notify(
+                        "Incorrect password",
+                        "error",
+                        "tc",
+                        10
+                    )
+                }
+
+            }).catch(function (error) {
+                console.log(error);
+            })
+        } else {
+            this.notify(
+                "Enter your current password",
+                "error",
+                "tc",
+                5
+            )
+        }
+    }
+
+    // Check if a passowrd is valid. 8 characters, uppercase, lowercase, and numbers
+    validPassword(text) {
+        if (text.length < 8) return false;
+        var hasUpperCase = /[A-Z]/.test(text);
+        var hasLowerCase = /[a-z]/.test(text);
+        var hasNumbers = /\d/.test(text);
+        var hasNonalphas = /\W/.test(text);
+        if (hasUpperCase + hasLowerCase + hasNumbers + hasNonalphas < 3) return false;
+
+        return true;
+    }
+
+    changePassword(e) {
+        var body = {};
+        var _this = this;
+
+        //check to ensure that current password is filled in
+        if (this.state.currentPassword !== "" && this.state.newPassword !== "" && this.state.confirmNewPassword) {
+
+            //check to make sure current password is correct
+            if (this.state.newPassword === this.state.confirmNewPassword) {
+                if (this.validPassword(this.state.newPassword)) {
+
+                    //ensure their current password is correct
+                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate?_id=' + this.state.id, 'POST', null, body).then(function (result) {
+
+                        if (result.status === 200) {
+                            //then change the password
+                            body.newPassword = this.state.newPassword;
+
+                            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/changePassword?_id=' + this.state.id, 'POST', null, body).then(function (result) {
+                                console.log(result);
+
+                                if (result.status === 200) {
+                                    this.notify(
+                                        "Password Changed",
+                                        "success",
+                                        "tc",
+                                        5
+                                    )
+                                }else if(result.status === 409) {
+                                    this.notify(
+                                        "Could not update",
+                                        "error",
+                                        "tc",
+                                        10
+                                    )
+                                }
+
+                            }).catch(function (error) {
+                                console.log(error);
+                            })
+                        } else if (result.status === 401) {
+                            this.notify(
+                                "Incorrect current password",
+                                "error",
+                                "tc",
+                                10
+                            )
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    })
+                } else {
+                    //put up a notify
+                    this.notify(
+                        "ERROR: Your password must be 8 or more characters, contain capital letters, lower case letters, and at least one number.",
+                        "error",
+                        "tc",
+                        10
+                    );
+                }
+            } else {
+                //put up a notify
+                this.notify(
+                    "New passwords do not match",
+                    "error",
+                    "tc",
+                    5
+                )
+            }
+
+        }
+    }
+
+
+
     render() {
         return (
             <div className="content">
-                <Grid fluid>
-                    <Row>
-                        <Col md={8}>
-                            <Card
-                                title="Edit Profile"
-                                content={
-                                    <form>
-                                        <FormInputs
-                                            ncols = {["col-md-5" , "col-md-3" , "col-md-4"]}
-                                            proprieties = {[
-                                                {
-                                                 label : "School (disabled)",
-                                                 type : "text",
-                                                 bsClass : "form-control",
-                                                 placeholder : "Company",
-                                                 defaultValue : "Penn State Univ.",
-                                                 disabled : true
-                                                },
-                                                {
-                                                 label : "Username",
-                                                 type : "text",
-                                                 bsClass : "form-control",
-                                                 placeholder : "Username",
-                                                 defaultValue : "michael23"
-                                                },
-                                                {
-                                                 label : "Email address",
-                                                 type : "email",
-                                                 bsClass : "form-control",
-                                                 placeholder : "Email"
-                                                }
-                                            ]}
-                                        />
-                                        <FormInputs
-                                            ncols = {["col-md-6" , "col-md-6"]}
-                                            proprieties = {[
-                                                {
-                                                 label : "First name",
-                                                 type : "text",
-                                                 bsClass : "form-control",
-                                                 placeholder : "First name",
-                                                 defaultValue : "Mike"
-                                                },
-                                                {
-                                                 label : "Last name",
-                                                 type : "text",
-                                                 bsClass : "form-control",
-                                                 placeholder : "Last name",
-                                                 defaultValue : "Andrew"
-                                                }
-                                            ]}
-                                        />
-                                        <FormInputs
-                                            ncols = {["col-md-12"]}
-                                            proprieties = {[
-                                                {
-                                                    label : "Adress",
-                                                    type : "text",
-                                                    bsClass : "form-control",
-                                                    placeholder : "Home Adress",
-                                                    defaultValue : "Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                                                }
-                                            ]}
-                                        />
-                                        <FormInputs
-                                            ncols = {["col-md-4","col-md-4","col-md-4"]}
-                                            proprieties = {[
-                                                {
-                                                    label : "City",
-                                                    type : "text",
-                                                    bsClass : "form-control",
-                                                    placeholder : "City",
-                                                    defaultValue : "Mike"
-                                                },
-                                                {
-                                                    label : "Country",
-                                                    type : "text",
-                                                    bsClass : "form-control",
-                                                    placeholder : "Country",
-                                                    defaultValue : "Andrew"
-                                                },
-                                                {
-                                                    label : "Postal Code",
-                                                    type : "number",
-                                                    bsClass : "form-control",
-                                                    placeholder : "ZIP Code"
-                                                }
-                                            ]}
-                                        />
+                <NotificationSystem ref="notificationSystem" style={style}/>
+                <MuiThemeProvider>
+                    <Grid fluid>
+                        <Row classname="show-grid">
+                            <Col md={4}>
+                                <UserCard
+                                    bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
+                                    //avatar={avatar}
+                                    avatar= {this.state.imageUrl}
+                                    name= {this.state.user.firstName + " " + this.state.user.lastName}
+                                    userName={this.state.user.emailAddress}
+                                    //maybe in description put the events they are doing? or school information?
+                                    description={<span> {this.state.desc}  </span> }
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname="show-grid">
+                            <Col md={12}>
+                                <AppBar showMenuIconButton={false} title="User Profile"/>
+                            </Col>
+                        </Row>
+                        <Row classname="show-grid">
+                            <Col md={4}>
+                                <TextField
+                                    name="fname"
+                                    hintText="First name"
+                                    floatingLabelText="First name"
+                                    onChange = {(event, newValue) => {var ryanRocks = this.state.user;
+                                        ryanRocks.firstName = event.target.value;
+                                        this.setState({user : ryanRocks})}}
+                                    value={this.state.user.firstName}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <TextField
+                                    name="lname"
+                                    hintText="Last name"
+                                    floatingLabelText="Last name"
+                                    onChange ={ (event, newValue) => {var ryanRocks = this.state.user;
+                                        ryanRocks.lastName = event.target.value;
+                                        this.setState({user : ryanRocks})}}
+                                    value={this.state.user.lastName}
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname="show-grid">
+                            <Col md = {4}>
+                                <TextField
+                                    name="phone"
+                                    floatingLabelText="Phone number"
+                                    onChange = {(event, newValue) => {var ryanRocks = this.state.user;
+                                        ryanRocks.phoneNumber = event.target.value;
+                                        this.setState({user : ryanRocks})}}
+                                    value={this.state.user.phoneNumber}
+                                >
+                                    <InputMask mask="1 (999) 999-9999" maskChar="#"
+                                               value={this.state.user.phoneNumber}/>
+                                </TextField>
+                            </Col>
+                            <Col md={4}>
+                                <TextField
+                                    name="timeBeforeEvent"
+                                    hintText="Time Before Event"
+                                    floatingLabelText="Time Before Event"
+                                    onChange = {(event, newValue) => {var ryanRocks = this.state.user;
+                                        ryanRocks.minutesBeforeEvent = event.target.value;
+                                        this.setState({user : ryanRocks})}}
+                                    value={this.state.user.minutesBeforeEvent}
+                                >
+                                    <InputMask mask="99" maskChar=""
+                                               value={this.state.user.minutesBeforeEvent}/>
+                                </TextField>
+                            </Col>
+                        </Row>
+                        <Row classname="show-grid">
+                            <Col md={4}>
 
-                                        <Row>
-                                            <Col md={12}>
-                                                <FormGroup controlId="formControlsTextarea">
-                                                    <ControlLabel>About Me</ControlLabel>
-                                                    <FormControl rows="5" componentClass="textarea" bsClass="form-control" placeholder="Here can be your description" defaultValue="About me... idk..."/>
-                                                </FormGroup>
-                                            </Col>
-                                        </Row>
-                                        <Button
-                                            bsStyle="info"
-                                            pullRight
-                                            fill
-                                            type="submit"
-                                        >
-                                            Update Profile
-                                        </Button>
-                                        <div className="clearfix"></div>
-                                    </form>
-                                }
-                            />
-                        </Col>
-                        <Col md={4}>
-                            <UserCard
-                                bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
-                                avatar={avatar}
-                                name="Mike Andrew"
-                                userName="michael24"
-                                description={
-                                    <span>
-                                        "I am
-                                        <br />
-                                        a person
-                                        <br />
-                                        and I like cats"
-                                    </span>
-                                }
-                                socials={
-                                    <div>
-                                        <Button simple><i className="fa fa-facebook-square"></i></Button>
-                                        <Button simple><i className="fa fa-twitter"></i></Button>
-                                        <Button simple><i className="fa fa-google-plus-square"></i></Button>
-                                    </div>
-                                }
-                            />
-                        </Col>
+                            </Col>
+                            <Col md={6}>
+                                <PasswordField
+                                    name="currentPassword"
+                                    // hintText="Current Password"
+                                    floatingLabelText="Current Password"
+                                    onChange={(event, newValue) => this.setState({password: newValue})}
+                                    value={this.state.password}
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname="show-grid">
+                            <Col md={4}>
+                                <input
+                                    name="receiveText"
+                                    type="checkbox"
+                                    checked={this.state.user.receiveText}
+                                    onChange={(event, newValue) => {var ryanRocks = this.state.user;
+                                        // console.log(event.target.value);
+                                        ryanRocks.receiveText = !ryanRocks.receiveText; //; ?  true : false);
+                                        this.setState({user : ryanRocks})}} />
+                                <label>
+                                    Receive Text Messages
+                                </label>
+                            </Col>
+                            <Col md={2}>
+                                <Button
+                                    bsStyle="info"
+                                    pullRight
+                                    fill
+                                    type="submit"
+                                    onClick={this.updateProfile}
+                                >
+                                    Update Profile
+                                </Button>
+                            </Col>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <label>
 
-                    </Row>
-                </Grid>
+                            </label>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <AppBar showMenuIconButton={false} title="Change Password"/>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <Col md={12}>
+                                <PasswordField
+                                    name="currentPassword"
+                                    // hintText="Current Password"
+                                    floatingLabelText="Current Password"
+                                    onChange={(event, newValue) => this.setState({currentPassword: newValue})}
+                                    value={this.state.currentPassword}
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <Col md={12}>
+                                <PasswordField
+                                    name="newPassword"
+                                    // hintText="New Password"
+                                    floatingLabelText="New Password"
+                                    onChange={(event, newValue) => this.setState({newPassword: newValue})}
+                                    value={this.state.newPassword}
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <Col md={12}>
+                                <PasswordField
+                                    name="confirmPassword"
+                                    // hintText="Confirm Password"
+                                    floatingLabelText="Confirm Password"
+                                    onChange={(event, newValue) => this.setState({confirmPassword: newValue})}
+                                    value={this.state.confirmPassword}
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <Col md={6}>
+                                <Button
+                                    bsStyle="info"
+                                    pullRight
+                                    fill
+                                    type="submit"
+                                    onClick={this.changePassword}
+                                >
+                                    Change Password
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Grid>
+                </MuiThemeProvider>
             </div>
         );
     }
 }
+
+
 
 export default UserProfile;
