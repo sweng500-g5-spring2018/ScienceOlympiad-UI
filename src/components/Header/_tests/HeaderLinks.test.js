@@ -5,16 +5,16 @@ import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
 
 /* Test Helpers */
-import helper from '../../../test/helpers/helper';
+import helper from '../../../../test/helpers/helper';
 
 //CHILDREN COMPONENTS OF COMPONENT IN TEST
 import { NavItem, Nav, NavDropdown } from 'react-bootstrap';
 
 //COMPONENT TO TEST
-import HeaderLinks from './HeaderLinks';
-import AuthService from "../../utils/AuthService";
+import HeaderLinks from '../HeaderLinks';
+import AuthService from "../../../utils/AuthService";
 
-describe('Header Component Tests', function () {
+describe('HeaderLinks Component Tests', function () {
 
     //Test Suite Mocks/Spies
     const mockedEvent = { target: {}, preventDefault : () => {} }

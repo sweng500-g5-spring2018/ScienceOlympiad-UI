@@ -5,19 +5,19 @@ import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
 
 /* Test Helpers */
-import helper from '../../../test/helpers/helper';
+import helper from '../../../../test/helpers/helper';
 
 //CHILDREN COMPONENTS OF COMPONENT IN TEST
 import { Navbar } from 'react-bootstrap';
-import HeaderLinks from './HeaderLinks.js';
+import HeaderLinks from '../HeaderLinks.js';
 
 //COMPONENT TO TEST
-import Header from './Header';
+import Header from '../Header';
 
 describe('Header Component Tests', function () {
 
     //Test Suite Mocks/Spies/Data
-    const reactRouterData = require('../../../test/data/header/reactRouterTest');
+    const reactRouterData = require('../../../../test/data/header/reactRouterTest');
     const mockedEvent = { target: {}, preventDefault : () => {} }
 
     //Set up test data before running any tests
