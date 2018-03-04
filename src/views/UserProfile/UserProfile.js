@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {
     Grid, Row, Col,
-    FormGroup, ControlLabel, FormControl
 } from 'react-bootstrap';
 
-import {Card} from '../../components/Card/Card.js';
-import {FormInputs} from '../../components/FormInputs/FormInputs.js';
 import {UserCard} from '../../components/UserCard/UserCard.js';
 import InputMask from 'react-input-mask';
 import Button from '../../elements/CustomButton/CustomButton.js';
 
-import avatar from "../../assets/img/faces/face-0.jpg";
 import {TextField} from "material-ui";
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import AuthService from "../../containers/Login/AuthService";
 import NotificationSystem from 'react-notification-system';
 import {style} from "../../variables/Variables";
-
+import AppBar from 'material-ui/AppBar';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import PasswordField from 'material-ui-password-field';
 
 class UserProfile extends React.Component {
 
@@ -104,6 +101,17 @@ class UserProfile extends React.Component {
                 this.state.id, 'POST', null, body).then(function (result) {
 
                 if (result.status === 200) {
+
+                    //update the user, first clean the phone number
+                    var cleanPhoneNumber = this.state.user.phoneNumber;
+                    cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
+                    cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
+                    cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
+                    cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
+
+                    this.state.user.phoneNumber = cleanPhoneNumber;
+
+                    //submit the http request
                     _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser?_id=' +
                         this.state.id, 'POST', null, body).then(function (result) {
 
@@ -242,224 +250,175 @@ class UserProfile extends React.Component {
         return (
             <div className="content">
                 <NotificationSystem ref="notificationSystem" style={style}/>
-                <Grid fluid>
-                    <Row>
-                        <Col md={4}>
-                            <UserCard
-                                bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
-                                //avatar={avatar}
-                                avatar= {this.state.imageUrl}
-                                name= {this.state.user.firstName + " " + this.state.user.lastName}
-                                userName={this.state.user.emailAddress}
-                                //maybe in description put the events they are doing? or school information?
-                                description={<span> {this.state.desc} </span> }
-                         //           <span>
-                         //               "I is
-                         //               <br />
-                         //               the worst person
-                         //               <br />
-                         //               you have ever met"
-                         //           </span>
+                <MuiThemeProvider>
+                    <Grid fluid>
+                        <Row classname="show-grid">
+                            <Col md={4}>
+                                <UserCard
+                                    bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
+                                    //avatar={avatar}
+                                    avatar= {this.state.imageUrl}
+                                    name= {this.state.user.firstName + " " + this.state.user.lastName}
+                                    userName={this.state.user.emailAddress}
+                                    //maybe in description put the events they are doing? or school information?
+                                    description={<span> {this.state.desc}  </span> }
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname="show-grid">
+                            <Col md={12}>
+                                <AppBar showMenuIconButton={false} title="User Profile"/>
+                            </Col>
+                        </Row>
+                        <Row classname="show-grid">
+                            <Col md={4}>
+                                <TextField
+                                    name="fname"
+                                    hintText="First name"
+                                    floatingLabelText="First name"
+                                    onChange = {(event, newValue) => {var ryanRocks = this.state.user;
+                                        ryanRocks.firstName = event.target.value;
+                                        this.setState({user : ryanRocks})}}
+                                    value={this.state.user.firstName}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <TextField
+                                    name="lname"
+                                    hintText="Last name"
+                                    floatingLabelText="Last name"
+                                    onChange ={ (event, newValue) => {var ryanRocks = this.state.user;
+                                        ryanRocks.lastName = event.target.value;
+                                        this.setState({user : ryanRocks})}}
+                                    value={this.state.user.lastName}
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname="show-grid">
+                            <Col md = {4}>
+                                <TextField
+                                    name="phone"
+                                    floatingLabelText="Phone number"
+                                    onChange = {(event, newValue) => {var ryanRocks = this.state.user;
+                                        ryanRocks.phoneNumber = event.target.value;
+                                        this.setState({user : ryanRocks})}}
+                                    value={this.state.user.phoneNumber}
+                                >
+                                    <InputMask mask="1 (999) 999-9999" maskChar="#"
+                                               value={this.state.user.phoneNumber}/>
+                                </TextField>
+                            </Col>
+                            <Col md={4}>
+                                <TextField
+                                    name="timeBeforeEvent"
+                                    hintText="Time Before Event"
+                                    floatingLabelText="Time Before Event"
+                                    onChange = {(event, newValue) => {var ryanRocks = this.state.user;
+                                        ryanRocks.minutesBeforeEvent = event.target.value;
+                                        this.setState({user : ryanRocks})}}
+                                    value={this.state.user.minutesBeforeEvent}
+                                >
+                                    <InputMask mask="99" maskChar=""
+                                               value={this.state.user.minutesBeforeEvent}/>
+                                </TextField>
+                            </Col>
+                        </Row>
+                        <Row classname="show-grid">
+                            <Col md={4}>
 
+                            </Col>
+                            <Col md={6}>
+                                <PasswordField
+                                    name="currentPassword"
+                                    // hintText="Current Password"
+                                    floatingLabelText="Current Password"
+                                    onChange={(event, newValue) => this.setState({password: newValue})}
+                                    value={this.state.password}
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname="show-grid">
+                            <Col md={4}>
+                                <input
+                                    name="receiveText"
+                                    type="checkbox"
+                                    checked={this.state.user.receiveText}
+                                    onChange={(event, newValue) => {var ryanRocks = this.state.user;
+                                        // console.log(event.target.value);
+                                        ryanRocks.receiveText = !ryanRocks.receiveText; //; ?  true : false);
+                                        this.setState({user : ryanRocks})}} />
+                                <label>
+                                    Receive Text Messages
+                                </label>
+                            </Col>
+                            <Col md={2}>
+                                <Button
+                                    bsStyle="info"
+                                    pullRight
+                                    fill
+                                    type="submit"
+                                    onClick={this.updateProfile}
+                                >
+                                    Update Profile
+                                </Button>
+                            </Col>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <label>
 
-                                // socials={
-                                //     <div>
-                                //         <Button
-                                //             bsStyle="info"
-                                //             fill
-                                //             type="submit"
-                                //             onClick={"http:www.facebook.com"}>
-                                //             <i className="fa fa-facebook-square"></i></Button>
-                                //         <Button simple><i className="fa fa-twitter"></i></Button>
-                                //         <Button simple><i className="fa fa-google-plus-square"></i></Button>
-                                //     </div>
-                                // }
-                            />
-                        </Col>
-                        <Col md={8}>
-                            <Card
-                                title="Edit Profile"
-                                content={
-                                    <form>
-                                        {/*<FormInputs*/}
-                                        {/*ncols = {["col-md-5" , "col-md-7"]}*/}
-                                        {/*proprieties = {[*/}
-                                        {/*{*/}
-                                        {/*label : "School Name ",*/}
-                                        {/*type : "text",*/}
-                                        {/*bsClass : "form-control",*/}
-                                        {/*placeholder : "Company",*/}
-                                        {/*defaultValue : "Penn State Univ.",*/}
-                                        {/*//onChange : {(event, newValue) => this.setState({firstName: newValue})}*/}
-                                        {/*disabled : true*/}
-                                        {/*},*/}
-                                        {/*{*/}
-                                        {/*label : "Email address",*/}
-                                        {/*type : "email",*/}
-                                        {/*bsClass : "form-control",*/}
-                                        {/*placeholder : "Email",*/}
-                                        {/*defaultValue : "KyleKevin@momsbasement.com",*/}
-                                        {/*value : this.state.user.emailAddress ? this.state.user.emailAddress : "",*/}
-                                        {/*disabled: true*/}
-                                        {/*}*/}
-                                        {/*]}*/}
-                                        {/*/>*/}
-                                        <FormInputs
-                                            ncols = {["col-md-6" , "col-md-6"]}
-                                            proprieties = {[
-                                                {
-                                                    label : "First name",
-                                                    type : "text",
-                                                    bsClass : "form-control",
-                                                    placeholder : "First name",
-                                                    value : this.state.user.firstName,
-                                                    onChange : (event, newValue) => {var ryanRocks = this.state.user;
-                                                        ryanRocks.firstName = event.target.value;
-                                                        this.setState({user : ryanRocks})}
-                                                },
-                                                {
-                                                    label : "Last name",
-                                                    type : "text",
-                                                    bsClass : "form-control",
-                                                    placeholder : "Last name",
-                                                    value : this.state.user.lastName ? this.state.user.lastName : "",
-                                                    onChange : (event, newValue) => {var ryanRocks = this.state.user;
-                                                        ryanRocks.lastName = event.target.value;
-                                                        this.setState({user : ryanRocks})}
-                                                }
-                                            ]}
-                                        />
-                                        <FormInputs
-                                            ncols = {["col-md-5" , "col-md-3" , "col-md-4"]}
-                                            proprieties = {[
-                                                {
-                                                    label: "Phone Number",
-                                                    type: "text",
-                                                    bsClass: "form-control",
-                                                    placeholder: "Phone Number",
-                                                    onChange : (event, newValue) => {var ryanRocks = this.state.user;
-                                                        ryanRocks.phone = event.target.value;
-                                                        this.setState({user : ryanRocks})},
-                                                    value : this.state.user.phoneNumber //? this.state.user.phoneNumber : ""
-                                                },
-                                                {
-                                                    label : "Receive Texts",
-                                                    type : "checkbox",
-                                                    bsClass : "form-control",
-                                                    placeholder : "Receive Texts",
-                                                    // checked: this.state.user.receiveText ? 'checked' : '',
-                                                    onChange : (event, newValue) => {var ryanRocks = this.state.user;
-                                                        // console.log(event.target.value);
-                                                        ryanRocks.receiveText = !ryanRocks.receiveText; //; ?  true : false);
-                                                        this.setState({user : ryanRocks})},
-                                                    value: this.state.user.receiveText
-                                                },
-                                                {
-                                                    label : "Time Before Event",
-                                                    type : "number",
-                                                    bsClass : "form-control",
-                                                    placeholder : "Time Before Event",
-                                                    tooltip : "Time before event to receive test, in minutes",
-                                                    value : this.state.user.minutesBeforeEvent,
-                                                    onChange : (event, newValue) => {var ryanRocks = this.state.user;
-                                                        ryanRocks.minutesBeforeEvent = event.target.value;
-                                                        this.setState({user : ryanRocks})}
-                                                }
-                                            ]}
-                                        />
-                                        <FormInputs
-                                            ncols = {["col-md-6"]}
-                                            proprieties = {[
-                                                {
-                                                    label: "Current Password",
-                                                    type: "password",
-                                                    bsClass : "form-control",
-                                                    placeholder: "Current Password",
-                                                    value : this.state.password,
-                                                    onChange : (event, newValue) => {this.setState({ password: newValue })},
-                                                }
-                                            ]}
-                                        />
-
-                                        {/*<Row>*/}
-                                        {/*<Col md={12}>*/}
-                                        {/*<FormGroup controlId="formControlsTextarea">*/}
-                                        {/*<ControlLabel>About Me</ControlLabel>*/}
-                                        {/*<FormControl rows="5" componentClass="textarea" bsClass="form-control" placeholder="Here can be your description" defaultValue="About me... idk..."/>*/}
-                                        {/*</FormGroup>*/}
-                                        {/*</Col>*/}
-                                        {/*</Row>*/}
-                                        <Button
-                                            bsStyle="info"
-                                            pullRight
-                                            fill
-                                            type="submit"
-                                            onClick={this.updateProfile}
-                                        >
-                                            Update Profile
-                                        </Button>
-                                        <div className="clearfix"></div>
-                                    </form>
-                                }
-                            />
-                            <Card
-                                title="Change Password"
-                                content={
-                                    <form>
-                                        <FormInputs
-                                            ncols = {["col-md-8"]}
-                                            proprieties = {[
-                                                {
-                                                    label: "Current Password",
-                                                    type: "password",
-                                                    bsClass : "form-control",
-                                                    placeholder: "Current Password",
-                                                    value : this.state.currentPassword,
-                                                    onChange : (event, newValue) => {this.setState({ currentPassword: newValue })},
-                                                }
-                                            ]}
-                                        />
-                                        <FormInputs
-                                            ncols = {["col-md-8"]}
-                                            proprieties = {[
-                                                {
-                                                    label: "New Password",
-                                                    type: "password",
-                                                    bsClass : "form-control",
-                                                    placeholder: "New Password",
-                                                    value : this.state.newPassword,
-                                                    onChange : (event, newValue) => {this.setState({newPassword: newValue })},
-                                                }
-                                            ]}
-                                        />
-                                        <FormInputs
-                                            ncols = {["col-md-8"]}
-                                            proprieties = {[
-                                                {
-                                                    label: "Confirm New Password",
-                                                    type: "password",
-                                                    bsClass : "form-control",
-                                                    placeholder: "Confirm New Password",
-                                                    value : this.state.confirmNewPassword,
-                                                    onChange : (event, newValue) => {this.setState({ confirmNewPassword: newValue })},
-                                                }
-                                            ]}
-                                        />
-                                        <Button
-                                            bsStyle="info"
-                                            pullRight
-                                            fill
-                                            type="submit"
-                                            onClick={this.changePassword}
-                                        >
-                                            Change Password
-                                        </Button>
-                                    </form>
-                                }
-                            />
-                        </Col>
-                    </Row>
-                </Grid>
+                            </label>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <AppBar showMenuIconButton={false} title="Change Password"/>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <Col md={12}>
+                                <PasswordField
+                                    name="currentPassword"
+                                    // hintText="Current Password"
+                                    floatingLabelText="Current Password"
+                                    onChange={(event, newValue) => this.setState({currentPassword: newValue})}
+                                    value={this.state.currentPassword}
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <Col md={12}>
+                                <PasswordField
+                                    name="newPassword"
+                                    // hintText="New Password"
+                                    floatingLabelText="New Password"
+                                    onChange={(event, newValue) => this.setState({newPassword: newValue})}
+                                    value={this.state.newPassword}
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <Col md={12}>
+                                <PasswordField
+                                    name="confirmPassword"
+                                    // hintText="Confirm Password"
+                                    floatingLabelText="Confirm Password"
+                                    onChange={(event, newValue) => this.setState({confirmPassword: newValue})}
+                                    value={this.state.confirmPassword}
+                                />
+                            </Col>
+                        </Row>
+                        <Row classname={"show-grid"}>
+                            <Col md={6}>
+                                <Button
+                                    bsStyle="info"
+                                    pullRight
+                                    fill
+                                    type="submit"
+                                    onClick={this.changePassword}
+                                >
+                                    Change Password
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Grid>
+                </MuiThemeProvider>
             </div>
         );
     }
