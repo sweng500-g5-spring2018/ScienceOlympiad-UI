@@ -4,22 +4,19 @@ import sinon from 'sinon';
 import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
 
-// jest.mock('react-router-dom');
-
 /* Test Helpers */
 import helper from '../../../test/helpers/helper';
 
 //CHILDREN COMPONENTS OF COMPONENT IN TEST
 import { Navbar } from 'react-bootstrap';
 import HeaderLinks from './HeaderLinks.js';
-import appRoutes from '../../routes/app.js';
 
 //COMPONENT TO TEST
 import Header from './Header';
 
 describe('Header Component Tests', function () {
 
-    const notify = sinon.spy();
+    //Test Suite Mocks/Spies/Data
     const reactRouterData = require('../../../test/data/header/reactRouterTest');
     const mockedEvent = { target: {}, preventDefault : () => {} }
 
