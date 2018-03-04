@@ -5,10 +5,10 @@ import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
 
 /* Test Helpers */
-import helper from '../../../test/helpers/helper';
+import helper from '../../../../test/helpers/helper';
 
 //CHILDREN COMPONENTS OF COMPONENT IN TEST
-import AuthService from "../../utils/AuthService";
+import AuthService from "../../../utils/AuthService";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
@@ -17,7 +17,7 @@ import PasswordField from 'material-ui-password-field'
 import {Redirect} from 'react-router-dom';
 
 //COMPONENT TO TEST
-import Login from "./Login";
+import Login from "../Login";
 
 describe('Login Component Tests', function () {
 

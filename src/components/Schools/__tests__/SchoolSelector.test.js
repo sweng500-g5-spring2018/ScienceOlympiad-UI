@@ -4,18 +4,18 @@ import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
 
 /* Test Helper functions */
-import helper from '../../../test/helpers/helper';
+import helper from '../../../../test/helpers/helper';
 
 /* Dependent Components */
-import HttpRequest from '../../adapters/httpRequest';
-import constants from '../../utils/constants';
+import HttpRequest from '../../../adapters/httpRequest';
+import constants from '../../../utils/constants';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
 /* Component under test */
-import SchoolSelector from "./SchoolSelector";
+import SchoolSelector from "../SchoolSelector";
 import RaisedButton from "material-ui/RaisedButton/index";
-import AuthService from "../../utils/AuthService";
+import AuthService from "../../../utils/AuthService";
 import TextField from "material-ui/TextField/index";
 
 describe('School Selector Component Tests', function () {
@@ -27,7 +27,7 @@ describe('School Selector Component Tests', function () {
         //STUB: Http request to simulate data retrieval from API
         sinon.stub(HttpRequest, 'httpRequest').resolves(
             //import test data JSON for response
-            require('../../../test/data/schools/getAllSchoolsResponseData.json')
+            require('../../../../test/data/schools/getAllSchoolsResponseData.json')
         )
 
         //STUB: Constants function used as argument to HttpRequest
