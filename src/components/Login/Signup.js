@@ -44,11 +44,11 @@ class Signup extends React.Component {
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', null, null).then(function (result) {
-            console.log(result);
+
             _this.state.schoolList = result.body;
 
         }).catch(function (error) {
-            console.log(error);
+
         })
     }
 
@@ -155,7 +155,7 @@ class Signup extends React.Component {
                     body.emailAddress = this.state.emailAddress;
 
                     _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body ).then(function (result) {
-                        console.log(result);
+
 
                         _this.setState({
                             emailAddress: _this.state.emailAddress.trim(),
@@ -171,7 +171,7 @@ class Signup extends React.Component {
                         }
 
                     }).catch(function (error) {
-                        console.log(error);
+
 
                         if (_this.state.httpResponse.status !== 200)
                             missingInfo = true;
@@ -196,36 +196,6 @@ class Signup extends React.Component {
 
         } // Form page 2
         else if (stepIndex === 1) {
-
-            // Checks for blank password
-            if (this.state.password.trim()) {
-                this.setState({
-                    password: this.state.password.trim(),
-                    passwordRequired: undefined
-                })
-            }
-            else {
-                this.setState({
-                    password: this.state.password.trim(),
-                    passwordRequired: "A password is required."
-                })
-                missingInfo = true;
-            }
-
-            // Checks for blank confirmation password
-            if (this.state.confirm.trim()) {
-                this.setState({
-                    confirm: this.state.confirm.trim(),
-                    confirmRequired: undefined
-                })
-            }
-            else {
-                this.setState({
-                    confirm: this.state.confirm.trim(),
-                    confirmRequired: "A password confirmation is required."
-                })
-                missingInfo = true;
-            }
 
             // Checks to see if the passwords are equal to each other
             if (this.state.password.trim() !== this.state.confirm.trim()) {
@@ -300,13 +270,11 @@ class Signup extends React.Component {
 
 
                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=COACH&schoolID=' + _this.state.school, 'POST', null, body ).then(function (result) {
-                    console.log(result);
 
                     if (result.status === 200)
                         _this.setState({accountMessage: "Congratulations! Your account has been created. Please return to the login screen."})
 
                 }).catch(function (error) {
-                    console.log(error);
 
                     _this.setState({accountMessage:"There was an error creating your account. Please try again later."})
 
@@ -399,6 +367,7 @@ class Signup extends React.Component {
                                     <Row className="show-grid">
                                         <Col xs={7} md={3}>
                                             <PasswordField
+                                                name={"password"}
                                                 type="password"
                                                 hintText="Enter your password"
                                                 errorText={this.state.passwordRequired}
@@ -410,6 +379,7 @@ class Signup extends React.Component {
                                         </Col>
                                         <Col xs={7} md={3}>
                                             <PasswordField
+                                                name={"confirm"}
                                                 type="password"
                                                 hintText="Confirm your password"
                                                 errorText={this.state.confirmRequired}

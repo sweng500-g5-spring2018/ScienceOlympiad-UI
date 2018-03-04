@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
-import AuthService from "../../containers/Login/AuthService";
+import AuthService from "../../utils/AuthService";
 
-class NotFound extends Component {
+class TestModule extends Component {
 
     constructor(props) {
         super(props);
@@ -36,7 +36,7 @@ class NotFound extends Component {
             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/users", "get", null, null).then(function (result) {
                 var testResults = result.body;
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/testCoachOnly", "get", constants.useCredentials(), null).then(function (result2) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +  "/sweng500/testCoachOnly", "get", constants.useCredentials(), null, true).then(function (result2) {
 
                     _this.setState({
                         test: testResults,
@@ -104,6 +104,8 @@ class NotFound extends Component {
                                         <h3>{key}:</h3> {this.state.test[key]}
                                     </div>
                                 )
+                            } else {
+                                return null;
                             }
                         }, this)
                     }
@@ -115,4 +117,4 @@ class NotFound extends Component {
     }
 
 }
-export default NotFound;
+export default TestModule;

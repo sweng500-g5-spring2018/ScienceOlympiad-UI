@@ -5,22 +5,14 @@ import Forgot from "../../components/Login/Forgot";
 import $ from 'jquery';
 import NotificationSystem from 'react-notification-system';
 
-
-
 import mountainBackground from '../../assets/img/SmallerMountain.jpg';
 
 import {style} from "../../variables/Variables";
-
-import HttpRequest from '../../adapters/httpRequest';
-import constants from "../../utils/constants";
-
 const backgroundStyle = {
     background: 'url(' + mountainBackground + ') no-repeat center center fixed',
     backgroundSize: 'cover',
     backgroundPosition: 'center center no-repeat'
 };
-
-
 
 class LoginContainer extends Component {
 
@@ -56,6 +48,8 @@ class LoginContainer extends Component {
             case 'flogin':
                 $('#login-container-slider').removeClass('collapse');
                 $('#forgot-container-slider').addClass('collapse');
+                break;
+            default :
                 break;
         }
     }

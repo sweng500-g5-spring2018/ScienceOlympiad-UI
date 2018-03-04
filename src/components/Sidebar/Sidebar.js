@@ -7,6 +7,7 @@ import imagine from '../../assets/img/Mountain.jpg';
 import logo from '../../assets/img/reactlogo.png';
 
 import appRoutes from '../../routes/app.js';
+import AuthService from "../../utils/AuthService";
 
 class Sidebar extends Component{
     constructor(props){
@@ -48,16 +49,20 @@ class Sidebar extends Component{
                         { this.state.width <= 991 ? (<HeaderLinks />):null }
                         {
                             appRoutes.map((prop,key) => {
-                                if(!prop.redirect)
-                                    return (
-                                        <li className={prop.upgrade ? "active active-pro":this.activeRoute(prop.path)} key={key}>
-                                            <NavLink to={prop.path} className="nav-link" activeClassName="active">
-                                                <i className={prop.icon}></i>
-                                                <p>{prop.name}</p>
-                                            </NavLink>
-                                        </li>
-                                    );
-                                return null;
+                                //DO NOT RENDER SIDEBAR LINK IF USER IS NOT ALLOWED TO VIEW
+                                if(prop.redirect || (prop.users && !AuthService.isUserRoleAllowed(prop.users))) {
+                                    return null;
+                                }
+
+                                return (
+                                    <li className={prop.upgrade ? "active active-pro" : this.activeRoute(prop.path)}
+                                        key={key}>
+                                        <NavLink to={prop.path} className="nav-link" activeClassName="active">
+                                            <i className={prop.icon}></i>
+                                            <p>{prop.name}</p>
+                                        </NavLink>
+                                    </li>
+                                );
                             })
                         }
                     </ul>

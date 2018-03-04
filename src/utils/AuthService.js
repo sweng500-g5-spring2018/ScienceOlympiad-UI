@@ -1,8 +1,8 @@
 import jwt from 'jwt-simple';
 import moment from 'moment';
 
-import constants from '../../utils/constants';
-import HttpRequest from '../../adapters/httpRequest';
+import constants from './constants';
+import HttpRequest from '../adapters/httpRequest';
 
 export default class AuthService {
 
@@ -91,10 +91,17 @@ export default class AuthService {
                 return false;
             }
         } else {
-            if(session || token) { AuthService.revokeAuth(true); }
-            else { AuthService.revokeAuth();}
+            AuthService.revokeAuth();
             return false;
         }
+    }
+
+    static isUserRoleAllowed(listOfAllowedRoles) {
+        if(listOfAllowedRoles && listOfAllowedRoles.length > 0){
+            return listOfAllowedRoles.indexOf(AuthService.getUserRole()) > -1;
+        }
+
+        return true;
     }
 
     static revokeAuth(withAlert) {
@@ -108,11 +115,13 @@ export default class AuthService {
     }
 
     static getUserRole() {
-        return AuthService.decodeSessionVars().role;
+        let decoded = AuthService.decodeSessionVars();
+        return (decoded && decoded.role) ? decoded.role : undefined;
     }
 
     static getUserEmail() {
-        return AuthService.decodeSessionVars().emailAddress;
+        let decoded = AuthService.decodeSessionVars();
+        return (decoded && decoded.emailAddress) ? decoded.emailAddress : undefined;
     }
 
     static decodeSessionVars() {

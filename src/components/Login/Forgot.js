@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
@@ -7,15 +6,14 @@ import AppBar from 'material-ui/AppBar';
 
 import {Redirect} from 'react-router-dom';
 
-import AuthService from '../../containers/Login/AuthService';
-import HttpRequest from '../../adapters/httpRequest';
+import AuthService from '../../utils/AuthService';
 
 class Forgot extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            email: '',
+            email: ''
         }
 
         this.handleClick = this.handleClick.bind(this);
@@ -24,17 +22,18 @@ class Forgot extends Component {
     }
 
     handleClick(event) {
-        event.preventDefault();
 
         if(this.state.email.trim()) {
 
-            // received an email address
-
+            this.setState({
+                email: this.state.email.trim(),
+                emailRequired: null
+            })
 
         } else {
             this.setState({
                 email: this.state.email.trim(),
-                emailRequired: "Email address is required."
+                emailRequired: "An email address is required."
             })
         }
     }

@@ -1,30 +1,10 @@
 import React, {Component} from 'react';
 import {Panel,Grid, Col, Row, Modal} from 'react-bootstrap';
-import {Map, Marker, GoogleApiWrapper} from 'google-maps-react';
-import Loader from 'react-loader'
-import {
-    Step,
-    Stepper,
-    StepLabel,
-    StepContent,
-} from 'material-ui/Stepper';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import DatePicker from 'material-ui/DatePicker'
-import TimePicker from 'material-ui/TimePicker'
-import AppBar from 'material-ui/AppBar'
-import {blue500} from 'material-ui/styles/colors'
-import FlatButton from 'material-ui/FlatButton';
-import FontIcon from 'material-ui/FontIcon';
-import ReactTable from 'react-table'
 import "react-table/react-table.css";
-import matchSorter from 'match-sorter'
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import Maps from "../Maps/Maps";
 
 
 
@@ -36,7 +16,8 @@ class EventDetail extends Component {
             //needed so initial backend call will not have blank eventid
             eventId: props.eventId,
 
-            eventDetail :{}
+            eventDetail :{},
+            judgesDetail :{}
         };
 
     }
@@ -53,17 +34,30 @@ class EventDetail extends Component {
         console.log("component did mount")
         var _this = this;
 
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + this.state.eventId, "get", constants.useCredentials(), null).then(function (result) {
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + this.state.eventId, "get", constants.useCredentials(), null, true).then(function (result) {
                 console.log("getting event");
                 _this.setState({
-                    eventDetail: result.body,
-
+                    eventDetail: result.body
                 })
+
 
 
             }).catch(function (error) {
                 console.log(error);
             })
+
+        _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/judges/" + _this.state.eventId, "get", constants.useCredentials(), null, true).then(function (judgeResult) {
+            console.log("getting judges");
+            console.log(judgeResult.body);
+            _this.setState({
+                judgesDetail: judgeResult.body,
+            })
+
+
+        }).catch(function (error) {
+            console.log(error);
+        })
+
 
 
 
@@ -83,7 +77,7 @@ class EventDetail extends Component {
                           </Panel>
                           <Panel bsStyle="info">
                               <Panel.Heading>Building</Panel.Heading>
-                              <Panel.Body>{this.state.eventDetail.location.building}</Panel.Body>
+
                           </Panel>
                       </Col>
                       

@@ -8,7 +8,7 @@ import PasswordField from 'material-ui-password-field'
 
 import {Redirect} from 'react-router-dom';
 
-import AuthService from '../../containers/Login/AuthService';
+import AuthService from '../../utils/AuthService';
 
 class Login extends Component {
     constructor(props) {
