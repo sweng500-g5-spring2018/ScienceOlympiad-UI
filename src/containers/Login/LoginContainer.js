@@ -55,34 +55,30 @@ class LoginContainer extends Component {
     }
 
     addNotification(message, level, position, autoDismiss) {
-        this.state._notificationSystem.addNotification({
-            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
-            message: (
-                <div>
-                    {message}
-                </div>
-            ),
-            level: level ? level : 'error',
-            position: position ? position : 'tc',
-            autoDismiss: autoDismiss ? autoDismiss : 10,
-        });
+        if(this.state._notificationSystem) {
+            this.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
+                message: (
+                    <div>
+                        {message}
+                    </div>
+                ),
+                level: level ? level : 'error',
+                position: position ? position : 'tc',
+                autoDismiss: autoDismiss ? autoDismiss : 10,
+            });
+        }
     }
 
     componentDidMount() {
-        this.setState({_notificationSystem: this.refs.notificationSystem});
-        var _notificationSystem = this.refs.notificationSystem;
-
-        _notificationSystem.addNotification({
-            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
-            message: (
-                <div>
-                    Please <b>Login</b> to the Science Olympiad System.
-                </div>
-            ),
-            level: 'info',
-            position: 'tc',
-            autoDismiss: 20,
-        });
+        this.setState({_notificationSystem: this.refs.notificationSystem}, () => {
+            this.addNotification(
+                <span>Please <b>Login</b> to the Science Olympiad System.</span>,
+                'info',
+                'tc',
+                10
+            )
+        })
     }
 
     render() {

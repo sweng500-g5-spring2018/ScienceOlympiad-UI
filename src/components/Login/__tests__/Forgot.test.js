@@ -4,18 +4,18 @@ import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
 
 /* Test Helper functions */
-import helper from '../../../test/helpers/helper';
+import helper from '../../../../test/helpers/helper';
 
 /* Dependent Components */
-import HttpRequest from '../../adapters/httpRequest';
-import constants from '../../utils/constants';
+import HttpRequest from '../../../adapters/httpRequest';
+import constants from '../../../utils/constants';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
 /* Component under test */
-import Forgot from './Forgot';
-import AuthService from "../../utils/AuthService";
+import Forgot from '../Forgot';
+import AuthService from "../../../utils/AuthService";
 import PasswordField from "material-ui-password-field";
 
 describe('School Component Tests', function () {

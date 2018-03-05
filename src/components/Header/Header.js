@@ -61,7 +61,7 @@ class Header extends Component{
                 <Navbar.Header>
                     <Navbar.Brand>
                         {/*<a href="#">{this.getBrand()}</a>*/}
-                        <div>{this.getBrand()}</div>
+                        <div id="brand-display">{this.getBrand()}</div>
                     </Navbar.Brand>
                     <Navbar.Toggle onClick={this.mobileSidebarToggle}/>
                 </Navbar.Header>

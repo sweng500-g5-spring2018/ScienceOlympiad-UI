@@ -4,20 +4,20 @@ import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
 
 /* Test Helper functions */
-import helper from '../../../test/helpers/helper';
+import helper from '../../../../test/helpers/helper';
 
 /* Dependent Components */
-import HttpRequest from '../../adapters/httpRequest';
-import constants from '../../utils/constants';
-import Card from '../../components/Card/Card.js';
+import HttpRequest from '../../../adapters/httpRequest';
+import constants from '../../../utils/constants';
+import Card from '../../../components/Card/Card.js';
 import TextField from 'material-ui/TextField';
 import {Grid, Col, Row, Modal} from 'react-bootstrap';
 import Loader from 'react-loader'
 import NotificationSystem from 'react-notification-system';
 
 /* Component under test */
-import Schools from './Schools';
-import AuthService from "../../utils/AuthService";
+import Schools from '../Schools';
+import AuthService from "../../../utils/AuthService";
 import PasswordField from "material-ui-password-field";
 import RaisedButton from "material-ui/RaisedButton/index";
 import Dialog from 'material-ui/Dialog';
@@ -32,7 +32,7 @@ describe('School Component Tests', function () {
         //STUB: Http request to simulate data retrieval from API
         sinon.stub(HttpRequest, 'httpRequest').resolves(
             //import test data JSON for response
-            require('../../../test/data/schools/getAllSchoolsResponseData.json')
+            require('../../../../test/data/schools/getAllSchoolsResponseData.json')
         )
         //STUB: Constants function used as argument to HttpRequest
         sinon.stub(constants, 'getServerUrl').returns("wow tests are stupid")
