@@ -18,7 +18,6 @@ describe('Header Component Tests', function () {
 
     //Test Suite Mocks/Spies/Data
     const reactRouterData = require('../../../../test/data/header/reactRouterTest');
-    const mockedEvent = { target: {}, preventDefault : () => {} }
 
     //Set up test data before running any tests
     beforeAll(function () {
@@ -59,7 +58,7 @@ describe('Header Component Tests', function () {
 
         expect(component.instance().state.sidebarExists).to.equal(false);
 
-        expect(navbarToggle.simulate('click', mockedEvent));
+        expect(navbarToggle.simulate('click', helper.mockedEvent));
 
         await helper.flushPromises();
         component.update();

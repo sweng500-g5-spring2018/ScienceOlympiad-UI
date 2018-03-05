@@ -29,4 +29,15 @@ function flushPromises() {
     return new Promise((resolve, reject) => setTimeout(resolve, 0));
 }
 
+module.exports.mockedEvent = {
+    target: {
+        attributes: {
+            getNamedItem: () => {
+                return {value: 'test'}
+            }
+        }
+    },
+    preventDefault : () => {}
+}
+
 module.exports.flushPromises = flushPromises;
