@@ -24,12 +24,11 @@ import "react-table/react-table.css";
 import matchSorter from 'match-sorter'
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-
+import Dialog from 'material-ui/Dialog';
 import EventDetail from './EventDetail'
 import FormInputs from "../../components/FormInputs/FormInputs";
-
-
-
+import NotificationSystem from 'react-notification-system';
+import {style} from "../../variables/Variables";
 
 class Events extends Component {
     constructor(props) {
@@ -43,11 +42,15 @@ class Events extends Component {
         this.eventDetails = this.eventDetails.bind(this);
         this.showEvents = this.showEvents.bind(this);
         this.addJudgeInputs = this.addJudgeInputs.bind(this);
+        this.addNotification = this.addNotification.bind(this);
 
         this.state = {
-            test: {},
+            events: {},
             loading: false,
             modal: false,
+            confirmDialog: false,
+            confirmMessage:'',
+            deleteID:'',
             stepIndex: 0,
             //used to send to event detail as a prop
             eventId :'',
@@ -64,11 +67,26 @@ class Events extends Component {
             judgeCount :0,
             existingJudgeValues:[],
             existingJudgeEmails:[],
-            newJudgeFnameErr:''
+            newJudgeFnameErr:'',
+            _notificationSystem:null
+
 
         };
     }
 
+    addNotification(message, level, position, autoDismiss, optionalTitle){
+        this.state._notificationSystem.addNotification({
+            title: optionalTitle ? optionalTitle : (<span data-notify="icon" className="pe-7s-home"></span>),
+            message: (
+                <div>
+                    {message}
+                </div>
+            ),
+            level: level ? level : 'info',
+            position: position ? position : 'tc',
+            autoDismiss: autoDismiss ? autoDismiss : 10,
+        });
+    }
     //launch the modal to enter an event
     createNewEvent() {
         this.setState({
@@ -113,14 +131,22 @@ class Events extends Component {
         body.newJudgeValues= newJudgeList;
         console.log(JSON.stringify(body));
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/addEvent/", "POST", constants.useCredentials(), body, true).then(function (result) {
-            //console.log(result.state);
-                //eventually add notification system
-                alert("The event was added!");
+            _this.addNotification(
+                "Success: The event has been added.",
+                "success",
+                "tc",
+                6
+            );
             _this.componentDidMount();
 
         }).catch(function (error) {
-            alert("There was a problem creating the event")
-            console.log(error);
+            _this.addNotification(
+                "Error: There was a problem creating the event.",
+                "error",
+                "tc",
+                6
+            );
+            _this.componentDidMount();
         })
         //show some success and then clear the fields
         //TODO refresh after an add to show new event in table
@@ -288,19 +314,32 @@ class Events extends Component {
         $('#eventPage').removeClass('collapse')
     }
 
-    removeEvent(eventId) {
+    removeEvent() {
         var _this = this;
+        var removeId = _this.state.deleteID;
         //just making remove a post for now
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/removeEvent/" + eventId, "post", constants.useCredentials(), null, true).then(function (result) {
-
-            alert("Removed the event!");
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/removeEvent/" + removeId, "DELETE", constants.useCredentials(), null,true).then(function (result) {
+            _this.setState({confirmDialog: false});
+            _this.addNotification(
+                "Success: The event has been deleted.",
+                "info",
+                "tc",
+                6
+            );
             _this.componentDidMount();
         }).catch(function (error) {
-            _this.setState({
-                eventNameError: "Event Name already exists"
-            });
+            _this.setState({confirmDialog: false});
+            _this.addNotification(
+                "Error: The event has not been deleted.",
+                "error",
+                "tc",
+                6
+            );
+            _this.componentDidMount();
             console.log(error);
         })
+        _this.setState({confirmDialog: false});
+
 
     }
 
@@ -344,14 +383,27 @@ class Events extends Component {
 
     }
 
+    // Delete the event
+    confirmEventDelete = (s) => {
+       // alert("Got here");
+        this.setState({deleteID: s.id});
+        this.setState({confirmMessage: "Are you sure you want to delete : "+ s.name+" ?", confirmDialog: true});
+    }
+
+    closeConfirmDialog  = () => {
+        this.setState({confirmDialog: false});
+    }
+
     componentDidMount() {
         //Make call out to backend
         var _this = this;
+        this.setState({_notificationSystem: this.refs.notificationSystem});
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/events", "get", constants.useCredentials(), null, true).then(function (result) {
             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/getJudges", "get", constants.useCredentials(), null, true).then(function (judgeResult) {
+                console.log(result.body);
                 _this.setState({
-                test: result.body,
+                events: result.body,
 
                 existingJudgeEmails : judgeResult.body,
                 loading: true
@@ -369,7 +421,7 @@ class Events extends Component {
 
     renderIfEventsFound() {
 
-        if (this.state.test !== null && Object.keys(this.state.test).length !== 0) {
+        if (this.state.events !== null && Object.keys(this.state.events).length !== 0) {
             const columns = [{
                 Header: 'Event Name',
                 filterMethod: (filter, rows) =>
@@ -389,16 +441,16 @@ class Events extends Component {
                 sortable: false,
                 filterable: false
             }];
-            for (let value in this.state.test) {
-                this.state.test[value].menuActions = <div><RaisedButton
+            for (let value in this.state.events) {
+                this.state.events[value].menuActions = <div><RaisedButton
                     primary={true} label="View Details"
-                    onClick={(event) => this.eventDetails(this.state.test[value].id)}/>&nbsp;&nbsp;&nbsp;<RaisedButton
+                    onClick={(event) => this.eventDetails(this.state.events[value].id)}/>&nbsp;&nbsp;&nbsp;<RaisedButton
                     secondary={true} label="Delete"
-                    onClick={(event) => this.eventDetails(this.state.test[value].id)}/></div>;
+                    onClick={this.confirmEventDelete.bind(this,this.state.events[value])}/></div>;
             }
             return (
                 <ReactTable
-                    data={this.state.test}
+                    data={this.state.events}
                     filterable
                     defaultFilterMethod={(filter, row) =>
                         String(row[filter.id]) === filter.value}
@@ -449,10 +501,23 @@ class Events extends Component {
             <EventDetail showEvents={this.showEvents} eventId={this.state.eventId}/>
             )
         }
+
+        const deleteActions = [
+            <FlatButton
+                label="Cancel"
+                primary={true}
+                onClick={this.closeConfirmDialog}
+            />,
+            <FlatButton
+                label="Delete"
+                primary={true}
+                onClick={this.removeEvent}
+            />,
+        ];
         return (
 
             <div className="content">
-
+                <NotificationSystem ref="notificationSystem"/>
                 <div id='eventPage' key="notFound-key" className="notFoundClass">
                     <MuiThemeProvider>
                         <Grid>
@@ -614,7 +679,14 @@ class Events extends Component {
                             {backButton} {actionButton}
                         </Modal.Footer>
                     </Modal>
-
+                    <Dialog
+                        actions={deleteActions}
+                        modal={false}
+                        open={this.state.confirmDialog}
+                        onRequestClose={this.closeConfirmDialog}
+                    >
+                        {this.state.confirmMessage}
+                    </Dialog>
 
                 </MuiThemeProvider>
             </div>
