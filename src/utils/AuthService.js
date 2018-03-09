@@ -53,7 +53,7 @@ export default class AuthService {
                 }).catch(function (error) {
                     AuthService.revokeAuth();
                     console.log(error);
-                    resolve({status: error.status, message: error});
+                    resolve({status: error.status, message: error.message});
                 })
             } else {
                 AuthService.revokeAuth();
