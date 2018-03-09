@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Well,Alert, Grid, Col, Row, Modal} from 'react-bootstrap';
+import {PageHeader,Well,Alert, Grid, Col, Row, Modal} from 'react-bootstrap';
 import Loader from 'react-loader'
 import {
     Step,
@@ -68,7 +68,10 @@ class Events extends Component {
             //for adding judges
             judgeInputs: [],
 
+            //keep track of the actual new Judges
             judgeCount: 0,
+            //keep track of where the most recent new judge is
+            judgeIndex:0,
             existingJudgeValues: [],
             existingJudgeEmails: [],
             newJudgeFnameErr: '',
@@ -205,6 +208,15 @@ class Events extends Component {
         })
     }
 
+    // Checks to see if an email has a host, @ symbols, and domain.
+    validEmail(text) {
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (reg.test(text) === false)
+            return true;
+        else
+            return false;
+    }
+
     nextStep() {
         //validate event entries here
 
@@ -295,12 +307,49 @@ class Events extends Component {
                 })
             }
         } else if (stepIndex == 1) {
-            //alert(this.state.existingJudgeValues);
+            //no validation since we are just pulling judges from the db
             _this.setState({
                 stepIndex: stepIndex + 1
             })
         } else {
+                //only verify the last email and send to create event post
 
+            var validateFields = true;
+            let judgeCnt = _this.state.judgeCount;
+            let idname = "#judgemail"+judgeCnt;
+            var promises =[];
+            //do not run when displaying the first set of inputs
+            if(judgeCnt > 0) {
+                var email = $(idname).val();
+                var body = {};
+                if (email != null && email.length > 0) {
+                    if(!this.validEmail(email.trim())) {
+                        body.emailAddress = email;
+                        promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body));
+                        console.log("added a promise " + email);
+                    } else {
+                        $(idname).parent().parent().parent().parent().find(".errorText").text("Email is not in the correct format");
+                        $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                    }
+                } else {
+                    $(idname).parent().parent().parent().parent().find(".errorText").text("Email is required");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                }
+            }
+            //only continue to create event if this email is good
+            if (promises.length > 0) {
+                Promises.all(promises).then(function (results) {
+                    $(idname).attr("disabled", true);
+                    $(idname).parent().parent().parent().parent().find(".errorText").text("");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display", "none");
+                    //finally send the event request
+                    _this.createEventPost();
+
+                }).catch(function (error) {
+                    $(idname).parent().parent().parent().parent().find(".errorText").text("Email is already in use");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                })
+            }
         }
     }
 
@@ -364,104 +413,135 @@ class Events extends Component {
 
     }
 
-    //dynamically add in new input fields when clicked
-    addJudgeInputs(previousEmail) {
+    //dynamically add in new input fields when clicked, validate the previous entry first
+    addJudgeInputs() {
         //get a local copy so we dont set state here and re-render, update state after
 
         var _this = this;
+        //control whether we execute the promise based on validation
+        var validateFields = true;
+
         let judgeCnt = _this.state.judgeCount;
         let idname = "#judgemail"+judgeCnt;
         var promises =[];
-        if(judgeCnt> 0){
-            alert("judgecnt > 0" );
+        //do not run when displaying the first set of inputs
+        if(judgeCnt > 0) {
             var email = $(idname).val();
             var body = {};
-            body.emailAddress=email;
-            promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body));
-       console.log("added a promise " + email);
+            if (email != null && email.length > 0) {
+                if(!this.validEmail(email.trim())) {
+                    body.emailAddress = email;
+                    promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body));
+                    console.log("added a promise " + email);
+                } else {
+                    //not the prettiest code....
+                    $(idname).parent().parent().parent().parent().find(".errorText").text("Email is not in the correct format");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                    validateFields = false;
+                }
+            } else {
+                $(idname).parent().parent().parent().parent().find(".errorText").text("Email is required");
+                $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                validateFields = false;
+            }
         }
-        judgeCnt = judgeCnt+1;
+        if(validateFields) {
+            judgeCnt = judgeCnt + 1;
 
-        const removeBtn = [
-            <RaisedButton icon={<FontIcon className="pe-7s-back"/>}
-                          secondary={true} label="Remove judge"
-                          onClick={this.removeNewJudge.bind(this,judgeCnt)}/>
-        ];
-
-        const fnameJudge =[
-            <TextField
-                id={"judgefname"+judgeCnt}
-                floatingLabelText="Event Name"
-                required={true}
-                autoFocus={true}
-                fullWidth={true}
-            />];
+            const fnameJudge = [
+                <TextField
+                    id={"judgefname" + judgeCnt}
+                    floatingLabelText="First Name"
+                    required={true}
+                    autoFocus={true}
+                    fullWidth={true}
+                />];
             const lnameJudge = [
-            <TextField
-                id={"judgelname"+judgeCnt}
-                floatingLabelText="Last Name"
-                required={true}
-                fullWidth={true}
-            />];
-                const emailJudge =[
-            <TextField
-            id={"judgemail"+judgeCnt}
-            floatingLabelText="Email"
-            required={true}
-            fullWidth={true}
-            />];
+                <TextField
+                    id={"judgelname" + judgeCnt}
+                    floatingLabelText="Last Name"
+                    required={true}
+                    fullWidth={true}
+                />];
+            const emailJudge = [
+                <TextField
+                    id={"judgemail" + judgeCnt}
+                    floatingLabelText="Email"
+                    required={true}
+                    fullWidth={true}
+                />];
 
-                //only add thew new row if the previous email is valid or
-       // alert(promises.length +   "  judcnt  " + judgeCnt);
-        if(promises.length > 0) {
-            Promises.all(promises).then(function (results)
-            {
-                $(idname).attr("disabled",true);
-                $(idname).parent().parent().parent().parent().find(".errorText").text("");
-                console.log("success email");
+            //only add thew new row if the previous email is valid or
+            // alert(promises.length +   "  judcnt  " + judgeCnt);
+            if (promises.length > 0) {
+                Promises.all(promises).then(function (results) {
+                    $(idname).attr("disabled", true);
+                    $(idname).parent().parent().parent().parent().find(".errorText").text("");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display","none");
+
+                    console.log("success email");
+                    _this.setState({
+                        judgeCount: _this.state.judgeCount + 1,
+                        judgeIndex: _this.state.judgeIndex + 1,
+
+                        //add judges class to use jquery to loop over reach one
+                        judgeInputs: _this.state.judgeInputs.concat(<Row>
+                            <div className={"col-md-9 col-xs-7" + " row" + judgeCnt}><Well>
+                                <h3>New Judge {judgeCnt}</h3>
+                                <Row><Alert style={{display:"none"}} bsStyle="danger"
+                                            className="errorText"></Alert></Row>
+                                <Row><Col md={4} xs={7}>{fnameJudge}</Col></Row>
+                                <Row><Col md={4} xs={7}>{lnameJudge}</Col></Row>
+                                <Row><Col md={4} xs={7}>{emailJudge}</Col></Row></Well>
+                            </div>
+                        </Row>)
+                    });
+                }).catch(function (error) {
+                    //ugly way to add error text
+
+                    console.log("error in email --- " + idname);
+                    $(idname).attr("disabled", false);
+                    $(idname).parent().parent().parent().parent().find(".errorText").text("Email already exists");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+
+                });
+            } else {
                 _this.setState({
                     judgeCount: _this.state.judgeCount + 1,
+                    judgeIndex: _this.state.judgeIndex + 1,
                     //add judges class to use jquery to loop over reach one
                     judgeInputs: _this.state.judgeInputs.concat(<Row>
-                        <div className={"col-md-9 col-xs-7" + " row" + judgeCnt}><Well><Row>{removeBtn}</Row>
-                            <Row><span className="errorText"></span></Row><Row><Col md={4} xs={7}>{fnameJudge}</Col></Row>
-                            <Row><Col md={4} xs={7}>{lnameJudge}</Col></Row><Row><Col md={4}
-                                                                                       xs={7}>{emailJudge}</Col></Row></Well>
+                        <div className={"col-md-9 col-xs-7" + " row" + judgeCnt}><Well>
+                            <h3>New Judge {judgeCnt}</h3>
+                            <Row> <Alert style={{display:"none"}} className="errorText" bsStyle="danger"></Alert></Row><Row>
+                            <Col md={4} xs={7}>{fnameJudge}</Col></Row>
+                            <Row><Col md={4} xs={7}>{lnameJudge}</Col></Row>
+                            <Row><Col md={4} xs={7}>{emailJudge}</Col></Row></Well>
                         </div>
                     </Row>)
                 });
-            }).catch(function (error) {
-                //ugly way to add error text
-
-                console.log( "error in email --- " + idname);
-                $(idname).attr("disabled",false);
-                $(idname).parent().parent().parent().parent().find(".errorText").text("Email already exists");
-            });
-        } else {
-            _this.setState({
-                judgeCount: _this.state.judgeCount + 1,
-                //add judges class to use jquery to loop over reach one
-                judgeInputs: _this.state.judgeInputs.concat(<Row>
-                    <div className={"col-md-9 col-xs-7" + " row" + judgeCnt}><Well><Row>{removeBtn}</Row>
-                        <Row><span className="errorText"></span></Row><Row><Col md={4} xs={7}>{fnameJudge}</Col></Row>
-                        <Row><Col md={4} xs={7}>{lnameJudge}</Col></Row><Row><Col md={4}
-                                                                                   xs={7}>{emailJudge}</Col></Row></Well>
-                    </div>
-                </Row>)
-            });
+            }
         }
 
     }
 
-    //Remove the text fields for a new judge
+    //Remove the text fields for the most recent judge
     removeNewJudge = (judgeCount) =>{
         //alert("judge count" + judgeCount);
-        var domId = ".row"+judgeCount;
-        $(domId).remove();
         var _this =this;
+        var tempCount = _this.state.judgeCount;
+        var domId = ".row"+ tempCount;
+        $(domId).remove();
+        tempCount -= 1;
+        domId=".row" +tempCount;
+        //reenable the previous row
+        $(domId).find("#judgemail"+tempCount).attr("disabled", false);
+        //always decrement when we remove
         _this.setState({
             judgeCount: this.state.judgeCount -1,
         })
+
+
     }
 
     // Delete the event
@@ -766,6 +846,12 @@ class Events extends Component {
                                                           primary={true} label="Add new judge"
                                                           onClick={this.addJudgeInputs}/>
                                                 </Col>
+                                                <Col md={3}>
+                                                    <RaisedButton icon={<FontIcon className="pe-7s-close"/>}
+                                                                  secondary={true} label="Remove judge"
+                                                                  onClick={this.removeNewJudge.bind(this)}/>
+                                                </Col>
+
                                             </Row>
                                         </StepContent>
                                     </Step>
