@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
-import {StatsCard} from '../../components/StatsCard/StatsCard.js';
+import {StatsCard} from '../../components/Cards/StatsCard.js';
 import Contact from '../../components/HttpExample/contact.js'
 
 class Dashboard extends Component {

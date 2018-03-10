@@ -9,7 +9,7 @@ import helper from '../../../../test/helpers/helper';
 /* Dependent Components */
 import HttpRequest from '../../../adapters/httpRequest';
 import constants from '../../../utils/constants';
-import Card from '../../../components/Card/Card.js';
+import Card from '../../../components/Cards/Card.js';
 import TextField from 'material-ui/TextField';
 import {Grid, Col, Row, Modal} from 'react-bootstrap';
 import Loader from 'react-loader'

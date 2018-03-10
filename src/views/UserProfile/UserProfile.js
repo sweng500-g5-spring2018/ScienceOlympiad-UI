@@ -3,7 +3,7 @@ import {
     Grid, Row, Col,
 } from 'react-bootstrap';
 
-import {UserCard} from '../../components/UserCard/UserCard.js';
+import {UserCard} from '../../components/Cards/UserCard.js';
 import InputMask from 'react-input-mask';
 import Button from '../../elements/CustomButton/CustomButton.js';
 

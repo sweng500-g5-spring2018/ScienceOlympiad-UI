@@ -8,7 +8,7 @@ import TextField from 'material-ui/TextField';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
-import Card from '../../components/Card/Card.js';
+import Card from '../../components/Cards/Card.js';
 import InputMask from 'react-input-mask';
 import ReactTable from 'react-table';
 import matchSorter from 'match-sorter';
