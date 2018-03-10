@@ -53,7 +53,7 @@ export default class AuthService {
                 }).catch(function (error) {
                     AuthService.revokeAuth();
                     console.log(error);
-                    resolve({status: error.status, message: error});
+                    resolve({status: error.status, message: error.message});
                 })
             } else {
                 AuthService.revokeAuth();
@@ -72,23 +72,17 @@ export default class AuthService {
         const token = AuthService.getToken();
         const session = AuthService.getSession();
         if (token && session) {
-            try {
-                var decoded = AuthService.decodeSessionVars();
-                if (!decoded || moment(decoded.expiration).isBefore(moment())) { // Checking if token is expired.
-                    AuthService.revokeAuth(true);
-                    return false;
-                }
-                else {
-                    if(isServerCall) {
-                        AuthService.updateTimeStamp(decoded);
-                    }
-
-                    return true;
-                }
-            }
-            catch (err) {
+            var decoded = AuthService.decodeSessionVars();
+            if (!decoded || moment(decoded.expiration).isBefore(moment())) { // Checking if token is expired.
                 AuthService.revokeAuth(true);
                 return false;
+            }
+            else {
+                if(isServerCall) {
+                    AuthService.updateTimeStamp(decoded);
+                }
+
+                return true;
             }
         } else {
             AuthService.revokeAuth();
@@ -136,18 +130,13 @@ export default class AuthService {
         }
     }
 
-    static encodeAndSetToken(json) {
-        try {
-            localStorage.setItem('id_token', jwt.encode(json, AuthService.getSession()));
-            return true;
-        } catch (error) {
-            return false;
-        }
-    }
-
     static updateTimeStamp(decoded) {
-        decoded.timestamp = moment().add(20, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS');
-        return AuthService.encodeAndSetToken(decoded);
+        decoded.expiration = moment().add(20, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS');
+
+        let encoded = jwt.encode(decoded, AuthService.getSession());
+        AuthService.setToken(encoded);
+
+        return true;
     }
 
     static setSession(session) {

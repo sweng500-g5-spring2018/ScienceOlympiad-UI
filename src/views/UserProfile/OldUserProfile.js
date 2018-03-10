@@ -5,9 +5,9 @@ import {
     FormGroup, ControlLabel, FormControl
 } from 'react-bootstrap';
 
-import {Card} from '../../components/Card/Card.js';
+import {Card} from '../../components/Cards/Card.js';
 import {FormInputs} from '../../components/FormInputs/FormInputs.js';
-import {UserCard} from '../../components/UserCard/UserCard.js';
+import {UserCard} from '../../components/Cards/UserCard.js';
 import InputMask from 'react-input-mask';
 import Button from '../../elements/CustomButton/CustomButton.js';
 

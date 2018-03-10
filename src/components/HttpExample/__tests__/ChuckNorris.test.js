@@ -3,9 +3,9 @@ import sinon from 'sinon';
 import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
 
-import ChuckNorris from "../chuckNorris";
+import ChuckNorris from "../ChuckNorris";
 
-describe('chuckNorris Component', function () {
+describe('ChuckNorris Component', function () {
 
     //Test Data declarations
     let chuckData;

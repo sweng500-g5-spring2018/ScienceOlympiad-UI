@@ -1,3 +1,4 @@
+import React from 'react';
 /**
  * Function for flushing current promises in the microtasks Queue
  *  This is useful when rendering components that setState during the
@@ -29,6 +30,10 @@ function flushPromises() {
     return new Promise((resolve, reject) => setTimeout(resolve, 0));
 }
 
+/**
+ * An event object which can be used for mocking Events
+ *
+ */
 module.exports.mockedEvent = {
     target: {
         attributes: {
