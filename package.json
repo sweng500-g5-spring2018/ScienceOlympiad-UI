@@ -41,10 +41,12 @@
     "build": "npm-run-all build-css build-js",
     "test": "react-scripts test --env=jsdom",
     "test:ci": "CI=true react-scripts test --env=jsdom --testResultsProcessor ./node_modules/jest-junit",
-    "test:coverage": "npm run test -- --coverage",
+    "test:coverage": "npm run test -- --coverage --no-cache",
+    "test:showConfig": "react-scripts test --showConfig",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "axios-mock-adapter": "^1.14.1",
     "chai": "^4.1.2",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",

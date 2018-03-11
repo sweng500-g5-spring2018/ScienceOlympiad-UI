@@ -19,13 +19,14 @@ export default class HttpRequest {
     static httpRequest(url, httpMethod, httpHeader, requestData, needsSession = false) {
         if (httpHeader == null) httpHeader = emptyHeader;
 
-        //IF request requires session, check if User is still Authorized
-        //  and update timestamp if they are
-        if (needsSession && !AuthService.isAuthorized(true)) {
-            window.location = '/#/login';
-        }
-
         var promise = new Promise(function (resolve, reject) {
+
+            //IF request requires session, check if User is still Authorized
+            //  and update timestamp if they are
+            if (needsSession && !AuthService.isAuthorized(true)) {
+                window.location = '/#/login';
+                reject('ERROR: Must be an authorized user.  Please login.');
+            }
 
             if (httpMethod == null) {
                 reject('ERROR: Must supply an HTTP Request.  Please try : GET, DELETE, PUT, POST.');

@@ -10,16 +10,13 @@ import TestComponent from '../../../test/helpers/TestComponent';
 
 //CHILDREN COMPONENTS
 import AuthService from "../../utils/AuthService";
-import {Router, Switch, Route, Redirect, HashRouter} from 'react-router-dom'
+import {Route, Redirect, HashRouter} from 'react-router-dom'
 
 //COMPONENT TO TEST
 import AuthenticatedRoute from "../AuthenticatedRoute";
 import Dashboard from "../../views/Dashboard/Dashboard";
 
 describe('Authenticated Route Tests', function () {
-    // const notifyStub = sinon.stub(NotificationSystem.prototype, 'addNotification').returns(true);
-    {/*<AuthenticatedRoute path={prop.path} component={prop.component} users={prop.users} key={key} notify={this.notify}/>*/}
-    // var hist = {location: {}, listen: () => {}}
     const mountWithRouter = node => mount(<HashRouter>{node}</HashRouter>);
     const shallowWithRouter = node => shallow(<HashRouter>{node}</HashRouter>);
 
@@ -70,6 +67,8 @@ describe('Authenticated Route Tests', function () {
         //Expect the TestComponent passed into Authenticated Route to be rendered
         expect(renderedComp.find(TestComponent)).to.be.length(1);
         expect(renderedComp.find("div#test-component-id")).to.be.length(1);
+
+        component.unmount();
     });
 
     //Test 2
@@ -84,6 +83,8 @@ describe('Authenticated Route Tests', function () {
         //Call render of Route since it is a function
         const renderedComp = shallowWithRouter(component.find(Route).instance().props.render(locationProps));
         expect(renderedComp.find(Redirect)).to.be.length(1);
+
+        component.unmount();
     });
 
 });
