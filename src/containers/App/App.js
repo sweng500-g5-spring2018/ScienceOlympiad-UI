@@ -4,15 +4,12 @@ import {
     Switch,
     Redirect
 } from 'react-router-dom';
-import AuthenticatedRoute from  '../../routes/AuthenticatedRoute';
-import AuthService from '../../utils/AuthService';
 
+import {style} from "../../variables/Variables.js";
+import AuthenticatedRoute from  '../../routes/AuthenticatedRoute';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import Sidebar from '../../components/Sidebar/Sidebar';
-
-import {style} from "../../variables/Variables.js";
-
 import appRoutes from '../../routes/app.js';
 
 
@@ -40,27 +37,39 @@ class App extends Component {
         });
     }
 
+    static getRandoNotification() {
+        var notifyJson = {};
+        notifyJson.position = 'tr';
+        notifyJson.autoDismiss = 10;
+
+        let color = Math.floor((Math.random() * 4) + 1);
+        switch (color) {
+            case 1:
+                notifyJson.level = 'success';
+                break;
+            case 2:
+                notifyJson.level = 'warning';
+                break;
+            case 3:
+                notifyJson.level = 'error';
+                break;
+            case 4:
+                notifyJson.level = 'info';
+                break;
+            default:
+                notifyJson.level = 'info';
+                break;
+        }
+
+        return notifyJson;
+    }
+
     componentDidMount(){
         this.setState({_notificationSystem: this.refs.notificationSystem});
         var _notificationSystem = this.refs.notificationSystem;
-        var color = Math.floor((Math.random() * 4) + 1);
-        var level;
-        switch (color) {
-            case 1:
-                level = 'success';
-                break;
-            case 2:
-                level = 'warning';
-                break;
-            case 3:
-                level = 'error';
-                break;
-            case 4:
-                level = 'info';
-                break;
-            default:
-                break;
-        }
+
+        let notifyJson = App.getRandoNotification();
+
         _notificationSystem.addNotification({
             title: (<span data-notify="icon" className="pe-7s-gift"></span>),
             message: (
@@ -68,9 +77,9 @@ class App extends Component {
                     Welcome to <b>Science Olympiad Dashboard</b> - a central hub for Science Olympiad Competitions.
                 </div>
             ),
-            level: level,
-            position: "tr",
-            autoDismiss: 15,
+            level: notifyJson.level,
+            position: notifyJson.position,
+            autoDismiss: notifyJson.autoDismiss,
         });
     }
     componentDidUpdate(e){
