@@ -89,7 +89,7 @@ class Events extends Component {
 
     addNotification(message, level, position, autoDismiss, optionalTitle) {
         this.state._notificationSystem.addNotification({
-            title: optionalTitle ? optionalTitle : (<span data-notify="icon" className="pe-7s-home"></span>),
+            title: optionalTitle ? optionalTitle : (<span data-notify="icon" className="pe-7s-note2"></span>),
             message: (
                 <div>
                     {message}
@@ -680,7 +680,7 @@ class Events extends Component {
         return (
 
             <div className="content">
-                <NotificationSystem ref="notificationSystem"/>
+                <NotificationSystem ref="notificationSystem" style={style}/>
                 <div id='eventPage' key="notFound-key" className="notFoundClass">
                     <MuiThemeProvider>
                         <Grid>
