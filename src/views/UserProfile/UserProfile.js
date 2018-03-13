@@ -10,7 +10,7 @@ import Button from '../../elements/CustomButton/CustomButton.js';
 import {TextField} from "material-ui";
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
-import AuthService from '../../utils/AuthService';
+import AuthService from "../../utils/AuthService";
 import NotificationSystem from 'react-notification-system';
 import {style} from "../../variables/Variables";
 import AppBar from 'material-ui/AppBar';
@@ -59,15 +59,15 @@ class UserProfile extends React.Component {
         const userType = AuthService.getUserRole();
         console.log(userType);
         if (userType === "ADMIN") {
-            this.state.imageUrl = "https://telegram.org/file/811140509/b45/dQTLEwKZ9gs.22232.gif/4580677d940852f30e";
+            this.setState({imageUrl : "https://telegram.org/file/811140509/b45/dQTLEwKZ9gs.22232.gif/4580677d940852f30e"});
         } else if (userType === "COACH") {
-            this.state.imageUrl = "https://baseballmomstuff.com/wp-content/uploads/2016/02/coach-cartoon.jpg";
-            this.state.desc = "School: " + this.state.user.school;
+            this.setState({imageUrl : "https://baseballmomstuff.com/wp-content/uploads/2016/02/coach-cartoon.jpg"});
+            this.setState({desc : "School: " + this.state.user.school});
         } else if (userType === "JUDGE") {
-            this.state.imageUrl = "https://www.how-to-draw-funny-cartoons.com/image-files/cartoon-judge-010.jpg";
+            this.setState({imageUrl : "https://www.how-to-draw-funny-cartoons.com/image-files/cartoon-judge-010.jpg"});
         } else if (userType === "STUDENT") {
-            this.state.imageUrl = "https://classroomclipart.com/images/gallery/Clipart/Science/TN_female-student-holding-flask-and-test-tube-in-science-lab-science-clipart.jpg";
-            this.state.desc = "Coach: " + this.state.user.coach;
+            this.setState({imageUrl : "https://classroomclipart.com/images/gallery/Clipart/Science/TN_female-student-holding-flask-and-test-tube-in-science-lab-science-clipart.jpg"});
+            this.setState({desc : "Coach: " + this.state.user.coach});
         }
     }
 
@@ -93,69 +93,81 @@ class UserProfile extends React.Component {
         var body = {};
         var _this = this;
 
-        body.user = this.state.user;
-
         if (this.state.password !== "") {
+
+            body.password = this.state.password;
+
+            //update the user, first clean the phone number
+            var cleanPhoneNumber = _this.state.user.phoneNumber;
+            cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
+            cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
+            cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
+            cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
+
+            // this.state.user.phoneNumber = cleanPhoneNumber;
+            var tempUser = _this.state.user;
+            tempUser.phoneNumber = cleanPhoneNumber;
+            _this.setState({user : tempUser}); //, () => {}
+
+            console.log("1st Update " + this.state.password);
+
             //check to ensure the password matches
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate?_id=' +
-                this.state.id, 'POST', null, body).then(function (result) {
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate', 'POST',
+                constants.useCredentials(), body).then(function (result) {
+
+                body.user = _this.state.user;
+
+                console.log("2nd Update " + body);
 
                 if (result.status === 200) {
 
-                    //update the user, first clean the phone number
-                    var cleanPhoneNumber = this.state.user.phoneNumber;
-                    cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
-                    cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
-                    cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
-                    cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
-
-                    this.state.user.phoneNumber = cleanPhoneNumber;
-
+                    console.log("3rd Update " + body);
                     //submit the http request
-                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser?_id=' +
-                        this.state.id, 'POST', null, body).then(function (result) {
 
-                        console.log(result);
+                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser', 'POST', constants.useCredentials(), body.user).then(function (result) {
+
+                        console.log("4th Update " + body);
 
                         if (result.status === 200) {
                             //use the app.notify to put something on the screen
-                            this.notify(
+                            _this.notify(
                                 "Profile Successfully Updated",
                                 "success",
                                 "tc",
                                 5
-                            )
+                            );
+                            document.getElementById('password').value='';
                         }else if(result.status === 409) {
-                            this.notify(
+                            _this.notify(
                                 "Could not update",
                                 "error",
                                 "tc",
                                 10
-                            )
+                            );
                         }
 
                     }).catch(function (error) {
                         console.log(error);
                     })
                 } else if(result.status === 401) {
-                    this.notify(
+                    _this.notify(
                         "Incorrect password",
                         "error",
                         "tc",
                         10
-                    )
+                    );
                 }
 
             }).catch(function (error) {
                 console.log(error);
             })
         } else {
-            this.notify(
+            _this.notify(
                 "Enter your current password",
                 "error",
                 "tc",
                 5
-            )
+            );
         }
     }
 
@@ -175,56 +187,77 @@ class UserProfile extends React.Component {
         var body = {};
         var _this = this;
 
+        console.log("Change pw 1");
         //check to ensure that current password is filled in
-        if (this.state.currentPassword !== "" && this.state.newPassword !== "" && this.state.confirmNewPassword) {
+        if (this.state.currentPassword !== "" && this.state.newPassword !== "" && this.state.confirmPassword !== "") {
 
+            console.log("Change pw 2");
             //check to make sure current password is correct
-            if (this.state.newPassword === this.state.confirmNewPassword) {
+            if (this.state.newPassword === this.state.confirmPassword) {
+
+                console.log("Change pw 3");
                 if (this.validPassword(this.state.newPassword)) {
 
+                    console.log("Change pw 4");
+
+                    body.password = this.state.currentPassword;
                     //ensure their current password is correct
-                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate?_id=' + this.state.id, 'POST', null, body).then(function (result) {
+                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate', 'POST',
+                        constants.useCredentials(), body).then(function (result) {
 
+                        console.log("Change pw 5");
                         if (result.status === 200) {
-                            //then change the password
-                            body.newPassword = this.state.newPassword;
 
-                            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/changePassword?_id=' + this.state.id, 'POST', null, body).then(function (result) {
+                            console.log("Change pw 6");
+                            //then change the password
+                            body.password = _this.state.newPassword;
+
+                            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/changePassword', 'POST', constants.useCredentials(), body).then(function (result) {
                                 console.log(result);
 
+                                console.log("Change pw 7");
                                 if (result.status === 200) {
-                                    this.notify(
+                                    _this.notify(
                                         "Password Changed",
                                         "success",
                                         "tc",
                                         5
-                                    )
+                                    );
+                                    document.getElementById('currentPassword').value='';
+                                    document.getElementById('newPassword').value='';
+                                    document.getElementById('confirmPassword').value='';
                                 }else if(result.status === 409) {
-                                    this.notify(
+                                    _this.notify(
                                         "Could not update",
                                         "error",
                                         "tc",
                                         10
-                                    )
+                                    );
                                 }
 
                             }).catch(function (error) {
                                 console.log(error);
                             })
-                        } else if (result.status === 401) {
-                            this.notify(
+                        } else {
+                            _this.notify(
                                 "Incorrect current password",
                                 "error",
                                 "tc",
                                 10
-                            )
+                            );
                         }
                     }).catch(function (error) {
+                        _this.notify(
+                            "Incorrect current password",
+                            "error",
+                            "tc",
+                            10
+                        );
                         console.log(error);
                     })
                 } else {
                     //put up a notify
-                    this.notify(
+                    _this.notify(
                         "ERROR: Your password must be 8 or more characters, contain capital letters, lower case letters, and at least one number.",
                         "error",
                         "tc",
@@ -233,14 +266,19 @@ class UserProfile extends React.Component {
                 }
             } else {
                 //put up a notify
-                this.notify(
+                _this.notify(
                     "New passwords do not match",
                     "error",
                     "tc",
                     5
-                )
+                );
             }
 
+        }
+        else {
+            console.log(this.state.currentPassword !== "");
+            console.log(this.state.newPassword !== "");
+            console.log(this.state.confirmPassword !== "");
         }
     }
 
@@ -304,7 +342,7 @@ class UserProfile extends React.Component {
                                         this.setState({user : ryanRocks})}}
                                     value={this.state.user.phoneNumber}
                                 >
-                                    <InputMask mask="1 (999) 999-9999" maskChar="#"
+                                    <InputMask mask="9 (999) 999-9999" maskChar="#"
                                                value={this.state.user.phoneNumber}/>
                                 </TextField>
                             </Col>
@@ -330,6 +368,7 @@ class UserProfile extends React.Component {
                             <Col md={6}>
                                 <PasswordField
                                     name="currentPassword"
+                                    id="password"
                                     // hintText="Current Password"
                                     floatingLabelText="Current Password"
                                     onChange={(event, newValue) => this.setState({password: newValue})}
@@ -375,6 +414,7 @@ class UserProfile extends React.Component {
                             <Col md={12}>
                                 <PasswordField
                                     name="currentPassword"
+                                    id="currentPassword"
                                     // hintText="Current Password"
                                     floatingLabelText="Current Password"
                                     onChange={(event, newValue) => this.setState({currentPassword: newValue})}
@@ -386,6 +426,7 @@ class UserProfile extends React.Component {
                             <Col md={12}>
                                 <PasswordField
                                     name="newPassword"
+                                    id="newPassword"
                                     // hintText="New Password"
                                     floatingLabelText="New Password"
                                     onChange={(event, newValue) => this.setState({newPassword: newValue})}
@@ -397,6 +438,7 @@ class UserProfile extends React.Component {
                             <Col md={12}>
                                 <PasswordField
                                     name="confirmPassword"
+                                    id="confirmPassword"
                                     // hintText="Confirm Password"
                                     floatingLabelText="Confirm Password"
                                     onChange={(event, newValue) => this.setState({confirmPassword: newValue})}

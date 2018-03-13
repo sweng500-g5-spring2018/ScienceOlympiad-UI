@@ -266,6 +266,7 @@ class Signup extends React.Component {
                 body.emailAddress = this.state.emailAddress;
                 body.phoneNumberString = cleanPhoneNumber;
                 body.password = this.state.password;
+                body.minutesBeforeEvent = 10;
                 var schoolID = this.state.school;
 
 
