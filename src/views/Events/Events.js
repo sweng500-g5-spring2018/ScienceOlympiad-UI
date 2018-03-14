@@ -198,6 +198,7 @@ class Events extends Component {
             endTime: '',
             eventDescription: '',
             eventLocation: '',
+            existingJudgeValues:[],
             judgeInputs: [],
             judgeCount: 0,
 
@@ -304,12 +305,12 @@ class Events extends Component {
         } else if (stepIndex == 1) {
             //no validation since we are just pulling judges from the db
             _this.setState({
-                stepIndex: stepIndex + 1
+                stepIndex: stepIndex + 1,
             })
         } else {
                 //only verify the last email and send to create event post
 
-            var validateFields = true;
+            var validateFields = false;
             let judgeCnt = _this.state.judgeCount;
             let idname = "#judgemail"+judgeCnt;
             var promises =[];
@@ -323,10 +324,12 @@ class Events extends Component {
                         promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body));
                         console.log("added a promise " + email);
                     } else {
+                        validateFields=true;
                         $(idname).parent().parent().parent().parent().find(".errorText").text("Email is not in the correct format");
                         $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
                     }
                 } else {
+                    validateFields=true;
                     $(idname).parent().parent().parent().parent().find(".errorText").text("Email is required");
                     $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
                 }
@@ -343,10 +346,12 @@ class Events extends Component {
                 }).catch(function (error) {
                     $(idname).parent().parent().parent().parent().find(".errorText").text("Email is already in use");
                     $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
-                })
+                });
             } else {
-                //just create event if no new judges
-                _this.createEventPost();
+                //just create event if no new judges and no syntax error
+                if(!validateFields) {
+                    _this.createEventPost();
+                }
             }
         }
     }
