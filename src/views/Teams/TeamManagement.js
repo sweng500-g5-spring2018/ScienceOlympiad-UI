@@ -5,6 +5,7 @@ import {Grid, Row, Col, Panel, PanelGroup} from 'react-bootstrap';
 
 import ReactTable from 'react-table';
 import StudentAdder from "./StudentAdder";
+import TeamAdder from "./TeamAdder";
 
 class TeamManagement extends Component {
     constructor(props) {
@@ -63,6 +64,7 @@ class TeamManagement extends Component {
                         <Panel id="add-team-collapsible-panel" eventKey={"team"} style={{border:0}}>
                             <Panel.Body collapsible>
                                 HA HA HA Team
+                                <TeamAdder/>
                             </Panel.Body>
                         </Panel>
                     </PanelGroup>
