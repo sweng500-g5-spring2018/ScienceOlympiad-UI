@@ -305,8 +305,11 @@ class Events extends Component {
             }
         } else if (stepIndex == 1) {
             //no validation since we are just pulling judges from the db
+            //clear the new judge inputs since we don't keep state on them
             _this.setState({
                 stepIndex: stepIndex + 1,
+                judgeInputs: [],
+                judgeCount:0
             })
         } else {
                 //only verify the last email and send to create event post
@@ -436,7 +439,6 @@ class Events extends Component {
                 if(!this.validEmail(email.trim())) {
                     body.emailAddress = email;
                     promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body));
-                    console.log("added a promise " + email);
                 } else {
                     //not the prettiest code....
                     $(idname).parent().parent().parent().parent().find(".errorText").text("Email is not in the correct format");
@@ -476,14 +478,12 @@ class Events extends Component {
                 />];
 
             //only add thew new row if the previous email is valid or
-            // alert(promises.length +   "  judcnt  " + judgeCnt);
             if (promises.length > 0) {
                 Promises.all(promises).then(function (results) {
                     $(idname).attr("disabled", true);
                     $(idname).parent().parent().parent().parent().find(".errorText").text("");
                     $(idname).parent().parent().parent().parent().find(".errorText").css("display","none");
 
-                    console.log("success email");
                     _this.setState({
                         judgeCount: _this.state.judgeCount + 1,
 
@@ -502,7 +502,6 @@ class Events extends Component {
                 }).catch(function (error) {
                     //ugly way to add error text
 
-                    console.log("error in email --- " + idname);
                     $(idname).attr("disabled", false);
                     $(idname).parent().parent().parent().parent().find(".errorText").text("Email already exists");
                     $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
@@ -538,9 +537,12 @@ class Events extends Component {
         domId=".row" +tempCount;
         //reenable the previous row
         $(domId).find("#judgemail"+tempCount).attr("disabled", false);
-        //always decrement when we remove
+
+        //remove from the array and decrement
+        _this.state.judgeInputs.pop();
         _this.setState({
-            judgeCount: this.state.judgeCount -1,
+            judgeCount: _this.state.judgeCount -1,
+
         })
 
 
@@ -679,6 +681,12 @@ class Events extends Component {
                 onClick={this.removeEvent}
             />,
         ];
+        let removeJudgeBtn;
+        if(this.state.judgeCount > 0) {
+            removeJudgeBtn=  <RaisedButton icon={<FontIcon className="pe-7s-close"/>}
+                                               secondary={true} label="Remove judge"
+                                               onClick={this.removeNewJudge.bind(this)}/>;
+        }
         return (
 
             <div className="content">
@@ -849,9 +857,7 @@ class Events extends Component {
                                                           onClick={this.addJudgeInputs}/>
                                                 </Col>
                                                 <Col md={3}>
-                                                    <RaisedButton icon={<FontIcon className="pe-7s-close"/>}
-                                                                  secondary={true} label="Remove judge"
-                                                                  onClick={this.removeNewJudge.bind(this)}/>
+                                                    {removeJudgeBtn}
                                                 </Col>
 
                                             </Row>
