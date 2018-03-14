@@ -187,35 +187,28 @@ class UserProfile extends React.Component {
         var body = {};
         var _this = this;
 
-        console.log("Change pw 1");
         //check to ensure that current password is filled in
         if (this.state.currentPassword !== "" && this.state.newPassword !== "" && this.state.confirmPassword !== "") {
 
-            console.log("Change pw 2");
             //check to make sure current password is correct
             if (this.state.newPassword === this.state.confirmPassword) {
 
-                console.log("Change pw 3");
                 if (this.validPassword(this.state.newPassword)) {
 
-                    console.log("Change pw 4");
-
                     body.password = this.state.currentPassword;
+
                     //ensure their current password is correct
                     _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate', 'POST',
                         constants.useCredentials(), body).then(function (result) {
 
-                        console.log("Change pw 5");
                         if (result.status === 200) {
 
-                            console.log("Change pw 6");
                             //then change the password
                             body.password = _this.state.newPassword;
 
                             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/changePassword', 'POST', constants.useCredentials(), body).then(function (result) {
                                 console.log(result);
 
-                                console.log("Change pw 7");
                                 if (result.status === 200) {
                                     _this.notify(
                                         "Password Changed",
