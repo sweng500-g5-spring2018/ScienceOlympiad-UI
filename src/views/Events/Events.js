@@ -67,14 +67,11 @@ class Events extends Component {
             eventDescription: '',
             //for adding judges
             judgeInputs: [],
-
             //keep track of the actual new Judges
             judgeCount: 0,
-            //keep track of where the most recent new judge is
-            judgeIndex:0,
+            //hold the existing judges
             existingJudgeValues: [],
             existingJudgeEmails: [],
-            newJudgeFnameErr: '',
             _notificationSystem: null
 
 
@@ -200,11 +197,11 @@ class Events extends Component {
             eventDate: '',
             startTime: '',
             endTime: '',
+            eventDescription: '',
             eventLocation: '',
             judgeInputs: [],
             judgeCount: 0,
-            existingJudgeValues: [],
-            existingJudgeEmails: [],
+
         })
     }
 
@@ -266,7 +263,6 @@ class Events extends Component {
                     endTimeError: undefined
                 })
             }
-            /** COMMENT OUT FOR NOW, need to add building */
             if (this.state.eventLocation.length < 1) {
                 missingInfo = true;
                 this.setState({
@@ -349,6 +345,9 @@ class Events extends Component {
                     $(idname).parent().parent().parent().parent().find(".errorText").text("Email is already in use");
                     $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
                 })
+            } else {
+                //just create event if no new judges
+                _this.createEventPost();
             }
         }
     }
@@ -482,7 +481,6 @@ class Events extends Component {
                     console.log("success email");
                     _this.setState({
                         judgeCount: _this.state.judgeCount + 1,
-                        judgeIndex: _this.state.judgeIndex + 1,
 
                         //add judges class to use jquery to loop over reach one
                         judgeInputs: _this.state.judgeInputs.concat(<Row>
@@ -508,7 +506,6 @@ class Events extends Component {
             } else {
                 _this.setState({
                     judgeCount: _this.state.judgeCount + 1,
-                    judgeIndex: _this.state.judgeIndex + 1,
                     //add judges class to use jquery to loop over reach one
                     judgeInputs: _this.state.judgeInputs.concat(<Row>
                         <div className={"col-md-9 col-xs-7" + " row" + judgeCnt}><Well>
