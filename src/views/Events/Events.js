@@ -326,7 +326,6 @@ class Events extends Component {
                     if(!this.validEmail(email.trim())) {
                         body.emailAddress = email;
                         promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body));
-                        console.log("added a promise " + email);
                     } else {
                         validateFields=true;
                         $(idname).parent().parent().parent().parent().find(".errorText").text("Email is not in the correct format");
@@ -354,7 +353,17 @@ class Events extends Component {
             } else {
                 //just create event if no new judges and no syntax error
                 if(!validateFields) {
-                    _this.createEventPost();
+                    if(_this.state.existingJudgeValues.length > 0) {
+                        _this.createEventPost()
+                    } else {
+                        _this.addNotification(
+                            "Error: Please assign at least one judge to the event or create a new one.",
+                            "error",
+                            "tc",
+                            6
+                        );
+                        _this.componentDidMount();
+                    }
                 }
             }
         }

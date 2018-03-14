@@ -99,14 +99,14 @@ class EventDetail extends Component {
             return (
                 <MuiThemeProvider>
                     <Row>
-                        <Col md={8} mdOffset={3} xs={7}>
+                        <Col md={8} mdOffset={2} xs={7}>
                             <Panel bsStyle="info">
                                 <Panel.Heading>Event </Panel.Heading>
                                 <Panel.Body>
                                     <PageHeader>
                                         {this.state.eventDetail.name} <br/>
                                         <Divider/>
-                                        <small>{this.state.eventDetail.description}</small>
+                                        <small style={{'overflow-wrap' : 'break-word'}}>{this.state.eventDetail.description}</small>
                                     </PageHeader>
                                 </Panel.Body>
                             </Panel>
