@@ -109,24 +109,16 @@ class UserProfile extends React.Component {
             tempUser.phoneNumber = cleanPhoneNumber;
             _this.setState({user : tempUser}); //, () => {}
 
-            console.log("1st Update " + this.state.password);
-
             //check to ensure the password matches
             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate', 'POST',
                 constants.useCredentials(), body).then(function (result) {
 
                 body.user = _this.state.user;
 
-                console.log("2nd Update " + body);
-
                 if (result.status === 200) {
-
-                    console.log("3rd Update " + body);
                     //submit the http request
 
                     _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser', 'POST', constants.useCredentials(), body.user).then(function (result) {
-
-                        console.log("4th Update " + body);
 
                         if (result.status === 200) {
                             //use the app.notify to put something on the screen
@@ -206,7 +198,9 @@ class UserProfile extends React.Component {
                             //then change the password
                             body.password = _this.state.newPassword;
 
-                            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/changePassword', 'POST', constants.useCredentials(), body).then(function (result) {
+                            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/changePassword', 'POST',
+                                constants.useCredentials(), body).then(function (result) {
+
                                 console.log(result);
 
                                 if (result.status === 200) {
