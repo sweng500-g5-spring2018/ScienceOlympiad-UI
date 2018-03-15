@@ -17,6 +17,7 @@ class TeamManagement extends Component {
         };
 
         this.handleAddClick = this.handleAddClick.bind(this);
+        this.toggleAdd = this.toggleAdd.bind(this);
     }
 
     handleAddClick(event) {
@@ -54,17 +55,18 @@ class TeamManagement extends Component {
                         id="add-collapsible-panel-group"
                         accordion
                         activeKey={this.state.addPanel}
+                        onSelect={() => {}}
+                        key="add-collapsible-panel-group"
                     >
                         <Panel id="add-user-collapsible-panel" eventKey={"student"} style={{border: 0}}>
                             <Panel.Body collapsible>
-                                HA HA HA STUDENT <br />
-                                <StudentAdder/>
+                                <br />
+                                <StudentAdder togglePanel={this.toggleAdd}/>
                             </Panel.Body>
                         </Panel>
                         <Panel id="add-team-collapsible-panel" eventKey={"team"} style={{border:0}}>
                             <Panel.Body collapsible>
-                                HA HA HA Team
-                                <TeamAdder/>
+                                <TeamAdder togglePanel={this.toggleAdd}/>
                             </Panel.Body>
                         </Panel>
                     </PanelGroup>
