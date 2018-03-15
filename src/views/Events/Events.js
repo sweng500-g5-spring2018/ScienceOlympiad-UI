@@ -26,7 +26,6 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Dialog from 'material-ui/Dialog';
 import EventDetail from './EventDetail'
-import FormInputs from "../../components/FormInputs/FormInputs";
 import NotificationSystem from 'react-notification-system';
 import {style} from "../../variables/Variables";
 import BuildingSelector from "../../components/Buildings/BuildingSelector";
