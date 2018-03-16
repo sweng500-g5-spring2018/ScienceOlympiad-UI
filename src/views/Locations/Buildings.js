@@ -48,7 +48,7 @@ class Buildings extends Component {
             longitude: null,
             latitude: null,
             buildingRequired: '',
-            buildingList:{},
+            buildingList:[],
             _notificationSystem: null
         };
     }
@@ -349,8 +349,6 @@ class Buildings extends Component {
                 filterable: false
             }];
 
-            console.log(this.state.buildingList)
-
             for(let value in this.state.buildingList) {
                 this.state.buildingList[value].status = "edit";
                 this.state.buildingList[value].position = value;
@@ -398,6 +396,7 @@ class Buildings extends Component {
                             <Row>
                                 <Col md={12}>
                                     <Card
+                                        style={{margin:10}}
                                         title="Registered Buildings"
                                         category={
                                             <div>These locations are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
