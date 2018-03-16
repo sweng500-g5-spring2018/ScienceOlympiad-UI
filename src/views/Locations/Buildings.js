@@ -48,7 +48,7 @@ class Buildings extends Component {
             longitude: null,
             latitude: null,
             buildingRequired: '',
-            buildingList:{},
+            buildingList:[],
             _notificationSystem: null
         };
     }
@@ -144,11 +144,7 @@ class Buildings extends Component {
         var id = this.state.deleteID;
         var _this = this;
 
-
-        console.log(constants.useCredentials())
-
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/removeBuilding/' + id, 'DELETE', constants.useCredentials(), null, true).then(function (result) {
-            console.log(result);
 
             _this.setState({confirmDialog: false});
 
@@ -217,12 +213,9 @@ class Buildings extends Component {
             body.lat = lat;
             body.lng = lng;
 
-            console.log(body);
-
             if (this.state.modalAction === "add") {
 
                 _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addBuilding', 'POST', constants.useCredentials(), body, true).then(function (result) {
-                    console.log(result);
 
                     if (result.status === 200) {
 
@@ -258,10 +251,8 @@ class Buildings extends Component {
             }
             else if (this.state.modalAction === "edit")
             {
-                console.log(this.state.buildingID);
 
                 _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateBuilding/'+ this.state.buildingID, 'POST', constants.useCredentials(), body, true).then(function (result) {
-                    console.log(result);
 
                     if (result.status === 200) {
 
@@ -307,7 +298,7 @@ class Buildings extends Component {
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getBuildings', 'GET', constants.useCredentials(), null, true).then(function (result) {
-            console.log(result);
+
             _this.setState({
                 buildingList: result.body,
                 loading: true
@@ -348,8 +339,6 @@ class Buildings extends Component {
                 sortable: false,
                 filterable: false
             }];
-
-            console.log(this.state.buildingList)
 
             for(let value in this.state.buildingList) {
                 this.state.buildingList[value].status = "edit";
@@ -398,6 +387,7 @@ class Buildings extends Component {
                             <Row>
                                 <Col md={12}>
                                     <Card
+                                        style={{margin:10}}
                                         title="Registered Buildings"
                                         category={
                                             <div>These locations are registered with the Science Olympiad system.<br/>They will appear in the registration systems and reports.
