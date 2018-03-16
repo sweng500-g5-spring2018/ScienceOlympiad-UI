@@ -68,7 +68,7 @@ class BuildingSelector extends React.Component {
             )
         }
         else
-            return ("ERROR LOADING SCHOOLS")
+            return ("ERROR LOADING BUILDINGS")
     }
 }
 
