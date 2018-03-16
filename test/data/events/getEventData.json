@@ -1,0 +1,15 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "id":"5a87826425acab41344f08aa",
+      "name":"Event1",
+      "eventDescription":"testdata"
+    },
+    {
+      "id":"5a87826425acab41334f08aa",
+      "name":"Event2",
+      "eventDescription":"testdatayo"
+    }
+  ]
+}
