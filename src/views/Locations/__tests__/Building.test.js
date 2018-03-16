@@ -48,7 +48,7 @@ describe('Building Component Tests', function () {
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
 
-        const component = mount(<Buildings />);
+        //const component = mount(<Buildings />);
 
         //expect(component.state().buildingList.length).to.equal(2);
         //expect(component.find(Card)).to.have.length(1);
