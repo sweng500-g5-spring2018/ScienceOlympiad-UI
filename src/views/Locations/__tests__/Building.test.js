@@ -19,6 +19,7 @@ import Buildings from "../Buildings"
 import AuthService from "../../../utils/AuthService";
 import RaisedButton from "material-ui/RaisedButton/index";
 import Dialog from 'material-ui/Dialog';
+import {Route} from "react-router-dom";
 
 describe('Building Component Tests', function () {
 
@@ -47,13 +48,7 @@ describe('Building Component Tests', function () {
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
 
-        const component = shallow(<Buildings />);
-
-        //Wait for setState's to finish and re-render component
-        await helper.flushPromises();
-        component.update();
-
-        console.log(component.state().buildingList)
+        const component = mount(<Buildings />);
 
         //expect(component.state().buildingList.length).to.equal(2);
         //expect(component.find(Card)).to.have.length(1);
