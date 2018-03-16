@@ -82,4 +82,24 @@ describe('Building Selector Component Tests', function () {
         expect(component.state().errorMsg).to.equal("error2");
     });
 
+    // Test 4
+    test('Test change drop down', async () => {
+
+        var stub = sinon.stub();
+
+        const component = shallow(<BuildingSelector callBack={stub}/>);
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        var selectfield = component.find(SelectField).at(0);
+        selectfield.simulate('change',{value : '5a92223925ac8ff0785f4d55'});
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(stub.getCall(0).args[0].value).to.equal("5a92223925ac8ff0785f4d55");
+    });
 });
