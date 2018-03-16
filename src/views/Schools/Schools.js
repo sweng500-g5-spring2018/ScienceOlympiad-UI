@@ -336,6 +336,7 @@ class Schools extends Component {
             }];
 
             for(let value in this.state.schoolList) {
+
                 this.state.schoolList[value].formattedPhone = this.formatPhoneNumber(this.state.schoolList[value].schoolContactPhone);
                 this.state.schoolList[value].status = "edit";
                 this.state.schoolList[value].menuActions = <div><RaisedButton

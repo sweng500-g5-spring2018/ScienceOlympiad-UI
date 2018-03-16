@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "id": "5a92223925ac8ff0785f4d55",
+      "building": "Science Center",
+      "lat": 41.306520311978396,
+      "lng": -76.01719379425049
+    },
+    {
+      "id": "5a9222c025ac8ff0785f4d58",
+      "building": "Technology Center",
+      "lat": 41.30754989013563,
+      "lng": -76.0175022482872
+    }
+  ]
+}

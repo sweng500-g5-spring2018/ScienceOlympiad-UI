@@ -13,12 +13,13 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
 /* Component under test */
-import SchoolSelector from "../SchoolSelector";
+import BuildingSelector from "../BuildingSelector";
 import RaisedButton from "material-ui/RaisedButton/index";
 import AuthService from "../../../utils/AuthService";
 import TextField from "material-ui/TextField/index";
+import SchoolSelector from "../../Schools/SchoolSelector";
 
-describe('School Selector Component Tests', function () {
+describe('Building Selector Component Tests', function () {
 
 
     //Set up test data before running any tests
@@ -27,7 +28,7 @@ describe('School Selector Component Tests', function () {
         //STUB: Http request to simulate data retrieval from API
         sinon.stub(HttpRequest, 'httpRequest').resolves(
             //import test data JSON for response
-            require('../../../../test/data/schools/getAllSchoolsResponseData.json')
+            require('../../../../test/data/buildings/getAllBuildingsResponseData.json')
         )
 
         //STUB: Constants function used as argument to HttpRequest
@@ -35,42 +36,42 @@ describe('School Selector Component Tests', function () {
     })
 
     // Test 1
-    test('Should render school selector with SelectField and 2 MenuItems when data is fetched', async () => {
-        const component = shallow(<SchoolSelector />);
+    test('Should render building selector with SelectField and 2 MenuItems when data is fetched', async () => {
+        const component = shallow(<BuildingSelector />);
 
         //Wait for setState's to finish and re-render component
         await helper.flushPromises();
         component.update();
 
-        expect(component.state().schoolList.length).to.equal(2);
+        expect(component.state().buildingList.length).to.equal(2);
         expect(component.find(SelectField)).to.have.length(1);
         expect(component.find(MenuItem)).to.have.length(2);
     });
 
     // Test 2
-    test('Should not render schools and display "ERROR LOADING SCHOOLS" when no schools are found', async () => {
+    test('Should not render buildings and display "ERROR LOADING BUILDINGS" when no buildings are found', async () => {
 
         //STUB: componentWillMount so that no content is fetched
-        sinon.stub(SchoolSelector.prototype, 'componentWillMount').returns(true);
+        sinon.stub(BuildingSelector.prototype, 'componentWillMount').returns(true);
 
-        const component = shallow(<SchoolSelector />);
+        const component = shallow(<BuildingSelector />);
 
         //Wait for setState's to finish and re-render component
         await helper.flushPromises();
         component.update();
 
-        expect(component.state().schoolList.length).to.equal(0);
+        expect(component.state().buildingList.length).to.equal(0);
         expect(component.find(SelectField)).to.have.length(0);
-        expect(component.text()).to.equal("ERROR LOADING SCHOOLS");
+        expect(component.text()).to.equal("ERROR LOADING BUILDINGS");
 
         //UNSTUB: componentWillMount so it is not stubbed any next test cases
-        SchoolSelector.prototype.componentWillMount.restore();
+        BuildingSelector.prototype.componentWillMount.restore();
     });
 
     // Test 3
     test('Test that props updates', async () => {
 
-        const component = shallow(<SchoolSelector errorMsg={"error"} />);
+        const component = shallow(<BuildingSelector errorMsg={"error"} />);
 
         //Wait for setState's to finish and re-render component
         await helper.flushPromises();
@@ -86,19 +87,19 @@ describe('School Selector Component Tests', function () {
 
         var stub = sinon.stub();
 
-        const component = shallow(<SchoolSelector callBack={stub}/>);
+        const component = shallow(<BuildingSelector callBack={stub}/>);
 
         //Wait for setState's to finish and re-render component
         await helper.flushPromises();
         component.update();
 
         var selectfield = component.find(SelectField).at(0);
-        selectfield.simulate('change',{value : '5a87826425acab41344f08aa'});
+        selectfield.simulate('change',{value : '5a92223925ac8ff0785f4d55'});
 
         //Wait for setState's to finish and re-render component
         await helper.flushPromises();
         component.update();
 
-        expect(stub.getCall(0).args[0].value).to.equal("5a87826425acab41344f08aa");
+        expect(stub.getCall(0).args[0].value).to.equal("5a92223925ac8ff0785f4d55");
     });
 });
