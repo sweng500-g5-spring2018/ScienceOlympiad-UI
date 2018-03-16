@@ -5,7 +5,7 @@ import {Grid, Row, Col, Panel} from 'react-bootstrap';
 
 import ReactTable from 'react-table';
 
-import CustomDropdown from "./CustomDropdown";
+import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
 import Validator from "../../utils/validator";
 import constants from "../../utils/constants";
 import HttpRequest from "../../adapters/httpRequest";

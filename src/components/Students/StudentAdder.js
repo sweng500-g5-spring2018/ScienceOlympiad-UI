@@ -4,8 +4,8 @@ import Button from '../../elements/CustomButton/CustomButton';
 import {Grid, Row, Col, Panel} from 'react-bootstrap';
 
 import ReactTable from 'react-table';
-import SchoolSelector from "../../components/Schools/SchoolSelector";
-import CustomDropdown from "./CustomDropdown";
+import SchoolSelector from "../Schools/SchoolSelector";
+import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
 import constants from "../../utils/constants";
 import Validator from "../../utils/validator";
 import HttpRequest from "../../adapters/httpRequest";
