@@ -53,7 +53,7 @@ describe('Building Component Tests', function () {
         await helper.flushPromises();
         component.update();
 
-        //console.log(component.state().buildingRequired)
+        console.log(component.state().buildingList)
 
         //expect(component.state().buildingList.length).to.equal(2);
         //expect(component.find(Card)).to.have.length(1);

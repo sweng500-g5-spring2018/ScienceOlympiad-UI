@@ -144,11 +144,7 @@ class Buildings extends Component {
         var id = this.state.deleteID;
         var _this = this;
 
-
-        console.log(constants.useCredentials())
-
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/removeBuilding/' + id, 'DELETE', constants.useCredentials(), null, true).then(function (result) {
-            console.log(result);
 
             _this.setState({confirmDialog: false});
 
@@ -217,12 +213,9 @@ class Buildings extends Component {
             body.lat = lat;
             body.lng = lng;
 
-            console.log(body);
-
             if (this.state.modalAction === "add") {
 
                 _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addBuilding', 'POST', constants.useCredentials(), body, true).then(function (result) {
-                    console.log(result);
 
                     if (result.status === 200) {
 
@@ -258,10 +251,8 @@ class Buildings extends Component {
             }
             else if (this.state.modalAction === "edit")
             {
-                console.log(this.state.buildingID);
 
                 _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateBuilding/'+ this.state.buildingID, 'POST', constants.useCredentials(), body, true).then(function (result) {
-                    console.log(result);
 
                     if (result.status === 200) {
 
@@ -307,7 +298,7 @@ class Buildings extends Component {
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getBuildings', 'GET', constants.useCredentials(), null, true).then(function (result) {
-            console.log(result);
+
             _this.setState({
                 buildingList: result.body,
                 loading: true
