@@ -4,10 +4,11 @@ import Button from '../../elements/CustomButton/CustomButton';
 import {Grid, Row, Col, Panel} from 'react-bootstrap';
 
 import ReactTable from 'react-table';
-import SchoolSelector from "../../components/Schools/SchoolSelector";
-import CustomDropdown from "./CustomDropdown";
+import SchoolSelector from "../Schools/SchoolSelector";
+import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
 import constants from "../../utils/constants";
 import Validator from "../../utils/validator";
+import HttpRequest from "../../adapters/httpRequest";
 
 class StudentAdder extends Component {
     constructor(props) {
@@ -32,7 +33,27 @@ class StudentAdder extends Component {
     }
 
     addStudent() {
-        alert("STUDENT WOULD BE ADDED");
+        var body = {};
+        body.firstName = this.state.firstName;
+        body.lastName = this.state.lastName;
+        body.emailAddress = this.state.emailAddress;
+
+        console.log(this.state.selectedSchool);
+
+        var _this = this;
+
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=STUDENT&schoolID=' + _this.state.selectedSchool.id, 'POST', constants.useCredentials(), body, true).then(function (result) {
+            _this.setState({
+                firstName: "",
+                lastName: "",
+                emailAddress: "",
+                selectedSchool: undefined
+            });
+
+            alert(result.body);
+        }).catch(function (error) {
+            alert(error.message);
+        });
     }
 
     validateStudentForm() {

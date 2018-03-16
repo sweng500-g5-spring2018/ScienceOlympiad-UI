@@ -12,7 +12,7 @@ const appRoutes = [
     { path: "/app/reports", name: "Reports", icon: "pe-7s-note2", component: Reports },
     { path: "/app/events", name:"Events", icon:"pe-7s-global", component :Events},
     { path: "/app/schools", name:"Schools", icon:"pe-7s-home", component :Schools, users:['ADMIN']},
-    { path: "/app/buildings", name:"Buildings", icon:"pe-7s-map", component :Buildings},
+    { path: "/app/buildings", name:"Buildings", icon:"pe-7s-map", component: Buildings, users:['ADMIN']},
     { path: "/app/teams", name: "Team Management", icon: "pe-7s-users", component : TeamManagement, users:['ADMIN', 'COACH']},
     { redirect: true, path:"/", to:"/app/dashboard", name: "Dashboard" }
 ];

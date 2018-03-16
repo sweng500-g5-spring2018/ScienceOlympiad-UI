@@ -5,9 +5,10 @@ import {Grid, Row, Col, Panel} from 'react-bootstrap';
 
 import ReactTable from 'react-table';
 
-import CustomDropdown from "./CustomDropdown";
+import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
 import Validator from "../../utils/validator";
 import constants from "../../utils/constants";
+import HttpRequest from "../../adapters/httpRequest";
 
 class TeamAdder extends Component {
     constructor(props) {
@@ -16,7 +17,7 @@ class TeamAdder extends Component {
         this.state = {
             selectedSchool: undefined,
             selectedCoach: undefined,
-            teamName: undefined,
+            teamName: "",
             unallocatedStudents: [],
             errors: {}
         }
@@ -39,7 +40,27 @@ class TeamAdder extends Component {
     }
 
     addTeam() {
-        alert("TEAM WOULD BE ADDED");
+        var body = {};
+        body.name = this.state.teamName;
+        body.coach = this.state.selectedCoach;
+        body.school = this.state.selectedSchool;
+
+        console.log(this.state.selectedSchool);
+
+        var _this = this;
+
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addTeam/', 'POST', constants.useCredentials(), body, true).then(function (result) {
+            _this.setState({
+                selectedSchool: undefined,
+                selectedCoach: undefined,
+                teamName: ""
+            });
+
+            alert(result.body);
+
+        }).catch(function (error) {
+            alert(error.message);
+        });
     }
 
     validateTeamForm() {

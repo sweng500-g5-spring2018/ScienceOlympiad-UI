@@ -4,8 +4,8 @@ import Button from '../../elements/CustomButton/CustomButton';
 import {Grid, Row, Col, Panel, PanelGroup} from 'react-bootstrap';
 
 import ReactTable from 'react-table';
-import StudentAdder from "./StudentAdder";
-import TeamAdder from "./TeamAdder";
+import StudentAdder from "../../components/Students/StudentAdder";
+import TeamAdder from "../../components/Teams/TeamAdder";
 
 class TeamManagement extends Component {
     constructor(props) {
