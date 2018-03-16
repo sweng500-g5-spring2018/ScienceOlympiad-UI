@@ -11,16 +11,12 @@ import HttpRequest from '../../../adapters/httpRequest';
 import constants from '../../../utils/constants';
 import Card from '../../../components/Cards/Card.js';
 import TextField from 'material-ui/TextField';
-import {Grid, Col, Row, Modal} from 'react-bootstrap';
-import Loader from 'react-loader'
-import NotificationSystem from 'react-notification-system';
+import {Modal} from 'react-bootstrap';
 
 /* Component under test */
 import Schools from '../Schools';
 import AuthService from "../../../utils/AuthService";
-import PasswordField from "material-ui-password-field";
 import RaisedButton from "material-ui/RaisedButton/index";
-import Dialog from 'material-ui/Dialog';
 
 describe('School Component Tests', function () {
 
