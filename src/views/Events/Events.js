@@ -50,6 +50,7 @@ class Events extends Component {
         this.state = {
             events: {},
             loading: false,
+            loadCreateEvent:true,
             modal: false,
             confirmDialog: false,
             confirmMessage: '',
@@ -143,7 +144,31 @@ class Events extends Component {
             body.existingJudgeValues = this.state.existingJudgeValues;
             body.newJudgeValues = newJudgeList;
             console.log(JSON.stringify(body));
+            _this.setState({
+                //show the spinner
+               loadCreateEvent:false
+            });
             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/addEvent/", "POST", constants.useCredentials(), body, true).then(function (result) {
+                //show some success and then clear the fields
+                //refresh after an add to show new event in table
+                _this.setState({
+                    modal: false,
+                    stepIndex: 0,
+                    loadCreateEvent:true,
+                    eventName: '',
+                    eventDescription: '',
+                    //this is a date object
+                    eventDate: '',
+                    startTime: '',
+                    endTime: '',
+                    eventLocation: '',
+                    judgeInputs: [],
+                    judgeCount: 0,
+                    existingJudgeValues: [],
+                    existingJudgeEmails: [],
+                    renderDetails: false,
+
+                })
                 _this.addNotification(
                     "Success: The event has been added.",
                     "success",
@@ -153,6 +178,9 @@ class Events extends Component {
                 _this.componentDidMount();
 
             }).catch(function (error) {
+                _this.setState({
+                    loadCreateEvent:true
+                });
                 _this.addNotification(
                     "Error: There was a problem creating the event.",
                     "error",
@@ -161,28 +189,18 @@ class Events extends Component {
                 );
                 _this.componentDidMount();
             })
-            //show some success and then clear the fields
-            //refresh after an add to show new event in table
-            this.setState({
-                modal: false,
-                stepIndex: 0,
 
-                eventName: '',
-                eventDescription: '',
-                //this is a date object
-                eventDate: '',
-                startTime: '',
-                endTime: '',
-                eventLocation: '',
-                judgeInputs: [],
-                judgeCount: 0,
-                existingJudgeValues: [],
-                existingJudgeEmails: [],
-                renderDetails: false,
-
-            })
         } else {
-            alert("some error was found when adding new judges");
+            _this.setState({
+                loadCreateEvent:true
+            });
+            _this.addNotification(
+                "Error: There was an error found prior to creating event.",
+                "error",
+                "tc",
+                6
+            );
+            _this.componentDidMount();
         }
 
     }
@@ -876,7 +894,7 @@ class Events extends Component {
                         </Modal.Body>
 
                         <Modal.Footer>
-                            {backButton} {actionButton}
+                            <Loader loaded={this.state.loadCreateEvent}></Loader> {backButton} {actionButton}
                         </Modal.Footer>
                     </Modal>
                     <Dialog
