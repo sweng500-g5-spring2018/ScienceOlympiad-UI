@@ -9,9 +9,9 @@ const appRoutes = [
     { path: "/app/dashboard", name: "Dashboard", icon: "pe-7s-graph", component: Dashboard },
     { path: "/app/user", name: "User Profile", icon: "pe-7s-user", component: UserProfile },
     { path: "/app/reports", name: "Reports", icon: "pe-7s-note2", component: Reports },
-    { path: "/app/events", name:"Events", icon:"pe-7s-global", component :Events},
-    { path: "/app/schools", name:"Schools", icon:"pe-7s-home", component :Schools, users:['ADMIN']},
-    { path: "/app/buildings", name:"Buildings", icon:"pe-7s-map", component :Buildings},
+    { path: "/app/events", name:"Events", icon:"pe-7s-global", component: Events},
+    { path: "/app/schools", name:"Schools", icon:"pe-7s-home", component: Schools, users:['ADMIN']},
+    { path: "/app/buildings", name:"Buildings", icon:"pe-7s-map", component: Buildings, users:['ADMIN']},
     { redirect: true, path:"/", to:"/app/dashboard", name: "Dashboard" }
 ];
 

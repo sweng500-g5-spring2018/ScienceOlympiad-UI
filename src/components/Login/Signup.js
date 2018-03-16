@@ -152,7 +152,7 @@ class Signup extends React.Component {
 
                     // Check to see if the email address already exists
 
-                    body.emailAddress = this.state.emailAddress;
+                    body.emailAddress = this.state.emailAddress.toLowerCase();
 
                     _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body ).then(function (result) {
 
@@ -263,8 +263,8 @@ class Signup extends React.Component {
 
                 body.firstName = this.state.firstName;
                 body.lastName = this.state.lastName;
-                body.emailAddress = this.state.emailAddress;
-                body.phoneNumberString = cleanPhoneNumber;
+                body.emailAddress = this.state.emailAddress.toLowerCase();
+                body.phoneNumber = cleanPhoneNumber;
                 body.password = this.state.password;
                 body.minutesBeforeEvent = 10;
                 var schoolID = this.state.school;
