@@ -31,7 +31,7 @@ class Login extends Component {
         if(this.state.emailAddress.trim()) {
             if(this.state.password.trim()) {
 
-                AuthService.login(this.state.emailAddress, this.state.password).then(function (result) {
+                AuthService.login(this.state.emailAddress.toLowerCase(), this.state.password).then(function (result) {
 
                 }).catch(function (error) {
                     console.log(error);
