@@ -25,29 +25,49 @@ import {DatePicker, TimePicker} from "material-ui";
 import BuildingSelector from "../../../components/Buildings/BuildingSelector";
 import ReactTable from 'react-table'
 import EventDetail from "../EventDetail";
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
 
 
 describe('Event Component Tests', function () {
 
     const notify = sinon.spy();
-
+    const judgeJson = {
+        "status": 200,
+        "body": [
+            {
+                "id":"5a87826425acab41344f08aa",
+                "firstName":"Joe",
+                "lastName":"Smith",
+                "email":"testdata@test.com"
+            },
+            {
+                "id":"5a87826425acab41334f08bb",
+                "firstName":"Jimmy",
+                "lastName":"Smith",
+                "email":"testdata2@test.com"
+            }
+        ]
+    }
+    var axiosMock;
+    var sandbox;
     //Set up test data before running any tests
-    beforeAll(function () {
-
+    beforeAll( () => {
+      //  axiosMock = new MockAdapter(axios);
         //STUB: Http request to simulate data retrieval from API
         sinon.stub(HttpRequest, 'httpRequest').resolves(
             //import test data JSON for response
             require('../../../../test/data/events/getEventData.json')
-        )
+         )
+
         //STUB: Constants function used as argument to HttpRequest
-        sinon.stub(constants, 'getServerUrl').returns("wow tests are stupid")
     })
 
     afterEach(function () {
         //Always unstub AuthService.isLoggedIn() in case we want it to return different values
         AuthService.isLoggedIn.restore();
-    })
 
+    })
     // Test 1
     test('Should render events when fetched', async () => {
 
@@ -176,4 +196,91 @@ describe('Event Component Tests', function () {
 
         expect(component.find(EventDetail)).to.have.length(1);
     });
+
+    // Test 7
+    test('Test input validation', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+
+        const component = shallow(<Events/>);
+
+        component.instance().setState({stepIndex: 0})
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+        component.instance().nextStep();
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+        expect(component.state().eventNameError).to.equal("Event name is required");
+        expect(component.state().eventDateError).to.equal("Event date is required");
+        expect(component.state().startTimeError).to.equal("Event start time is required");
+        expect(component.state().endTimeError).to.equal("Event end time is required");
+        expect(component.state().eventLocationError).to.equal("Please select a building for the event");
+        expect(component.state().eventDescriptionError).to.equal("Event description is required");
+    });
+
+    // Test 8
+    test('Test event name does not exist ', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+
+        const component = shallow(<Events/>);
+
+        component.instance().setState({stepIndex: 0});
+        component.instance().setState({eventName: 'Event8'});
+        component.instance().setState({eventDate: 'test'});
+        component.instance().setState({startTime: 'test'});
+        component.instance().setState({endTime: 'test'});
+        component.instance().setState({eventLocation: 'test'});
+        component.instance().setState({eventDescription: 'test'});
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        component.instance().nextStep();
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+        expect(component.state().eventNameError).to.equal(undefined);
+    });
+
+    // Test 9
+    test('Test previousStep method', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+
+        const component = shallow(<Events />);
+        component.instance().setState({stepIndex: 1});
+        await helper.flushPromises();
+        component.update();
+
+        component.instance().previousStep();
+
+        expect(component.state().stepIndex).to.equal(0);
+    });
+
+    // Test 10
+    test('Get Judges request test ', async () => {
+
+        //load in new data so reset the wrapper
+        HttpRequest.httpRequest.restore();
+        var judgeStub = sinon;
+        judgeStub.stub(HttpRequest,'httpRequest').resolves(
+            require('../../../../test/data/events/getJudges.json')
+        );
+
+        //STUB: AuthService
+        judgeStub.stub(AuthService, 'isLoggedIn').returns(true);
+        const component = shallow(<Events/>);
+        await helper.flushPromises();
+        component.update();
+        expect(component.state().existingJudgeEmails.length).to.equal(2);
+    });
+
 });

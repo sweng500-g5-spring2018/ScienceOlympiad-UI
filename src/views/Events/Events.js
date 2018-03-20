@@ -247,8 +247,15 @@ class Events extends Component {
                     eventNameError: "Event name is required"
                 })
             } else {
-                this.setState({
-                    eventNameError: undefined
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null, true).then(function (result) {
+
+
+                }).catch(function (error) {
+                    missingInfo = true;
+                    _this.setState({
+                        eventNameError: "Event Name already exists"
+                    });
+                    console.log(error);
                 })
             }
             if (this.state.eventDate.length < 1) {
@@ -264,7 +271,7 @@ class Events extends Component {
             if (this.state.startTime.length < 1) {
                 missingInfo = true;
                 this.setState({
-                    startTimeError: "Event description is required"
+                    startTimeError: "Event start time is required"
                 })
             } else {
                 this.setState({
@@ -274,7 +281,7 @@ class Events extends Component {
             if (this.state.endTime.length < 1) {
                 missingInfo = true;
                 this.setState({
-                    endTimeError: "Event description is required"
+                    endTimeError: "Event end time is required"
                 })
             } else {
                 this.setState({
@@ -306,18 +313,8 @@ class Events extends Component {
 
             if (!missingInfo) {
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null, true).then(function (result) {
-                    console.log("verify event");
-                    // alert(result.status);
-                    _this.setState({
-                        stepIndex: stepIndex + 1
-                    })
-
-                }).catch(function (error) {
-                    _this.setState({
-                        eventNameError: "Event Name already exists"
-                    });
-                    console.log(error);
+                _this.setState({
+                    stepIndex: stepIndex + 1
                 })
             }
         } else if (stepIndex == 1) {

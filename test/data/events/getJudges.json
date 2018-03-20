@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "id":"5a87826425acab41344f08aa",
+      "firstName":"Joe",
+      "lastName":"Smith",
+      "email":"testdata@test.com"
+    },
+    {
+      "id":"5a87826425acab41334f08bb",
+      "firstName":"Jimmy",
+      "lastName":"Smith",
+      "email":"testdata2@test.com"
+    }
+  ]
+}
