@@ -50,6 +50,7 @@ class Events extends Component {
 
         this.state = {
             events: {},
+            editMode:false,
             loading: false,
             loadCreateEvent: true,
             modal: false,
@@ -99,11 +100,68 @@ class Events extends Component {
         });
     }
 
-    //launch the modal to enter an event
-    createNewEvent() {
-        this.setState({
-            modal: true
-        })
+    //launch the modal to enter an event or edit one
+    createNewEvent = (mode) => {
+        const _this = this;
+        if(mode.status === "edit") {
+            _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/judges/" + mode.id, "get", constants.useCredentials(), null, true).then(function (judgeResult) {
+                let judgeVals = judgeResult.body;
+                //have the judges for this event already selected
+                var selectedJudgeIds = [];
+                for (let value in judgeVals) {
+                    selectedJudgeIds.push(judgeVals[value].id);
+                }
+                _this.setState({
+                    modal: true,
+                    stepIndex: 0,
+                    editMode:true,
+                    eventName: mode.name,
+                    eventDate: new Date(mode.eventDate),
+                    startTime: new Date(mode.startTime),
+                    endTime: new Date(mode.endTime),
+                    eventDescription: mode.description,
+                    eventLocation: mode.building.id,
+                    existingJudgeValues: selectedJudgeIds,
+                    judgeInputs: [],
+                    judgeCount: 0,
+
+                })
+
+            }).catch(function (error) {
+                //no judges assigned to the event yet
+                _this.setState({
+                    modal: true,
+                    stepIndex: 0,
+                    editMode:true,
+                    eventName: mode.name,
+                    eventDate: new Date(mode.eventDate),
+                    startTime: new Date(mode.startTime),
+                    endTime: new Date(mode.endTime),
+                    eventDescription: mode.description,
+                    eventLocation: mode.building.id,
+                    existingJudgeValues: [],
+                    judgeInputs: [],
+                    judgeCount: 0,
+
+                })
+            })
+        } else {
+            //creating new event
+            _this.setState({
+                modal: true,
+                editMode:false,
+                stepIndex: 0,
+                eventName: '',
+                eventDate: '',
+                startTime: '',
+                endTime: '',
+                eventDescription:'',
+                eventLocation: '',
+                existingJudgeValues: [],
+                judgeInputs: [],
+                judgeCount: 0,
+            })
+        }
     }
 
     createEventPost() {
@@ -210,17 +268,7 @@ class Events extends Component {
         //reset when closing modal
         this.setState({
             modal: false,
-            stepIndex: 0,
-            eventName: '',
-            eventDate: '',
-            startTime: '',
-            endTime: '',
-            eventDescription: '',
-            eventLocation: '',
-            existingJudgeValues: [],
-            judgeInputs: [],
-            judgeCount: 0,
-
+            editMode:false
         })
     }
 
@@ -241,24 +289,19 @@ class Events extends Component {
         const {eventName, stepIndex} = this.state;
         // Checks first name
         if (stepIndex == 0) {
+            var promises =[];
             if (this.state.eventName.length < 1) {
                 missingInfo = true;
                 this.setState({
                     eventName: this.state.eventName.trim(),
                     eventNameError: "Event name is required"
                 })
+                //only check if duplicate event if we are creating a new event
+            } else if(!this.state.editMode){
+                promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null, true));
             } else {
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null, true).then(function (result) {
-                    this.setState({
-                        eventNameError: undefined
-                    })
-
-                }).catch(function (error) {
-                    missingInfo = true;
-                    _this.setState({
-                        eventNameError: "Event Name already exists"
-                    });
-                    console.log(error);
+                this.setState({
+                    eventNameError: undefined
                 })
             }
             if (this.state.eventDate.length < 1) {
@@ -315,10 +358,25 @@ class Events extends Component {
             }
 
             if (!missingInfo) {
+                if(promises.length > 0) {
+                    Promises.all(promises).then(function () {
 
-                _this.setState({
-                    stepIndex: stepIndex + 1
-                })
+                        _this.setState({
+                            eventNameError: undefined,
+                            stepIndex: stepIndex+1
+                        })
+
+                    }).catch(function (error) {
+                        _this.setState({
+                            eventNameError: "Event Name already exists"
+                        });
+                        console.log(error);
+                    })
+                } else {
+                    _this.setState({
+                        stepIndex: stepIndex + 1
+                    })
+                }
             }
         } else if (stepIndex == 1) {
             //no validation since we are just pulling judges from the db
@@ -587,7 +645,7 @@ class Events extends Component {
 
     componentDidMount() {
         //hide things from non admins and coaches just for now to test
-        let modifyRoles = ['COACH','ADMIN'];
+        let modifyRoles = ['COACH', 'ADMIN'];
         let allowModify = AuthService.isUserRoleAllowed(modifyRoles);
         if (allowModify) {
             this.setState({
@@ -646,12 +704,17 @@ class Events extends Component {
             }];
             for (let value in this.state.events) {
                 if (this.state.showDeletebtn) {
+                    this.state.events[value].status = "edit";
+                    this.state.events[value].judges = this.state.existingJudgeEmails;
                     this.state.events[value].menuActions = <div>
                         <RaisedButton
                             primary={true} label="View Details"
                             onClick={(event) => this.eventDetails(this.state.events[value].id)}/>&nbsp;&nbsp;
                         <RaisedButton
-                            secondary={true} className="deleteBtns" label="Delete"
+                            primary={true} label="Edit"
+                            onClick={this.createNewEvent.bind(this, this.state.events[value])}/>&nbsp;&nbsp;
+                        <RaisedButton
+                            secondary={true} label="Delete"
                             onClick={this.confirmEventDelete.bind(this, this.state.events[value])}/>
                         }
                     </div>
@@ -711,8 +774,14 @@ class Events extends Component {
                 <RaisedButton icon={<FontIcon className="pe-7s-angle-up-circle"/>} primary={true}
                               label="Back to Existing"
                               onClick={this.previousStep}/>;
-            actionButton = <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true} label="Create Event"
-                                         onClick={this.nextStep}/>;
+                              if(this.state.editMode) {
+                                  actionButton = <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true} label="Save Event"
+                                                               onClick={this.nextStep}/>;
+                              } else {
+                                  actionButton = <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true} label="Create Event"
+                                                               onClick={this.nextStep}/>;
+                              }
+
         }
         if (this.state.renderDetails) {
             return (
@@ -741,12 +810,28 @@ class Events extends Component {
         let createEventBtn;
         if (this.state.showDeletebtn) {
             createEventBtn = <Row className="show-grid">
-                                 <Col md={4} mdOffset={4}>
-                                <RaisedButton primary={true} label="Create New Event"
+                <Col md={4} mdOffset={4}>
+                    <RaisedButton primary={true} label="Create New Event"
                                   onClick={this.createNewEvent}/>
-                                <br/>
-                                 </Col>
-                            </Row>
+                    <br/>
+                </Col>
+            </Row>
+        }
+        let modalTitleBar;
+        if(this.state.editMode) {
+           modalTitleBar= <AppBar
+                iconElementRight={<FlatButton label="Close"/>}
+                showMenuIconButton={false}
+                onRightIconButtonClick={(event) => this.closeModal()}
+                title="Modify Event"
+            />
+        } else {
+           modalTitleBar= <AppBar
+                iconElementRight={<FlatButton label="Close"/>}
+                showMenuIconButton={false}
+                onRightIconButtonClick={(event) => this.closeModal()}
+                title="Create New Event"
+            />
         }
         return (
 
@@ -773,12 +858,7 @@ class Events extends Component {
                 <MuiThemeProvider>
                     <Modal bsSize="large" show={this.state.modal} onHide={this.closeModal}>
                         <Modal.Header>
-                            <Modal.Title> <AppBar
-                                iconElementRight={<FlatButton label="Close"/>}
-                                showMenuIconButton={false}
-                                onRightIconButtonClick={(event) => this.closeModal()}
-                                title="Create New Event"
-                            /></Modal.Title>
+                            <Modal.Title> {modalTitleBar}</Modal.Title>
                         </Modal.Header>
 
                         <Modal.Body>
