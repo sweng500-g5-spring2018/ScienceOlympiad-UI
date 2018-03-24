@@ -59,6 +59,7 @@ describe('Event Component Tests', function () {
             //import test data JSON for response
             require('../../../../test/data/events/getEventData.json')
          )
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
         //STUB: Constants function used as argument to HttpRequest
     })
@@ -73,6 +74,7 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        //sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
         const component = shallow(<Events />);
 
@@ -90,6 +92,8 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+       // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
 
         const component = shallow(<Events />);
 
@@ -107,6 +111,8 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        //sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
 
         const component = shallow(<Events />);
 
@@ -128,6 +134,8 @@ describe('Event Component Tests', function () {
 
         //S imulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+       // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
 
         const component = shallow(<Events/>);
 
@@ -166,6 +174,7 @@ describe('Event Component Tests', function () {
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
 
+
         //load full component?
         const component = mount(<Events />);
 
@@ -173,9 +182,9 @@ describe('Event Component Tests', function () {
         await helper.flushPromises();
         component.update();
 
-        //two fake events loaded so 2 actions for each and 1 create event button
+        //two fake events loaded so 3 actions for each and 1 create event button
 
-        expect(component.find(RaisedButton)).to.have.length(5);
+        expect(component.find(RaisedButton)).to.have.length(7);
     });
 
     // Test 6
@@ -183,6 +192,8 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+      //  sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
 
         //load full component?
         const component = mount(<Events />);
@@ -202,6 +213,8 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+      //  sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
 
         const component = shallow(<Events/>);
 
@@ -227,6 +240,8 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+       // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
 
         const component = shallow(<Events/>);
 
@@ -254,6 +269,8 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+       // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
 
         const component = shallow(<Events />);
         component.instance().setState({stepIndex: 1});
@@ -277,6 +294,8 @@ describe('Event Component Tests', function () {
 
         //STUB: AuthService
         judgeStub.stub(AuthService, 'isLoggedIn').returns(true);
+       // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
         const component = shallow(<Events/>);
         await helper.flushPromises();
         component.update();
