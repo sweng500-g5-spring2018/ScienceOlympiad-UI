@@ -6,6 +6,7 @@ import {Grid, Row, Col, Panel, PanelGroup} from 'react-bootstrap';
 import ReactTable from 'react-table';
 import StudentAdder from "../../components/Students/StudentAdder";
 import TeamAdder from "../../components/Teams/TeamAdder";
+import TeamViewer from "./TeamViewer";
 
 class TeamManagement extends Component {
     constructor(props) {
@@ -37,7 +38,7 @@ class TeamManagement extends Component {
     render() {
         return (
             <MuiThemeProvider>
-                <div className="content">
+                <div className="content" style={{textAlign: 'center'}}>
                     <Button fill bsStyle="info" onClick={this.handleAddClick}>Add Student/Team</Button>
                     <Popover
                         open={this.state.popOverOpen}
@@ -70,9 +71,11 @@ class TeamManagement extends Component {
                             </Panel.Body>
                         </Panel>
                     </PanelGroup>
+                    <div>
+                        <TeamViewer/>
+                    </div>
                 </div>
             </MuiThemeProvider>
-
         )
     }
 
