@@ -71,8 +71,8 @@ class TeamManagement extends Component {
                             </Panel.Body>
                         </Panel>
                     </PanelGroup>
-                    <div>
-                        <TeamViewer/>
+                    <div id="team-view-table" >
+                        <TeamViewer key="team-viewer-table-key"/>
                     </div>
                 </div>
             </MuiThemeProvider>

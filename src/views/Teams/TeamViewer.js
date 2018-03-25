@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {MuiThemeProvider, Dialog, Popover, Menu, MenuItem, RaisedButton} from 'material-ui';
+import {MuiThemeProvider, Dialog, Popover, Menu, MenuItem, RaisedButton, AppBar, FlatButton} from 'material-ui';
 import Button from '../../elements/CustomButton/CustomButton';
-import {Grid, Row, Col, Panel, PanelGroup} from 'react-bootstrap';
+import {Grid, Row, Col, Panel, PanelGroup, Modal, ModalBody, ModalFooter, ModalHeader} from 'react-bootstrap';
+import FontIcon from 'material-ui/FontIcon';
 
 import ReactTable from 'react-table';
 import StudentAdder from "../../components/Students/StudentAdder";
@@ -9,6 +10,7 @@ import TeamAdder from "../../components/Teams/TeamAdder";
 import constants from "../../utils/constants";
 import HttpRequest from "../../adapters/httpRequest";
 import matchSorter from "match-sorter";
+import StudentViewer from "./StudentViewer";
 
 class TeamViewer extends Component {
     constructor(props) {
@@ -17,8 +19,9 @@ class TeamViewer extends Component {
         this.state = {
             teams: []
         }
-    }
 
+        this.addStudentToTeam = this.addStudentToTeam.bind(this);
+    }
 
     componentWillMount() {
         var _this = this;
@@ -49,6 +52,20 @@ class TeamViewer extends Component {
         })
     }
 
+    addStudentToTeam(studentId, teamId) {
+        var body = {};
+        body.studentId = this.state.firstName;
+        body.teamId = this.state.lastName;
+
+        var _this = this;
+
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addStudentToTeam', 'POST', constants.useCredentials(), body, true).then(function (result) {
+            alert(result.body);
+        }).catch(function (error) {
+            alert(error.message);
+        });
+    }
+
     // render() {
     //     return (
     //         <div><div>HELLLOOOOO</div>{Object.keys(this.state.teams).map(function (teamKey) {
@@ -56,6 +73,7 @@ class TeamViewer extends Component {
     //         }, this)}</div>
     //     )
     // }
+
 
     render() {
         const columns = [{
@@ -85,61 +103,22 @@ class TeamViewer extends Component {
             filterable: false
         }];
 
-        const columns2 = [
-            {
-                Header: 'First Name',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, {keys: ["firstName"]}),
-                filterAll: true,
-                accessor: 'firstName' // String-based value accessors!
-            },
-            {
-                Header: 'Last Name',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, {keys: ["lastName"]}),
-                filterAll: true,
-                accessor: 'lastName' // String-based value accessors!
-            },
-            {
-                Header: 'Email',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, {keys: ["emailAddress"]}),
-                filterAll: true,
-                accessor: 'emailAddress' // String-based value accessors!
-            }
-        ];
-
         return (
-            <ReactTable
-                data={this.state.teams}
-                columns={columns}
-                filterable
-                defaultFilterMethod={(filter, row) =>
-                    String(row[filter.id]) === filter.value }
-                defaultPageSize={5}
-                className="-striped -highlight"
-                defaultSorted={[{id: "name"}]}
-                SubComponent={ row => {
-                    return (
-                        <div style={{padding:'20px'}}>
-                            <div style={{textAlign: 'center', fontSize: 'large'}}>
-                                <em>Students in team: <b>{row.original.name}</b></em>
-                            </div>
-                            <ReactTable
-                                data={row.original.students}
-                                columns={columns2}
-                                filterable
-                                defaultFilterMethod={(filter, row) =>
-                                    String(row[filter.id]) === filter.value }
-                                defaultPageSize={row.original.students.length}
-                                showPagination={false}
-                                className="-striped -highlight"
-                                defaultSorted={[{id: "firstName"}]}
-                            />
-                        </div>
-                    )
-                }}
-            />
+            <div>
+                <ReactTable
+                    data={this.state.teams}
+                    columns={columns}
+                    filterable
+                    defaultFilterMethod={(filter, row) =>
+                        String(row[filter.id]) === filter.value }
+                    defaultPageSize={5}
+                    className="-striped -highlight"
+                    defaultSorted={[{id: "name"}]}
+                    SubComponent={row => (
+                        <StudentViewer teamProp={row.original}/>
+                    )}
+                />
+            </div>
         )
     }
 
