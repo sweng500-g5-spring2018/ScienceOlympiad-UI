@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {PageHeader,Well,Alert, Grid, Col, Row, Modal} from 'react-bootstrap';
+import {PageHeader, Well, Alert, Grid, Col, Row, Modal} from 'react-bootstrap';
 import Loader from 'react-loader'
 import {
     Step,
@@ -30,6 +30,7 @@ import NotificationSystem from 'react-notification-system';
 import {style} from "../../variables/Variables";
 import BuildingSelector from "../../components/Buildings/BuildingSelector";
 import * as Promises from "axios";
+import AuthService from "../../utils/AuthService";
 
 class Events extends Component {
     constructor(props) {
@@ -49,7 +50,9 @@ class Events extends Component {
 
         this.state = {
             events: {},
+            editMode:false,
             loading: false,
+            loadCreateEvent: true,
             modal: false,
             confirmDialog: false,
             confirmMessage: '',
@@ -97,11 +100,68 @@ class Events extends Component {
         });
     }
 
-    //launch the modal to enter an event
-    createNewEvent() {
-        this.setState({
-            modal: true
-        })
+    //launch the modal to enter an event or edit one
+    createNewEvent = (mode) => {
+        const _this = this;
+        if(mode.status === "edit") {
+            _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/judges/" + mode.id, "get", constants.useCredentials(), null, true).then(function (judgeResult) {
+                let judgeVals = judgeResult.body;
+                //have the judges for this event already selected
+                var selectedJudgeIds = [];
+                for (let value in judgeVals) {
+                    selectedJudgeIds.push(judgeVals[value].id);
+                }
+                _this.setState({
+                    modal: true,
+                    stepIndex: 0,
+                    editMode:true,
+                    eventName: mode.name,
+                    eventDate: new Date(mode.eventDate),
+                    startTime: new Date(mode.startTime),
+                    endTime: new Date(mode.endTime),
+                    eventDescription: mode.description,
+                    eventLocation: mode.building.id,
+                    existingJudgeValues: selectedJudgeIds,
+                    judgeInputs: [],
+                    judgeCount: 0,
+
+                })
+
+            }).catch(function (error) {
+                //no judges assigned to the event yet
+                _this.setState({
+                    modal: true,
+                    stepIndex: 0,
+                    editMode:true,
+                    eventName: mode.name,
+                    eventDate: new Date(mode.eventDate),
+                    startTime: new Date(mode.startTime),
+                    endTime: new Date(mode.endTime),
+                    eventDescription: mode.description,
+                    eventLocation: mode.building.id,
+                    existingJudgeValues: [],
+                    judgeInputs: [],
+                    judgeCount: 0,
+
+                })
+            })
+        } else {
+            //creating new event
+            _this.setState({
+                modal: true,
+                editMode:false,
+                stepIndex: 0,
+                eventName: '',
+                eventDate: '',
+                startTime: '',
+                endTime: '',
+                eventDescription:'',
+                eventLocation: '',
+                existingJudgeValues: [],
+                judgeInputs: [],
+                judgeCount: 0,
+            })
+        }
     }
 
     createEventPost() {
@@ -127,7 +187,7 @@ class Events extends Component {
 
         }
         // newJudges.newjudges= newJudgeList;
-       // alert(newJudgeList);
+        // alert(newJudgeList);
         if (!errorFound) {
             var event = {};
 
@@ -143,7 +203,31 @@ class Events extends Component {
             body.existingJudgeValues = this.state.existingJudgeValues;
             body.newJudgeValues = newJudgeList;
             console.log(JSON.stringify(body));
+            _this.setState({
+                //show the spinner
+                loadCreateEvent: false
+            });
             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/addEvent/", "POST", constants.useCredentials(), body, true).then(function (result) {
+                //show some success and then clear the fields
+                //refresh after an add to show new event in table
+                _this.setState({
+                    modal: false,
+                    stepIndex: 0,
+                    loadCreateEvent: true,
+                    eventName: '',
+                    eventDescription: '',
+                    //this is a date object
+                    eventDate: '',
+                    startTime: '',
+                    endTime: '',
+                    eventLocation: '',
+                    judgeInputs: [],
+                    judgeCount: 0,
+                    existingJudgeValues: [],
+                    existingJudgeEmails: [],
+                    renderDetails: false,
+
+                });
                 _this.addNotification(
                     "Success: The event has been added.",
                     "success",
@@ -153,6 +237,9 @@ class Events extends Component {
                 _this.componentDidMount();
 
             }).catch(function (error) {
+                _this.setState({
+                    loadCreateEvent: true
+                });
                 _this.addNotification(
                     "Error: There was a problem creating the event.",
                     "error",
@@ -161,28 +248,18 @@ class Events extends Component {
                 );
                 _this.componentDidMount();
             })
-            //show some success and then clear the fields
-            //refresh after an add to show new event in table
-            this.setState({
-                modal: false,
-                stepIndex: 0,
 
-                eventName: '',
-                eventDescription: '',
-                //this is a date object
-                eventDate: '',
-                startTime: '',
-                endTime: '',
-                eventLocation: '',
-                judgeInputs: [],
-                judgeCount: 0,
-                existingJudgeValues: [],
-                existingJudgeEmails: [],
-                renderDetails: false,
-
-            })
         } else {
-            alert("some error was found when adding new judges");
+            _this.setState({
+                loadCreateEvent: true
+            });
+            _this.addNotification(
+                "Error: There was an error found prior to creating event.",
+                "error",
+                "tc",
+                6
+            );
+            _this.componentDidMount();
         }
 
     }
@@ -191,17 +268,7 @@ class Events extends Component {
         //reset when closing modal
         this.setState({
             modal: false,
-            stepIndex: 0,
-            eventName: '',
-            eventDate: '',
-            startTime: '',
-            endTime: '',
-            eventDescription: '',
-            eventLocation: '',
-            existingJudgeValues:[],
-            judgeInputs: [],
-            judgeCount: 0,
-
+            editMode:false
         })
     }
 
@@ -222,12 +289,16 @@ class Events extends Component {
         const {eventName, stepIndex} = this.state;
         // Checks first name
         if (stepIndex == 0) {
+            var promises =[];
             if (this.state.eventName.length < 1) {
                 missingInfo = true;
                 this.setState({
                     eventName: this.state.eventName.trim(),
                     eventNameError: "Event name is required"
                 })
+                //only check if duplicate event if we are creating a new event
+            } else if(!this.state.editMode){
+                promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null, true));
             } else {
                 this.setState({
                     eventNameError: undefined
@@ -246,7 +317,7 @@ class Events extends Component {
             if (this.state.startTime.length < 1) {
                 missingInfo = true;
                 this.setState({
-                    startTimeError: "Event description is required"
+                    startTimeError: "Event start time is required"
                 })
             } else {
                 this.setState({
@@ -256,7 +327,7 @@ class Events extends Component {
             if (this.state.endTime.length < 1) {
                 missingInfo = true;
                 this.setState({
-                    endTimeError: "Event description is required"
+                    endTimeError: "Event end time is required"
                 })
             } else {
                 this.setState({
@@ -287,20 +358,25 @@ class Events extends Component {
             }
 
             if (!missingInfo) {
+                if(promises.length > 0) {
+                    Promises.all(promises).then(function () {
 
-                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/verifyEvent/" + eventName, "get", constants.useCredentials(), null, true).then(function (result) {
-                    console.log("verify event");
-                    // alert(result.status);
+                        _this.setState({
+                            eventNameError: undefined,
+                            stepIndex: stepIndex+1
+                        })
+
+                    }).catch(function (error) {
+                        _this.setState({
+                            eventNameError: "Event Name already exists"
+                        });
+                        console.log(error);
+                    })
+                } else {
                     _this.setState({
                         stepIndex: stepIndex + 1
                     })
-
-                }).catch(function (error) {
-                    _this.setState({
-                        eventNameError: "Event Name already exists"
-                    });
-                    console.log(error);
-                })
+                }
             }
         } else if (stepIndex == 1) {
             //no validation since we are just pulling judges from the db
@@ -308,32 +384,32 @@ class Events extends Component {
             _this.setState({
                 stepIndex: stepIndex + 1,
                 judgeInputs: [],
-                judgeCount:0
+                judgeCount: 0
             })
         } else {
-                //only verify the last email and send to create event post
+            //only verify the last email and send to create event post
 
             var validateFields = false;
             let judgeCnt = _this.state.judgeCount;
-            let idname = "#judgemail"+judgeCnt;
-            var promises =[];
+            let idname = "#judgemail" + judgeCnt;
+            var promises = [];
             //do not run when displaying the first set of inputs
-            if(judgeCnt > 0) {
+            if (judgeCnt > 0) {
                 var email = $(idname).val();
                 var body = {};
                 if (email != null && email.length > 0) {
-                    if(!this.validEmail(email.trim())) {
+                    if (!this.validEmail(email.trim())) {
                         body.emailAddress = email;
                         promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body));
                     } else {
-                        validateFields=true;
+                        validateFields = true;
                         $(idname).parent().parent().parent().parent().find(".errorText").text("Email is not in the correct format");
-                        $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                        $(idname).parent().parent().parent().parent().find(".errorText").css("display", "block");
                     }
                 } else {
-                    validateFields=true;
+                    validateFields = true;
                     $(idname).parent().parent().parent().parent().find(".errorText").text("Email is required");
-                    $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display", "block");
                 }
             }
             //only continue to create event if this email is good
@@ -347,12 +423,12 @@ class Events extends Component {
 
                 }).catch(function (error) {
                     $(idname).parent().parent().parent().parent().find(".errorText").text("Email is already in use");
-                    $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display", "block");
                 });
             } else {
                 //just create event if no new judges and no syntax error
-                if(!validateFields) {
-                    if(_this.state.existingJudgeValues.length > 0) {
+                if (!validateFields) {
+                    if (_this.state.existingJudgeValues.length > 0) {
                         _this.createEventPost()
                     } else {
                         _this.addNotification(
@@ -437,29 +513,29 @@ class Events extends Component {
         var validateFields = true;
 
         let judgeCnt = _this.state.judgeCount;
-        let idname = "#judgemail"+judgeCnt;
-        var promises =[];
+        let idname = "#judgemail" + judgeCnt;
+        var promises = [];
         //do not run when displaying the first set of inputs
-        if(judgeCnt > 0) {
+        if (judgeCnt > 0) {
             var email = $(idname).val();
             var body = {};
             if (email != null && email.length > 0) {
-                if(!this.validEmail(email.trim())) {
+                if (!this.validEmail(email.trim())) {
                     body.emailAddress = email;
                     promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body));
                 } else {
                     //not the prettiest code....
                     $(idname).parent().parent().parent().parent().find(".errorText").text("Email is not in the correct format");
-                    $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display", "block");
                     validateFields = false;
                 }
             } else {
                 $(idname).parent().parent().parent().parent().find(".errorText").text("Email is required");
-                $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                $(idname).parent().parent().parent().parent().find(".errorText").css("display", "block");
                 validateFields = false;
             }
         }
-        if(validateFields) {
+        if (validateFields) {
             judgeCnt = judgeCnt + 1;
 
             const fnameJudge = [
@@ -490,7 +566,7 @@ class Events extends Component {
                 Promises.all(promises).then(function (results) {
                     $(idname).attr("disabled", true);
                     $(idname).parent().parent().parent().parent().find(".errorText").text("");
-                    $(idname).parent().parent().parent().parent().find(".errorText").css("display","none");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display", "none");
 
                     _this.setState({
                         judgeCount: _this.state.judgeCount + 1,
@@ -499,7 +575,7 @@ class Events extends Component {
                         judgeInputs: _this.state.judgeInputs.concat(<Row>
                             <div className={"col-md-9 col-xs-7" + " row" + judgeCnt}><Well>
                                 <h3>New Judge {judgeCnt}</h3>
-                                <Row><Alert style={{display:"none"}} bsStyle="danger"
+                                <Row><Alert style={{display: "none"}} bsStyle="danger"
                                             className="errorText"></Alert></Row>
                                 <Row><Col md={4} xs={7}>{fnameJudge}</Col></Row>
                                 <Row><Col md={4} xs={7}>{lnameJudge}</Col></Row>
@@ -512,7 +588,7 @@ class Events extends Component {
 
                     $(idname).attr("disabled", false);
                     $(idname).parent().parent().parent().parent().find(".errorText").text("Email already exists");
-                    $(idname).parent().parent().parent().parent().find(".errorText").css("display","block");
+                    $(idname).parent().parent().parent().parent().find(".errorText").css("display", "block");
 
                 });
             } else {
@@ -522,7 +598,7 @@ class Events extends Component {
                     judgeInputs: _this.state.judgeInputs.concat(<Row>
                         <div className={"col-md-9 col-xs-7" + " row" + judgeCnt}><Well>
                             <h3>New Judge {judgeCnt}</h3>
-                            <Row> <Alert style={{display:"none"}} className="errorText" bsStyle="danger"></Alert></Row><Row>
+                            <Row> <Alert style={{display: "none"}} className="errorText" bsStyle="danger"></Alert></Row><Row>
                             <Col md={4} xs={7}>{fnameJudge}</Col></Row>
                             <Row><Col md={4} xs={7}>{lnameJudge}</Col></Row>
                             <Row><Col md={4} xs={7}>{emailJudge}</Col></Row></Well>
@@ -535,21 +611,21 @@ class Events extends Component {
     }
 
     //Remove the text fields for the most recent judge
-    removeNewJudge = (judgeCount) =>{
+    removeNewJudge = (judgeCount) => {
         //alert("judge count" + judgeCount);
-        var _this =this;
+        var _this = this;
         var tempCount = _this.state.judgeCount;
-        var domId = ".row"+ tempCount;
+        var domId = ".row" + tempCount;
         $(domId).remove();
         tempCount -= 1;
-        domId=".row" +tempCount;
+        domId = ".row" + tempCount;
         //reenable the previous row
-        $(domId).find("#judgemail"+tempCount).attr("disabled", false);
+        $(domId).find("#judgemail" + tempCount).attr("disabled", false);
 
         //remove from the array and decrement
         _this.state.judgeInputs.pop();
         _this.setState({
-            judgeCount: _this.state.judgeCount -1,
+            judgeCount: _this.state.judgeCount - 1,
 
         })
 
@@ -568,6 +644,18 @@ class Events extends Component {
     }
 
     componentDidMount() {
+        //hide things from non admins and coaches just for now to test
+        let modifyRoles = ['COACH', 'ADMIN'];
+        let allowModify = AuthService.isUserRoleAllowed(modifyRoles);
+        if (allowModify) {
+            this.setState({
+                showDeletebtn: true
+            });
+        } else {
+            this.setState({
+                showDeletebtn: false
+            });
+        }
         //Make call out to backend
         var _this = this;
         this.setState({_notificationSystem: this.refs.notificationSystem});
@@ -615,12 +703,30 @@ class Events extends Component {
                 filterable: false
             }];
             for (let value in this.state.events) {
-                this.state.events[value].menuActions = <div><RaisedButton
-                    primary={true} label="View Details"
-                    onClick={(event) => this.eventDetails(this.state.events[value].id)}/>&nbsp;&nbsp;&nbsp;<RaisedButton
-                    secondary={true} label="Delete"
-                    onClick={this.confirmEventDelete.bind(this, this.state.events[value])}/></div>;
+                if (this.state.showDeletebtn) {
+                    this.state.events[value].status = "edit";
+                    this.state.events[value].judges = this.state.existingJudgeEmails;
+                    this.state.events[value].menuActions = <div>
+                        <RaisedButton
+                            primary={true} label="View Details"
+                            onClick={(event) => this.eventDetails(this.state.events[value].id)}/>&nbsp;&nbsp;
+                        <RaisedButton
+                            primary={true} label="Edit"
+                            onClick={this.createNewEvent.bind(this, this.state.events[value])}/>&nbsp;&nbsp;
+                        <RaisedButton
+                            secondary={true} label="Delete"
+                            onClick={this.confirmEventDelete.bind(this, this.state.events[value])}/>
+                        }
+                    </div>
+                } else {
+                    this.state.events[value].menuActions = <div>
+                        <RaisedButton
+                            primary={true} label="View Details"
+                            onClick={(event) => this.eventDetails(this.state.events[value].id)}/></div>
+                }
             }
+
+
             return (
                 <ReactTable
                     data={this.state.events}
@@ -668,8 +774,14 @@ class Events extends Component {
                 <RaisedButton icon={<FontIcon className="pe-7s-angle-up-circle"/>} primary={true}
                               label="Back to Existing"
                               onClick={this.previousStep}/>;
-            actionButton = <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true} label="Create Event"
-                                         onClick={this.nextStep}/>;
+                              if(this.state.editMode) {
+                                  actionButton = <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true} label="Save Event"
+                                                               onClick={this.nextStep}/>;
+                              } else {
+                                  actionButton = <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true} label="Create Event"
+                                                               onClick={this.nextStep}/>;
+                              }
+
         }
         if (this.state.renderDetails) {
             return (
@@ -690,10 +802,36 @@ class Events extends Component {
             />,
         ];
         let removeJudgeBtn;
-        if(this.state.judgeCount > 0) {
-            removeJudgeBtn=  <RaisedButton icon={<FontIcon className="pe-7s-close"/>}
-                                               secondary={true} label="Remove judge"
-                                               onClick={this.removeNewJudge.bind(this)}/>;
+        if (this.state.judgeCount > 0) {
+            removeJudgeBtn = <RaisedButton icon={<FontIcon className="pe-7s-close"/>}
+                                           secondary={true} label="Remove judge"
+                                           onClick={this.removeNewJudge.bind(this)}/>;
+        }
+        let createEventBtn;
+        if (this.state.showDeletebtn) {
+            createEventBtn = <Row className="show-grid">
+                <Col md={4} mdOffset={4}>
+                    <RaisedButton primary={true} label="Create New Event"
+                                  onClick={this.createNewEvent}/>
+                    <br/>
+                </Col>
+            </Row>
+        }
+        let modalTitleBar;
+        if(this.state.editMode) {
+           modalTitleBar= <AppBar
+                iconElementRight={<FlatButton label="Close"/>}
+                showMenuIconButton={false}
+                onRightIconButtonClick={(event) => this.closeModal()}
+                title="Modify Event"
+            />
+        } else {
+           modalTitleBar= <AppBar
+                iconElementRight={<FlatButton label="Close"/>}
+                showMenuIconButton={false}
+                onRightIconButtonClick={(event) => this.closeModal()}
+                title="Create New Event"
+            />
         }
         return (
 
@@ -702,13 +840,7 @@ class Events extends Component {
                 <div id='eventPage' key="notFound-key" className="notFoundClass">
                     <MuiThemeProvider>
                         <Grid>
-                            <Row className="show-grid">
-                                <Col md={4} mdOffset={4}>
-                                    <RaisedButton primary={true} label="Create New Event"
-                                                  onClick={this.createNewEvent}/>
-                                    <br/>
-                                </Col>
-                            </Row>
+                            {createEventBtn}
                             <br/>
                             <br/>
                             <Row className="show-grid">
@@ -726,12 +858,7 @@ class Events extends Component {
                 <MuiThemeProvider>
                     <Modal bsSize="large" show={this.state.modal} onHide={this.closeModal}>
                         <Modal.Header>
-                            <Modal.Title> <AppBar
-                                iconElementRight={<FlatButton label="Close"/>}
-                                showMenuIconButton={false}
-                                onRightIconButtonClick={(event) => this.closeModal()}
-                                title="Create New Event"
-                            /></Modal.Title>
+                            <Modal.Title> {modalTitleBar}</Modal.Title>
                         </Modal.Header>
 
                         <Modal.Body>
@@ -860,9 +987,9 @@ class Events extends Component {
                                             {this.state.judgeInputs}
                                             <Row>
                                                 <Col md={3}>
-                                            <RaisedButton icon={<FontIcon className="pe-7s-angle-down-circle"/>}
-                                                          primary={true} label="Add new judge"
-                                                          onClick={this.addJudgeInputs}/>
+                                                    <RaisedButton icon={<FontIcon className="pe-7s-angle-down-circle"/>}
+                                                                  primary={true} label="Add new judge"
+                                                                  onClick={this.addJudgeInputs}/>
                                                 </Col>
                                                 <Col md={3}>
                                                     {removeJudgeBtn}
@@ -876,7 +1003,7 @@ class Events extends Component {
                         </Modal.Body>
 
                         <Modal.Footer>
-                            {backButton} {actionButton}
+                            <Loader loaded={this.state.loadCreateEvent}></Loader> {backButton} {actionButton}
                         </Modal.Footer>
                     </Modal>
                     <Dialog
