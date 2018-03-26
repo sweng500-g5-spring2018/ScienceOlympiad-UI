@@ -1,0 +1,19 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "id": "1",
+      "roomName": "Room 1",
+      "capacity" : 30,
+      "buildingID": "5a9222c025ac8ff0785f4d58"
+    },
+    {
+      "id": "2",
+      "roomName": "Room 2",
+      "capacity" : 35,
+      "buildingID": "5a9222c025ac8ff0785f4d58"
+    }
+  ]
+}
+
+
