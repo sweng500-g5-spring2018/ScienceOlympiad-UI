@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
 import {StatsCard} from '../../components/Cards/StatsCard.js';
 import ChuckParent from '../../components/HttpExample/ChuckParent.js'
-import TestModule from "../../components/HttpExample/testModule";
 
 class Dashboard extends Component {
 
@@ -29,10 +28,6 @@ class Dashboard extends Component {
                                 statsIconText="In the last hour"
                             />
                         </Col>
-                    </Row>
-                    <Row>
-                        <ChuckParent />
-                        <TestModule/>
                     </Row>
                 </Grid>
             </div>

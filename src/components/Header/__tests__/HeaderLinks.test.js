@@ -34,7 +34,6 @@ describe('HeaderLinks Component Tests', function () {
         const component = shallow(<HeaderLinks />);
 
         expect(component.find(Nav)).to.have.length(2);
-        expect(component.find(NavDropdown)).to.have.length(2);
         expect(component.find(NavItem)).to.have.length(2);
 
     })
