@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
 import {MuiThemeProvider, AppBar, TextField} from 'material-ui';
 import Button from '../../elements/CustomButton/CustomButton';
-import {Grid, Row, Col, Panel} from 'react-bootstrap';
-
-import ReactTable from 'react-table';
+import {Grid, Row, Col} from 'react-bootstrap';
 
 import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
 import Validator from "../../utils/validator";

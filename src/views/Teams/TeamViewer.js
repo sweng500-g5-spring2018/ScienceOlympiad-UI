@@ -1,12 +1,6 @@
 import React, {Component} from 'react';
-import {MuiThemeProvider, Dialog, Popover, Menu, MenuItem, RaisedButton, AppBar, FlatButton} from 'material-ui';
-import Button from '../../elements/CustomButton/CustomButton';
-import {Grid, Row, Col, Panel, PanelGroup, Modal, ModalBody, ModalFooter, ModalHeader} from 'react-bootstrap';
-import FontIcon from 'material-ui/FontIcon';
-
+import {RaisedButton} from 'material-ui';
 import ReactTable from 'react-table';
-import StudentAdder from "../../components/Students/StudentAdder";
-import TeamAdder from "../../components/Teams/TeamAdder";
 import constants from "../../utils/constants";
 import HttpRequest from "../../adapters/httpRequest";
 import matchSorter from "match-sorter";
@@ -20,7 +14,7 @@ class TeamViewer extends Component {
             teams: []
         }
 
-        this.addStudentToTeam = this.addStudentToTeam.bind(this);
+        this.updateTeam = this.updateTeam.bind(this);
     }
 
     componentWillMount() {
@@ -34,16 +28,6 @@ class TeamViewer extends Component {
                 resultTeams[value].menuActions = <div><RaisedButton
                     primary={true} onClick={event => {}} label="Edit"/>&nbsp;&nbsp;&nbsp;<RaisedButton
                     secondary={true} onClick={event => {}} label="Delete"/></div>;
-
-                resultTeams[value].students.push({
-                    emailAddress: "bullshit@bullshit.com",
-                    firstName: "bull",
-                    lastName: "shit",
-                    id: "123456789098765432112345",
-                    name: "bull shit",
-                    phoneNumber: "",
-                    school: {schoolName: "Dallas Dag"}
-                });
             }
 
             _this.setState({teams: resultTeams})
@@ -52,28 +36,19 @@ class TeamViewer extends Component {
         })
     }
 
-    addStudentToTeam(studentId, teamId) {
-        var body = {};
-        body.studentId = this.state.firstName;
-        body.teamId = this.state.lastName;
+    updateTeam(updatedTeam) {
+        var tempTeams = this.state.teams;
 
-        var _this = this;
-
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addStudentToTeam', 'POST', constants.useCredentials(), body, true).then(function (result) {
-            alert(result.body);
-        }).catch(function (error) {
-            alert(error.message);
+        tempTeams.map(function (team) {
+            if(team.id === updatedTeam.id) {
+                team.students = updatedTeam.students;
+            }
         });
+
+        this.setState({
+            teams: tempTeams
+        })
     }
-
-    // render() {
-    //     return (
-    //         <div><div>HELLLOOOOO</div>{Object.keys(this.state.teams).map(function (teamKey) {
-    //             return <div>{this.state.teams[teamKey].name}</div>
-    //         }, this)}</div>
-    //     )
-    // }
-
 
     render() {
         const columns = [{
@@ -85,13 +60,13 @@ class TeamViewer extends Component {
         }, {
             Header: 'Coach',
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, {keys: ["coach"]}),
+                matchSorter(rows, filter.value, {keys: ["coach.name"]}),
             filterAll: true,
             accessor: 'coach.name' // String-based value accessors!
         }, {
             Header: 'School',
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, {keys: ["coach"]}),
+                matchSorter(rows, filter.value, {keys: ["school.schoolName"]}),
             filterAll: true,
             accessor: 'school.schoolName' // String-based value accessors!
         },
@@ -115,7 +90,7 @@ class TeamViewer extends Component {
                     className="-striped -highlight"
                     defaultSorted={[{id: "name"}]}
                     SubComponent={row => (
-                        <StudentViewer teamProp={row.original}/>
+                        <StudentViewer teamProp={row.original} updateTeam={this.updateTeam}/>
                     )}
                 />
             </div>

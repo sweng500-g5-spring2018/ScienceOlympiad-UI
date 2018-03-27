@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {MuiThemeProvider, Dialog, Popover, Menu, MenuItem, RaisedButton} from 'material-ui';
 import Button from '../../elements/CustomButton/CustomButton';
-import {Grid, Row, Col, Panel, PanelGroup} from 'react-bootstrap';
+import {Panel, PanelGroup} from 'react-bootstrap';
 
-import ReactTable from 'react-table';
 import StudentAdder from "../../components/Students/StudentAdder";
 import TeamAdder from "../../components/Teams/TeamAdder";
 import TeamViewer from "./TeamViewer";
@@ -14,7 +13,8 @@ class TeamManagement extends Component {
 
         this.state = {
             popOverOpen: false,
-            addPanel: ""
+            addPanel: "",
+            tableUpdate: false
         };
 
         this.handleAddClick = this.handleAddClick.bind(this);
@@ -32,7 +32,7 @@ class TeamManagement extends Component {
 
 
     toggleAdd(type) {
-        this.setState({popOverOpen: false, addPanel: type});
+        this.setState({popOverOpen: false, addPanel: type, tableUpdate: !this.state.tableUpdate});
     }
 
     render() {
@@ -72,7 +72,7 @@ class TeamManagement extends Component {
                         </Panel>
                     </PanelGroup>
                     <div id="team-view-table" >
-                        <TeamViewer key="team-viewer-table-key"/>
+                        <TeamViewer key="team-viewer-table-key" />
                     </div>
                 </div>
             </MuiThemeProvider>

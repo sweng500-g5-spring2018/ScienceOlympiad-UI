@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
-import {MuiThemeProvider, Dialog, Popover, Menu, MenuItem, RaisedButton, AppBar, FlatButton, SelectField} from 'material-ui';
+import {MenuItem, RaisedButton, SelectField} from 'material-ui';
 import Button from '../../elements/CustomButton/CustomButton';
-import {Grid, Row, Col, Panel, PanelGroup, Modal, ModalBody, ModalFooter, ModalHeader} from 'react-bootstrap';
+import {Panel} from 'react-bootstrap';
 import FontIcon from 'material-ui/FontIcon';
 
 import ReactTable from 'react-table';
-import StudentAdder from "../../components/Students/StudentAdder";
-import TeamAdder from "../../components/Teams/TeamAdder";
 import constants from "../../utils/constants";
 import HttpRequest from "../../adapters/httpRequest";
 import matchSorter from "match-sorter";
@@ -18,12 +16,16 @@ class StudentViewer extends Component {
         this.state = {
             modal: false,
             modalTitle: "",
-            teams: [],
-            studentsSelectable: []
+            studentsSelectable: [],
+            selectedStudents: [],
+            openStudentSelector: false
         }
 
         this.closeModal = this.closeModal.bind(this);
-        this.addStudentToTeam = this.addStudentToTeam.bind(this);
+        this.studentMenuItems = this.studentMenuItems.bind(this);
+        this.selectionRenderer = this.selectionRenderer.bind(this);
+        this.toggleStudentSelector = this.toggleStudentSelector.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     // Close the modal
@@ -40,19 +42,30 @@ class StudentViewer extends Component {
         })
     }
 
-    handleSubmit() {
-        console.log("SUBMIT CLICKED");
+    toggleStudentSelector() {
+        this.setState({openStudentSelector: false, selectedStudents: []});
     }
 
-    addStudentToTeam(studentId, teamId) {
-        var body = {};
-        body.studentId = this.state.firstName;
-        body.teamId = this.state.lastName;
+    handleSubmit() {
+        var body = JSON.parse(JSON.stringify(this.props.teamProp));
 
+        if(body.students[0].firstName === "bull") {
+            body.students.shift();
+        }
+
+        this.state.selectedStudents.forEach(function (student) {
+            body.students.push(student);
+        })
+
+        console.log(body);
         var _this = this;
 
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addStudentToTeam', 'POST', constants.useCredentials(), body, true).then(function (result) {
-            alert(result.body);
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addStudentsToTeam', 'POST', constants.useCredentials(), body, true).then(function (result) {
+            var updatedTeam = result.body;
+
+            console.log(updatedTeam);
+            _this.props.updateTeam(updatedTeam);
+
         }).catch(function (error) {
             alert(error.message);
         });
@@ -77,11 +90,15 @@ class StudentViewer extends Component {
         var _this = this;
 
         _this.getStudentsInSchoolDistrict(team.school.id).then(function (students) {
+            // _this.setState({
+            //     modalTitle: "Add Student to Team",
+            //     modalButton: "Submit",
+            //     studentsSelectable: students,
+            //     modal: true
+            // })
             _this.setState({
-                modalTitle: "Add Student to Team",
-                modalButton: "Submit",
                 studentsSelectable: students,
-                modal: true
+                openStudentSelector: true
             })
         }).catch(function (error) {
             console.log(error);
@@ -133,70 +150,109 @@ class StudentViewer extends Component {
                     />
                     <br />
                     <div>
-                        <Button fill bsStyle="info" onClick={event => {this.clickAddStudentToTeam(this.props.teamProp)}}>Add Student to <b>{this.props.teamProp.name}</b></Button>
+                        <Button fill bsStyle="info" onClick={event => {this.clickAddStudentToTeam(this.props.teamProp)}} disabled={this.state.openStudentSelector}>
+                            Add Student to <b>{this.props.teamProp.name}</b>
+                        </Button>
+                        <br />
+                        <Panel id="student-to-team-collapsible-panel" expanded={this.state.openStudentSelector} onToggle={ () => {}}
+                               style={{border: 0, width: '50%', marginLeft: '25%', marginRight: '25%'}}>
+                            <Panel.Body collapsible>
+                                {
+                                    this.renderSelectFieldIfContent()
+                                }
+                                <br />
+                                <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} secondary={true} label="Cancel"
+                                    onClick={this.toggleStudentSelector}/>&nbsp;&nbsp;
+                                <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label="Add Students"
+                                    onClick={this.handleSubmit} disabled={this.state.selectedStudents.length === 0 ? true : false}/>
+                            </Panel.Body>
+                        </Panel>
                     </div>
                 </div>
-                <Modal show={this.state.modal} onHide={this.closeModal}>
-                    <Modal.Header>
-                        <Modal.Title> <AppBar
-                            iconElementRight={<FlatButton label="Close"/>}
-                            showMenuIconButton={false}
-                            onRightIconButtonClick={(event) => this.closeModal()}
-                            title={this.state.modalTitle}
-                        /></Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <div>
-                            {
-                                Object.keys(this.state.studentsSelectable).map(function (studentKey) {
-                                    return <li>{this.state.studentsSelectable[studentKey].name}</li>
-                                }, this)
-                            }
+                {/*<Modal show={this.state.modal} onHide={this.closeModal}>*/}
+                    {/*<Modal.Header>*/}
+                        {/*<Modal.Title> <AppBar*/}
+                            {/*iconElementRight={<FlatButton label="Close"/>}*/}
+                            {/*showMenuIconButton={false}*/}
+                            {/*onRightIconButtonClick={(event) => this.closeModal()}*/}
+                            {/*title={this.state.modalTitle}*/}
+                        {/*/></Modal.Title>*/}
+                    {/*</Modal.Header>*/}
+                    {/*<Modal.Body>*/}
+                        {/*<div>*/}
+                            {/*{*/}
+                                {/*Object.keys(this.state.studentsSelectable).map(function (studentKey) {*/}
+                                    {/*return <li>{this.state.studentsSelectable[studentKey].name}</li>*/}
+                                {/*}, this)*/}
+                            {/*}*/}
                             {/*<SelectField*/}
                                 {/*multiple={true}*/}
                                 {/*fullWidth={true}*/}
                                 {/*autoWidth={true}*/}
-                                {/*hintText="Students In District"*/}
-                                {/*value={this.state.studentSelectValues}*/}
-                                {/*onChange={this.studentMenuClick}*/}
+                                {/*hintText="Select Students"*/}
+                                {/*selectionRenderer={this.selectionRenderer}*/}
+                                {/*value={this.state.selectedStudents}*/}
+                                {/*onChange={ (event, index, values) => this.setState({selectedStudents: values})}*/}
                             {/*>*/}
-                                {/*{this.judgeMenuItems(this.state.studentSelectValues)}*/}
+                                {/*{this.studentMenuItems()}*/}
                             {/*</SelectField>*/}
-                        </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} primary={true} label="Cancel"
-                                      onClick={this.closeModal}/>&nbsp;&nbsp;
-                        <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label={this.state.modalButton}
-                                      onClick={this.handleSubmit}/>
-                    </Modal.Footer>
-                </Modal>
+                        {/*</div>*/}
+                    {/*</Modal.Body>*/}
+                    {/*<Modal.Footer>*/}
+                        {/*<RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} primary={true} label="Cancel"*/}
+                                      {/*onClick={this.closeModal}/>&nbsp;&nbsp;*/}
+                        {/*<RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label={this.state.modalButton}*/}
+                                      {/*onClick={this.handleSubmit}/>*/}
+                    {/*</Modal.Footer>*/}
+                {/*</Modal>*/}
             </div>
         )
     }
 
-    // //adds in the menu items for existing judges
-    // studentMenuItems = (studentMenuItems) => {
-    //     if (this.state.studentMenuItems != null) {
-    //         return this.state.studentSelectValues.map((obj) => (
-    //             <MenuItem
-    //                 key={obj.id}
-    //                 insetChildren={true}
-    //                 targetOrigin={{horizontal: "right", vertical: "bottom"}}
-    //                 checked={existingJudgeValues && existingJudgeValues.indexOf(obj.id) > -1}
-    //                 value={obj.id}
-    //                 primaryText={obj.firstName + "     " + obj.lastName + "  --   " + obj.emailAddress}
-    //             />
-    //         ));
-    //     }
-    // }
-    //
-    // studentMenuClick = (event, index, values) => {
-    //     this.setState({
-    //         studentSelectValues: values
-    //     });
-    // }
+    renderSelectFieldIfContent() {
+        if(this.state.studentsSelectable && this.state.studentsSelectable.length > 0) {
+            return (
+                <SelectField
+                    multiple={true}
+                    autoWidth={true}
+                    hintText="Select Students"
+                    selectionRenderer={this.selectionRenderer}
+                    value={this.state.selectedStudents}
+                    onChange={ (event, index, values) => this.setState({selectedStudents: values})}
+                >
+                    {this.studentMenuItems()}
+                </SelectField>
+            )
+        } else {
+            return (
+                <div><b>No students are currently available to be assigned to a new team within this district</b></div>
+            )
+        }
+    }
 
+    selectionRenderer() {
+        console.log(this.state.selectedStudents);
+        switch (this.state.selectedStudents.length) {
+            case 0:
+                return '';
+            case 1:
+                return this.state.selectedStudents[0].firstName + " " + this.state.selectedStudents[0].lastName + " selected";
+            default:
+                return `${this.state.selectedStudents.length} names selected`;
+        }
+    }
+
+    studentMenuItems() {
+        return this.state.studentsSelectable.map((student) => (
+            <MenuItem
+                key={student.id}
+                insetChildren={true}
+                checked={this.state.selectedStudents.indexOf(student) > -1}
+                value={student}
+                primaryText={student.firstName + " " + student.lastName}
+            />
+        ));
+    }
 }
 
 export default StudentViewer;

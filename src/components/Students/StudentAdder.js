@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import {MuiThemeProvider, AppBar, TextField} from 'material-ui';
 import Button from '../../elements/CustomButton/CustomButton';
-import {Grid, Row, Col, Panel} from 'react-bootstrap';
+import {Grid, Row, Col} from 'react-bootstrap';
 
-import ReactTable from 'react-table';
-import SchoolSelector from "../Schools/SchoolSelector";
 import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
 import constants from "../../utils/constants";
 import Validator from "../../utils/validator";
