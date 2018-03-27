@@ -210,7 +210,7 @@ class EventDetail extends Component {
                                     category={
                                         <div>
                                             <RaisedButton primary={true} label="Go back to events"
-                                                          onClick={event => this.props.showEvents(event)}/>,
+                                                          onClick={event => this.props.showEvents(event)}/> &nbsp;&nbsp;
                                             <RaisedButton primary={true} label="Register a Team"
                                                           onClick={event => this.props.showEvents(event)}/>
                                         </div>}
