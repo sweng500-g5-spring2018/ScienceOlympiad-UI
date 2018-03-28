@@ -60,12 +60,12 @@ class StudentTeamCreator extends Component {
                         <Panel id="add-user-collapsible-panel" eventKey={"student"} style={{border: 0}}>
                             <Panel.Body collapsible>
                                 <br />
-                                <StudentAdder togglePanel={this.toggleAdd} updateTable={this.props.updateTable}/>
+                                <StudentAdder togglePanel={this.toggleAdd} updateTable={this.props.updateTable} addNotification={this.props.addNotification}/>
                             </Panel.Body>
                         </Panel>
                         <Panel id="add-team-collapsible-panel" eventKey={"team"} style={{border:0}}>
                             <Panel.Body collapsible>
-                                <TeamAdder togglePanel={this.toggleAdd} updateTable={this.props.updateTable}/>
+                                <TeamAdder togglePanel={this.toggleAdd} updateTable={this.props.updateTable} addNotification={this.props.addNotification}/>
                             </Panel.Body>
                         </Panel>
                     </PanelGroup>

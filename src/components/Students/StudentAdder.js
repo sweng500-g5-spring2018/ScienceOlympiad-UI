@@ -46,12 +46,15 @@ class StudentAdder extends Component {
                 lastName: "",
                 emailAddress: "",
                 selectedSchool: undefined
-            }, () => _this.props.updateTable());
+            }, () => {
+                _this.props.addNotification(<div><b>{body.firstName + ' ' + body.lastName}</b> has been created.</div>);
+                _this.props.updateTable();
+            });
 
-            alert(result.body);
-        }).catch(function (error) {
-            alert(error.message);
-        });
+            // alert(result.body);
+        }, body).catch(function (error) {
+            _this.props.addNotification(<div><b>{body.firstName}</b> could not be created because: <em>{error.message}</em></div>);
+        }, body);
     }
 
     validateStudentForm() {
