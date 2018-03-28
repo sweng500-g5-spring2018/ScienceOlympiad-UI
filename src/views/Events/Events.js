@@ -51,6 +51,7 @@ class Events extends Component {
         this.state = {
             events: {},
             editMode:false,
+            editEventId:'',
             loading: false,
             loadCreateEvent: true,
             modal: false,
@@ -114,6 +115,7 @@ class Events extends Component {
                 _this.setState({
                     modal: true,
                     stepIndex: 0,
+                    editEventId: mode.id,
                     editMode:true,
                     eventName: mode.name,
                     eventDate: new Date(mode.eventDate),
@@ -130,6 +132,7 @@ class Events extends Component {
             }).catch(function (error) {
                 //no judges assigned to the event yet
                 _this.setState({
+                    editEventId: mode.id,
                     modal: true,
                     stepIndex: 0,
                     editMode:true,
@@ -150,6 +153,7 @@ class Events extends Component {
             _this.setState({
                 modal: true,
                 editMode:false,
+                editEventId: '',
                 stepIndex: 0,
                 eventName: '',
                 eventDate: '',
@@ -207,48 +211,91 @@ class Events extends Component {
                 //show the spinner
                 loadCreateEvent: false
             });
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/addEvent/", "POST", constants.useCredentials(), body, true).then(function (result) {
-                //show some success and then clear the fields
-                //refresh after an add to show new event in table
-                _this.setState({
-                    modal: false,
-                    stepIndex: 0,
-                    loadCreateEvent: true,
-                    eventName: '',
-                    eventDescription: '',
-                    //this is a date object
-                    eventDate: '',
-                    startTime: '',
-                    endTime: '',
-                    eventLocation: '',
-                    judgeInputs: [],
-                    judgeCount: 0,
-                    existingJudgeValues: [],
-                    existingJudgeEmails: [],
-                    renderDetails: false,
+            if(this.state.editMode) {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/updateEvent/"+this.state.editEventId, "POST", constants.useCredentials(), body, true).then(function (result) {
+                    //show some success and then clear the fields
+                    //refresh after an add to show new event in table
+                    _this.setState({
+                        modal: false,
+                        stepIndex: 0,
+                        loadCreateEvent: true,
+                        eventName: '',
+                        eventDescription: '',
+                        //this is a date object
+                        eventDate: '',
+                        startTime: '',
+                        endTime: '',
+                        eventLocation: '',
+                        judgeInputs: [],
+                        judgeCount: 0,
+                        existingJudgeValues: [],
+                        existingJudgeEmails: [],
+                        renderDetails: false,
 
-                });
-                _this.addNotification(
-                    "Success: The event has been added.",
-                    "success",
-                    "tc",
-                    6
-                );
-                _this.componentDidMount();
+                    });
+                    _this.addNotification(
+                        "Success: The event has been saved.",
+                        "success",
+                        "tc",
+                        6
+                    );
+                    _this.componentDidMount();
 
-            }).catch(function (error) {
-                _this.setState({
-                    loadCreateEvent: true
-                });
-                _this.addNotification(
-                    "Error: There was a problem creating the event.",
-                    "error",
-                    "tc",
-                    6
-                );
-                _this.componentDidMount();
-            })
+                }).catch(function (error) {
+                    _this.setState({
+                        loadCreateEvent: true,
+                    });
+                    _this.addNotification(
+                        "Error: There was a problem editing the event.",
+                        "error",
+                        "tc",
+                        6
+                    );
+                    _this.componentDidMount();
+                })
+            } else {
+                _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/addEvent/", "POST", constants.useCredentials(), body, true).then(function (result) {
+                    //show some success and then clear the fields
+                    //refresh after an add to show new event in table
+                    _this.setState({
+                        modal: false,
+                        stepIndex: 0,
+                        loadCreateEvent: true,
+                        eventName: '',
+                        eventDescription: '',
+                        //this is a date object
+                        eventDate: '',
+                        startTime: '',
+                        endTime: '',
+                        eventLocation: '',
+                        judgeInputs: [],
+                        judgeCount: 0,
+                        existingJudgeValues: [],
+                        existingJudgeEmails: [],
+                        renderDetails: false,
 
+                    });
+                    _this.addNotification(
+                        "Success: The event has been added.",
+                        "success",
+                        "tc",
+                        6
+                    );
+                    _this.componentDidMount();
+
+                }).catch(function (error) {
+                    _this.setState({
+                        loadCreateEvent: true
+                    });
+                    _this.addNotification(
+                        "Error: There was a problem creating the event.",
+                        "error",
+                        "tc",
+                        6
+                    );
+                    _this.componentDidMount();
+                })
+            }
         } else {
             _this.setState({
                 loadCreateEvent: true
@@ -268,7 +315,8 @@ class Events extends Component {
         //reset when closing modal
         this.setState({
             modal: false,
-            editMode:false
+            editMode:false,
+            editEventId:''
         })
     }
 
@@ -705,7 +753,6 @@ class Events extends Component {
             for (let value in this.state.events) {
                 if (this.state.showDeletebtn) {
                     this.state.events[value].status = "edit";
-                    this.state.events[value].judges = this.state.existingJudgeEmails;
                     this.state.events[value].menuActions = <div>
                         <RaisedButton
                             primary={true} label="View Details"
@@ -716,7 +763,6 @@ class Events extends Component {
                         <RaisedButton
                             secondary={true} label="Delete"
                             onClick={this.confirmEventDelete.bind(this, this.state.events[value])}/>
-                        }
                     </div>
                 } else {
                     this.state.events[value].menuActions = <div>
