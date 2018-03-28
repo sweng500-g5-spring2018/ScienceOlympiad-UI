@@ -46,7 +46,7 @@ class StudentAdder extends Component {
                 lastName: "",
                 emailAddress: "",
                 selectedSchool: undefined
-            });
+            }, () => _this.props.updateTable());
 
             alert(result.body);
         }).catch(function (error) {

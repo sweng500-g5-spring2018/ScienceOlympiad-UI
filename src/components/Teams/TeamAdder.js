@@ -52,7 +52,7 @@ class TeamAdder extends Component {
                 selectedSchool: undefined,
                 selectedCoach: undefined,
                 teamName: ""
-            });
+            }, () => _this.props.updateTable());
 
             alert(result.body);
 

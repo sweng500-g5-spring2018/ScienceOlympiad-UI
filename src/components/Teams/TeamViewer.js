@@ -4,7 +4,7 @@ import ReactTable from 'react-table';
 import constants from "../../utils/constants";
 import HttpRequest from "../../adapters/httpRequest";
 import matchSorter from "match-sorter";
-import StudentViewer from "./StudentViewer";
+import StudentViewer from "../Students/StudentViewer";
 
 class TeamViewer extends Component {
     constructor(props) {
@@ -17,7 +17,13 @@ class TeamViewer extends Component {
         this.updateTeam = this.updateTeam.bind(this);
     }
 
-    componentWillMount() {
+    componentWillReceiveProps(nextProps) {
+        if(this.props.tableUpdateToggler != nextProps.tableUpdateToggler) {
+            this.getTeams();
+        }
+    }
+
+    getTeams() {
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getTeams', 'GET', constants.useCredentials(), null, true).then(function (result) {
@@ -34,6 +40,10 @@ class TeamViewer extends Component {
         }).catch(function (error) {
             console.log(error);
         })
+    }
+
+    componentWillMount() {
+        this.getTeams();
     }
 
     updateTeam(updatedTeam) {
@@ -86,7 +96,7 @@ class TeamViewer extends Component {
                     filterable
                     defaultFilterMethod={(filter, row) =>
                         String(row[filter.id]) === filter.value }
-                    defaultPageSize={5}
+                    defaultPageSize={10}
                     className="-striped -highlight"
                     defaultSorted={[{id: "name"}]}
                     SubComponent={row => (
