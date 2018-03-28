@@ -49,13 +49,9 @@ class StudentViewer extends Component {
     handleSubmit() {
         var body = JSON.parse(JSON.stringify(this.props.teamProp));
 
-        if(body.students[0].firstName === "bull") {
-            body.students.shift();
-        }
-
         this.state.selectedStudents.forEach(function (student) {
             body.students.push(student);
-        })
+        });
 
         console.log(body);
         var _this = this;
