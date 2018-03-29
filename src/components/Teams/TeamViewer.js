@@ -18,9 +18,30 @@ class TeamViewer extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(this.props.tableUpdateToggler != nextProps.tableUpdateToggler) {
+        if(this.props.tableUpdateToggler !== nextProps.tableUpdateToggler) {
             this.getTeams();
         }
+    }
+
+
+    deleteTeam(team) {
+        var _this = this;
+        var removeId = team.id;
+        console.log(team);
+        console.log(removeId);
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/removeTeam/" + removeId, "DELETE", constants.useCredentials(), null, true).then(function (result) {
+            var tempTeams = _this.state.teams.filter(t => {
+                return t !== team;
+            });
+
+            _this.setState({
+                teams: tempTeams
+            });
+
+            _this.props.addNotification(<div><b>{team.name}</b> has been deleted.</div>);
+        }).catch(function (error) {
+            _this.props.addNotification(<div><b>{team.name}</b> could not be deleted because: <em>{error.message}</em></div>, 'error');
+        })
     }
 
     getTeams() {
@@ -32,8 +53,7 @@ class TeamViewer extends Component {
 
             for(let value in resultTeams) {
                 resultTeams[value].menuActions = <div><RaisedButton
-                    primary={true} onClick={event => {}} label="Edit"/>&nbsp;&nbsp;&nbsp;<RaisedButton
-                    secondary={true} onClick={event => {}} label="Delete"/></div>;
+                    secondary={true} onClick={event => {_this.deleteTeam(resultTeams[value])}} label="Delete"/></div>;
             }
 
             _this.setState({teams: resultTeams})

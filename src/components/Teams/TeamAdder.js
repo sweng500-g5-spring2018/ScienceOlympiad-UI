@@ -57,9 +57,9 @@ class TeamAdder extends Component {
                 _this.props.updateTable()
             });
 
-        }, body).catch(function (error) {
-            _this.props.addNotification(<div><b>{body.name}</b> could not be created because: <em>{error.message}</em></div>);
-        }, body);
+        }).catch(function (error) {
+            _this.props.addNotification(<div><b>{body.name}</b> could not be created because: <em>{error.message}</em></div>, 'error');
+        });
     }
 
     validateTeamForm() {

@@ -52,9 +52,9 @@ class StudentAdder extends Component {
             });
 
             // alert(result.body);
-        }, body).catch(function (error) {
-            _this.props.addNotification(<div><b>{body.firstName}</b> could not be created because: <em>{error.message}</em></div>);
-        }, body);
+        }).catch(function (error) {
+            _this.props.addNotification(<div><b>{body.firstName}</b> could not be created because: <em>{error.message}</em></div>, 'error');
+        });
     }
 
     validateStudentForm() {
