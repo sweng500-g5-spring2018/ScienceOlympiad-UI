@@ -90,7 +90,7 @@ class TeamAdder extends Component {
         return (
             <MuiThemeProvider>
                 <div style={{textAlign: 'center'}}>
-                    <AppBar showMenuIconButton={false} title="Register Team"/>
+                    <AppBar showMenuIconButton={false} title="Register Team" style={{zIndex: 10}}/>
                     <Grid>
                         <Row className="show-grid" style={{textAlign:'center'}}>
                             <Col xs={7} md={3}>
