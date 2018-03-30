@@ -4,12 +4,16 @@
     {
       "id": "5a92223925ac8ff0785f4d55",
       "building": "Science Center",
+      "buildingID": "5a9222c025ac8ff0785f4d58",
+      "roomName":"test",
       "lat": 41.306520311978396,
       "lng": -76.01719379425049
     },
     {
       "id": "5a9222c025ac8ff0785f4d58",
       "building": "Technology Center",
+      "buildingID": "5a92223925ac8ff0785f4d55",
+      "roomName":"test2",
       "lat": 41.30754989013563,
       "lng": -76.0175022482872
     }
