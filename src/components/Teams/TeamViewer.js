@@ -118,14 +118,16 @@ class TeamViewer extends Component {
             accessor: 'name' // String-based value accessors!
         }, {
             Header: 'Coach',
+            id: 'coachName',
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, {keys: ["coach.name"]}),
+                matchSorter(rows, filter.value, {keys: ["coachName"]}),
             filterAll: true,
             accessor: 'coach.name' // String-based value accessors!
         }, {
             Header: 'School',
+            id: 'schoolName',
             filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, {keys: ["school.schoolName"]}),
+                matchSorter(rows, filter.value, {keys: ["schoolName"]}),
             filterAll: true,
             accessor: 'school.schoolName' // String-based value accessors!
         },
