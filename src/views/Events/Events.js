@@ -122,7 +122,7 @@ class Events extends Component {
                     startTime: new Date(mode.startTime),
                     endTime: new Date(mode.endTime),
                     eventDescription: mode.description,
-                    eventLocation: mode.building.id,
+                    eventLocation: mode.room.id,
                     existingJudgeValues: selectedJudgeIds,
                     judgeInputs: [],
                     judgeCount: 0,
@@ -141,7 +141,7 @@ class Events extends Component {
                     startTime: new Date(mode.startTime),
                     endTime: new Date(mode.endTime),
                     eventDescription: mode.description,
-                    eventLocation: mode.building.id,
+                    eventLocation: mode.room.id,
                     existingJudgeValues: [],
                     judgeInputs: [],
                     judgeCount: 0,
@@ -198,7 +198,7 @@ class Events extends Component {
             event.name = this.state.eventName;
             event.description = this.state.eventDescription;
             event.eventDate = this.state.eventDate;
-            event.building = this.state.eventLocation;
+            event.room = this.state.eventLocation;
             event.startTime = this.state.startTime;
             event.endTime = this.state.endTime;
             //the actual string
@@ -970,12 +970,12 @@ class Events extends Component {
                                                 </Col>
                                             </Row>
                                             <Row className="show-grid">
-                                                <Col xs={5} mdOffset={1} xs={7}>
+                                                <Col md={5} mdOffset={1} xs={7}>
                                                     <BuildingSelector selected={this.state.eventLocation}
                                                                       errorMsg={this.state.eventLocationError}
                                                                       callBack={this.buildingCallback}
-                                                                      labelText={"Building"}
-                                                                      hintText={"Select a building"}/>
+                                                                      labelText={"Building - Room"}
+                                                                      hintText={"Select a building/room"}/>
                                                 </Col>
                                             </Row>
                                             <Row className={"show-grid"}>
