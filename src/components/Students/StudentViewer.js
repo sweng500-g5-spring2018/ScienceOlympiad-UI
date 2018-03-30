@@ -14,32 +14,15 @@ class StudentViewer extends Component {
         super(props);
 
         this.state = {
-            modal: false,
-            modalTitle: "",
             studentsSelectable: [],
             selectedStudents: [],
             openStudentSelector: false
-        }
+        };
 
-        this.closeModal = this.closeModal.bind(this);
         this.studentMenuItems = this.studentMenuItems.bind(this);
         this.selectionRenderer = this.selectionRenderer.bind(this);
         this.toggleStudentSelector = this.toggleStudentSelector.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    // Close the modal
-    closeModal() {
-        this.setState({
-            modal: false
-        })
-    }
-
-    // Close the modal
-    openModal() {
-        this.setState({
-            modal: true
-        })
     }
 
     toggleStudentSelector() {
@@ -86,12 +69,6 @@ class StudentViewer extends Component {
         var _this = this;
 
         _this.getStudentsInSchoolDistrict(team.school.id).then(function (students) {
-            // _this.setState({
-            //     modalTitle: "Add Student to Team",
-            //     modalButton: "Submit",
-            //     studentsSelectable: students,
-            //     modal: true
-            // })
             _this.setState({
                 studentsSelectable: students,
                 openStudentSelector: true
@@ -172,42 +149,6 @@ class StudentViewer extends Component {
                         </Panel>
                     </div>
                 </div>
-                {/*<Modal show={this.state.modal} onHide={this.closeModal}>*/}
-                    {/*<Modal.Header>*/}
-                        {/*<Modal.Title> <AppBar*/}
-                            {/*iconElementRight={<FlatButton label="Close"/>}*/}
-                            {/*showMenuIconButton={false}*/}
-                            {/*onRightIconButtonClick={(event) => this.closeModal()}*/}
-                            {/*title={this.state.modalTitle}*/}
-                        {/*/></Modal.Title>*/}
-                    {/*</Modal.Header>*/}
-                    {/*<Modal.Body>*/}
-                        {/*<div>*/}
-                            {/*{*/}
-                                {/*Object.keys(this.state.studentsSelectable).map(function (studentKey) {*/}
-                                    {/*return <li>{this.state.studentsSelectable[studentKey].name}</li>*/}
-                                {/*}, this)*/}
-                            {/*}*/}
-                            {/*<SelectField*/}
-                                {/*multiple={true}*/}
-                                {/*fullWidth={true}*/}
-                                {/*autoWidth={true}*/}
-                                {/*hintText="Select Students"*/}
-                                {/*selectionRenderer={this.selectionRenderer}*/}
-                                {/*value={this.state.selectedStudents}*/}
-                                {/*onChange={ (event, index, values) => this.setState({selectedStudents: values})}*/}
-                            {/*>*/}
-                                {/*{this.studentMenuItems()}*/}
-                            {/*</SelectField>*/}
-                        {/*</div>*/}
-                    {/*</Modal.Body>*/}
-                    {/*<Modal.Footer>*/}
-                        {/*<RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} primary={true} label="Cancel"*/}
-                                      {/*onClick={this.closeModal}/>&nbsp;&nbsp;*/}
-                        {/*<RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label={this.state.modalButton}*/}
-                                      {/*onClick={this.handleSubmit}/>*/}
-                    {/*</Modal.Footer>*/}
-                {/*</Modal>*/}
             </div>
         )
     }
