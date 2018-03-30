@@ -1,20 +1,27 @@
 import React, {Component} from 'react';
-import {RaisedButton} from 'material-ui';
+import {RaisedButton, AppBar, FontIcon, FlatButton} from 'material-ui';
 import ReactTable from 'react-table';
 import constants from "../../utils/constants";
 import HttpRequest from "../../adapters/httpRequest";
 import matchSorter from "match-sorter";
 import StudentViewer from "../Students/StudentViewer";
 
+import {Modal} from 'react-bootstrap';
+
 class TeamViewer extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            teams: []
+            teams: [],
+            teamToDelete: null,
+            modal: false
         }
 
         this.updateTeam = this.updateTeam.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+        this.openModal = this.openModal.bind(this);
+        this.deleteTeamButtonClicked = this.deleteTeamButtonClicked.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -23,6 +30,26 @@ class TeamViewer extends Component {
         }
     }
 
+    // Close the modal
+    closeModal() {
+        this.setState({
+            modal: false
+        })
+    }
+
+    // Close the modal
+    openModal() {
+        this.setState({
+            modal: true
+        })
+    }
+
+    deleteTeamButtonClicked(team) {
+        this.setState({
+            teamToDelete: team,
+            modal: true
+        })
+    }
 
     deleteTeam(team) {
         var _this = this;
@@ -35,7 +62,9 @@ class TeamViewer extends Component {
             });
 
             _this.setState({
-                teams: tempTeams
+                teams: tempTeams,
+                teamToDelete: null,
+                modal:false
             });
 
             _this.props.addNotification(<div><b>{team.name}</b> has been deleted.</div>);
@@ -53,7 +82,7 @@ class TeamViewer extends Component {
 
             for(let value in resultTeams) {
                 resultTeams[value].menuActions = <div><RaisedButton
-                    secondary={true} onClick={event => {_this.deleteTeam(resultTeams[value])}} label="Delete"/></div>;
+                    secondary={true} onClick={event => {_this.deleteTeamButtonClicked(resultTeams[value])}} label="Delete"/></div>;
             }
 
             _this.setState({teams: resultTeams})
@@ -123,6 +152,29 @@ class TeamViewer extends Component {
                         <StudentViewer teamProp={row.original} updateTeam={this.updateTeam}/>
                     )}
                 />
+                <Modal show={this.state.modal} onHide={this.closeModal}>
+                    <Modal.Header>
+                        <Modal.Title> <AppBar
+                            iconElementRight={<FlatButton label="Close"/>}
+                            showMenuIconButton={false}
+                            onRightIconButtonClick={this.closeModal}
+                            title="Delete Team"
+                        /></Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div style={{textAlign: 'center'}}>
+                            <b>Are you sure you wish to delete team <u><em>{this.state.teamToDelete != null ? this.state.teamToDelete.name : ''}</em></u> ?</b>
+                            <br />
+                            Note: This action cannot be undone.
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} primary={true} label="Cancel"
+                                      onClick={this.closeModal}/>&nbsp;&nbsp;
+                        <RaisedButton icon={<FontIcon className="pe-7s-like2" />} secondary={true} label="Confirm Delete"
+                                      onClick={e => {this.deleteTeam(this.state.teamToDelete)}}/>
+                    </Modal.Footer>
+                </Modal>
             </div>
         )
     }
