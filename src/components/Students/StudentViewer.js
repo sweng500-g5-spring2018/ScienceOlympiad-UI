@@ -124,6 +124,13 @@ class StudentViewer extends Component {
                     matchSorter(rows, filter.value, {keys: ["emailAddress"]}),
                 filterAll: true,
                 accessor: 'emailAddress' // String-based value accessors!
+            },
+            {
+                Header: 'Actions',
+                accessor: 'menuActions', // String-based value accessors!
+                style:{textAlign:'center'},
+                sortable: false,
+                filterable: false
             }
         ];
 
@@ -147,7 +154,7 @@ class StudentViewer extends Component {
                     <br />
                     <div>
                         <Button fill bsStyle="info" onClick={event => {this.clickAddStudentToTeam(this.props.teamProp)}} disabled={this.state.openStudentSelector}>
-                            Add Student to <b>{this.props.teamProp.name}</b>
+                            Add Students to <b>{this.props.teamProp.name}</b>
                         </Button>
                         <br />
                         <Panel id="student-to-team-collapsible-panel" expanded={this.state.openStudentSelector} onToggle={ () => {}}

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {MuiThemeProvider, AppBar, TextField} from 'material-ui';
-import Button from '../../elements/CustomButton/CustomButton';
+import {MuiThemeProvider, AppBar, TextField, RaisedButton, FontIcon} from 'material-ui';
 import {Grid, Row, Col} from 'react-bootstrap';
 
 import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
@@ -132,6 +131,7 @@ class StudentAdder extends Component {
                                     name={"school"}
                                     labelText={"School"}
                                     hintText={"Select School"}
+                                    errorText={this.state.errors.schoolError}
                                     selected={this.state.selectedSchool}
                                     endpoint={"/sweng500/getSchools"}
                                     sortKey={"schoolName"}
@@ -142,10 +142,10 @@ class StudentAdder extends Component {
                         </Row>
                         <Row className="show-grid">
                             <Col sm={6} style={{maxWidth: 200}}>
-                                <Button fill block bsStyle="info" onClick={this.validateStudentForm}>Confirm</Button>
+                                <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} label="Cancel" onClick={event => {this.props.togglePanel("")} } />
                             </Col>
                             <Col sm={6} style={{maxWidth: 200}}>
-                                <Button fill block bsStyle="danger" onClick={event => {this.props.togglePanel("")} }>Cancel</Button>
+                                <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} onClick={this.validateStudentForm} label="Confirm"/>
                             </Col>
                         </Row>
                     </Grid>

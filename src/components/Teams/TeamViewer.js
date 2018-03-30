@@ -80,9 +80,20 @@ class TeamViewer extends Component {
             console.log(result.body);
             let resultTeams = result.body;
 
-            for(let value in resultTeams) {
-                resultTeams[value].menuActions = <div><RaisedButton
-                    secondary={true} onClick={event => {_this.deleteTeamButtonClicked(resultTeams[value])}} label="Delete"/></div>;
+            for(let teamIndex in resultTeams) {
+                resultTeams[teamIndex].menuActions =
+                    <div>
+                        <RaisedButton secondary={true} onClick={event => {_this.deleteTeamButtonClicked(resultTeams[teamIndex])}} label="Delete Team"/>
+                    </div>;
+
+                for(let studIndex in resultTeams[teamIndex].students) {
+                    resultTeams[teamIndex].students[studIndex].menuActions =
+                        <div>
+                            <RaisedButton secondary={true} onClick={event => {console.log("Remove Stud from Team Clicked!!!")}} label="Remove"/>
+                            &nbsp;&nbsp;
+                            <RaisedButton secondary={true} onClick={event => {console.log("DELETE STUDENT CLICKED")}} label="Delete"/>
+                        </div>;
+                }
             }
 
             _this.setState({teams: resultTeams})

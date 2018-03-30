@@ -37,7 +37,7 @@ class StudentTeamCreator extends Component {
         return (
             <MuiThemeProvider>
                 <div style={{textAlign: 'center'}}>
-                    <Button fill bsStyle="info" onClick={this.handleAddClick}>Add Student/Team</Button>
+                    <Button fill bsStyle="info" onClick={this.handleAddClick}>Create Student/Team</Button>
                     <Popover
                         open={this.state.popOverOpen}
                         anchorEl={this.state.anchorEl}
@@ -46,8 +46,8 @@ class StudentTeamCreator extends Component {
                         onRequestClose={ () => {this.setState({popOverOpen: false})}}
                     >
                         <Menu>
-                            <MenuItem primaryText="Add Student" onClick={ () => this.toggleAdd("student")}/>
-                            <MenuItem primaryText="Add Team" onClick={ () => this.toggleAdd("team")}/>
+                            <MenuItem primaryText="Create Student" onClick={ () => this.toggleAdd("student")}/>
+                            <MenuItem primaryText="Create Team" onClick={ () => this.toggleAdd("team")}/>
                         </Menu>
                     </Popover>
                     <PanelGroup

@@ -10,7 +10,7 @@ class CustomDropdown extends Component {
         super(props);
 
         this.state = {
-            errorMsg: this.props.errorMsg,
+            errorText: this.props.errorText,
             list: [],
         }
 
@@ -55,15 +55,15 @@ class CustomDropdown extends Component {
             _this.setState({list: _this.sortByKey(result.body, _this.props.sortKey)})
         }).catch(function (error) {
             _this.setState({
-                errorMsg: "Failed to get data"
+                errorText: "Failed to get data"
             });
         })
     }
 
     componentWillReceiveProps(nextProps) {
 
-        if(JSON.stringify(this.props.errorMsg) !== JSON.stringify(nextProps.errorMsg))
-            this.setState({errorMsg: nextProps.errorMsg})
+        if(JSON.stringify(this.props.errorText) !== JSON.stringify(nextProps.errorText))
+            this.setState({errorText: nextProps.errorText})
     }
 
     updateValues(event, index, value) {
@@ -76,7 +76,7 @@ class CustomDropdown extends Component {
                 <SelectField
                     name={this.props.name}
                     hintText={this.props.hintText}
-                    errorText={this.state.errorMsg}
+                    errorText={this.state.errorText}
                     floatingLabelText={this.props.labelText}
                     onChange={this.updateValues}
                     value={this.props.selected}
