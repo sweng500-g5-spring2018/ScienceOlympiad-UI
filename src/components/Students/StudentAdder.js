@@ -35,8 +35,6 @@ class StudentAdder extends Component {
         body.lastName = this.state.lastName;
         body.emailAddress = this.state.emailAddress;
 
-        console.log(this.state.selectedSchool);
-
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=STUDENT&schoolID=' + _this.state.selectedSchool.id, 'POST', constants.useCredentials(), body, true).then(function (result) {

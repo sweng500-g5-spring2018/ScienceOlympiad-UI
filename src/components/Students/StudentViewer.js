@@ -30,23 +30,25 @@ class StudentViewer extends Component {
     }
 
     handleSubmit() {
+        this.setState({
+            openStudentSelector: false
+        });
+
         var body = JSON.parse(JSON.stringify(this.props.teamProp));
 
         this.state.selectedStudents.forEach(function (student) {
             body.students.push(student);
         });
 
-        console.log(body);
         var _this = this;
-
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addStudentsToTeam', 'POST', constants.useCredentials(), body, true).then(function (result) {
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateStudentsInTeam', 'POST', constants.useCredentials(), body, true).then(function (result) {
             var updatedTeam = result.body;
 
-            console.log(updatedTeam);
-            _this.props.updateTeam(updatedTeam);
-
+            _this.props.updateTeam(updatedTeam, _this.props.viewIndex);
+            _this.props.addNotification(<div><b>{body.name}</b> has been updated.</div>);
         }).catch(function (error) {
-            alert(error.message);
+            _this.props.addNotification(<div><b>{body.name}</b> could not be updated at this time.</div>, 'error');
+            console.log(error.message);
         });
     }
 
@@ -54,7 +56,6 @@ class StudentViewer extends Component {
         var promise = new Promise(function (resolve, reject) {
 
             HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getStudentsFromSchool/?schoolId=' + schoolId, 'GET', constants.useCredentials(), null, true).then(function (result) {
-                console.log(result.body);
                 resolve(result.body);
             }).catch(function (error) {
                 reject(error.message);
@@ -65,7 +66,6 @@ class StudentViewer extends Component {
     }
 
     clickAddStudentToTeam(team) {
-        console.log(team);
         var _this = this;
 
         _this.getStudentsInSchoolDistrict(team.school.id).then(function (students) {
@@ -74,83 +74,13 @@ class StudentViewer extends Component {
                 openStudentSelector: true
             })
         }).catch(function (error) {
+            _this.setState({
+                studentsSelectable: [],
+                openStudentSelector: true
+            });
+
             console.log(error);
         });
-    }
-
-    render() {
-
-        const columns2 = [
-            {
-                Header: 'First Name',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, {keys: ["firstName"]}),
-                filterAll: true,
-                accessor: 'firstName' // String-based value accessors!
-            },
-            {
-                Header: 'Last Name',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, {keys: ["lastName"]}),
-                filterAll: true,
-                accessor: 'lastName' // String-based value accessors!
-            },
-            {
-                Header: 'Email',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, {keys: ["emailAddress"]}),
-                filterAll: true,
-                accessor: 'emailAddress' // String-based value accessors!
-            },
-            {
-                Header: 'Actions',
-                accessor: 'menuActions', // String-based value accessors!
-                style:{textAlign:'center'},
-                sortable: false,
-                filterable: false
-            }
-        ];
-
-        return (
-            <div>
-                <div style={{padding:'20px'}}>
-                    <div style={{textAlign: 'center', fontSize: 'large'}}>
-                        <em>Students in team: <b>{this.props.teamProp.name}</b></em>
-                    </div>
-                    <ReactTable
-                        data={this.props.teamProp.students}
-                        columns={columns2}
-                        filterable
-                        defaultFilterMethod={(filter, row) =>
-                            String(row[filter.id]) === filter.value }
-                        defaultPageSize={this.props.teamProp.students.length}
-                        showPagination={false}
-                        className="-striped -highlight"
-                        defaultSorted={[{id: "firstName"}]}
-                    />
-                    <br />
-                    <div>
-                        <Button fill bsStyle="info" onClick={event => {this.clickAddStudentToTeam(this.props.teamProp)}} disabled={this.state.openStudentSelector}>
-                            Add Students to <b>{this.props.teamProp.name}</b>
-                        </Button>
-                        <br />
-                        <Panel id="student-to-team-collapsible-panel" expanded={this.state.openStudentSelector} onToggle={ () => {}}
-                               style={{border: 0, width: '50%', marginLeft: '25%', marginRight: '25%'}}>
-                            <Panel.Body collapsible>
-                                {
-                                    this.renderSelectFieldIfContent()
-                                }
-                                <br />
-                                <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} secondary={true} label="Cancel"
-                                    onClick={this.toggleStudentSelector}/>&nbsp;&nbsp;
-                                <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label="Add Students"
-                                    onClick={this.handleSubmit} disabled={this.state.selectedStudents.length === 0 ? true : false}/>
-                            </Panel.Body>
-                        </Panel>
-                    </div>
-                </div>
-            </div>
-        )
     }
 
     renderSelectFieldIfContent() {
@@ -175,7 +105,6 @@ class StudentViewer extends Component {
     }
 
     selectionRenderer() {
-        console.log(this.state.selectedStudents);
         switch (this.state.selectedStudents.length) {
             case 0:
                 return '';
@@ -197,6 +126,80 @@ class StudentViewer extends Component {
             />
         ));
     }
+
+    render() {
+        return (
+            <div>
+                <div style={{padding:'20px'}}>
+                    <div style={{textAlign: 'center', fontSize: 'large'}}>
+                        <em>Students in team: <b>{this.props.teamProp.name}</b></em>
+                    </div>
+                    <ReactTable
+                        data={this.props.teamProp.students}
+                        columns={this.columns2}
+                        filterable
+                        defaultFilterMethod={(filter, row) =>
+                            String(row[filter.id]) === filter.value }
+                        defaultPageSize={this.props.teamProp.students.length}
+                        showPagination={false}
+                        className="-striped -highlight"
+                        defaultSorted={[{id: "firstName"}]}
+                    />
+                    <br />
+                    <div>
+                        <Button fill bsStyle="info" onClick={event => {this.clickAddStudentToTeam(this.props.teamProp)}} disabled={this.state.openStudentSelector}>
+                            Add Students to <b>{this.props.teamProp.name}</b>
+                        </Button>
+                        <br />
+                        <Panel id="student-to-team-collapsible-panel" expanded={this.state.openStudentSelector} onToggle={ () => {}}
+                               style={{border: 0, width: '50%', marginLeft: '25%', marginRight: '25%'}}>
+                            <Panel.Body collapsible>
+                                {
+                                    this.renderSelectFieldIfContent()
+                                }
+                                <br />
+                                <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} secondary={true} label="Cancel"
+                                              onClick={this.toggleStudentSelector}/>&nbsp;&nbsp;
+                                <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label="Add Students"
+                                              onClick={this.handleSubmit} disabled={this.state.selectedStudents.length === 0 ? true : false}/>
+                            </Panel.Body>
+                        </Panel>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    columns2 = [
+        {
+            Header: 'First Name',
+            filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, {keys: ["firstName"]}),
+            filterAll: true,
+            accessor: 'firstName' // String-based value accessors!
+        },
+        {
+            Header: 'Last Name',
+            filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, {keys: ["lastName"]}),
+            filterAll: true,
+            accessor: 'lastName' // String-based value accessors!
+        },
+        {
+            Header: 'Email',
+            filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, {keys: ["emailAddress"]}),
+            filterAll: true,
+            accessor: 'emailAddress' // String-based value accessors!
+        },
+        {
+            Header: 'Actions',
+            accessor: 'menuActions', // String-based value accessors!
+            style:{textAlign:'center'},
+            sortable: false,
+            filterable: false
+        }
+    ];
 }
 
 export default StudentViewer;

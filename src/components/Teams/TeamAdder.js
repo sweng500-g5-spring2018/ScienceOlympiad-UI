@@ -42,8 +42,6 @@ class TeamAdder extends Component {
         body.coach = this.state.selectedCoach;
         body.school = this.state.selectedSchool;
 
-        console.log(this.state.selectedSchool);
-
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addTeam/', 'POST', constants.useCredentials(), body, true).then(function (result) {

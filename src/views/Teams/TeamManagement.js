@@ -51,7 +51,7 @@ class TeamManagement extends Component {
                 <div className="content" style={{textAlign: 'center'}}>
                     <NotificationSystem ref="notificationSystem" style={style}/>
                     <StudentTeamCreator updateTable={this.updateTable} addNotification={this.addNotification}/>
-                    <TeamViewer tableUpdateToggler={this.state.tableUpdateToggler} addNotification={this.addNotification} />
+                    <TeamViewer updateTable={this.updateTable} tableUpdateToggler={this.state.tableUpdateToggler} addNotification={this.addNotification} />
                 </div>
             </MuiThemeProvider>
         )
