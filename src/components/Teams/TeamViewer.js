@@ -14,14 +14,16 @@ class TeamViewer extends Component {
 
         this.state = {
             teams: [],
-            teamToDelete: null,
+            selectedTeam: null,
+            selectedStudent: null,
+            studentToRemoveFromTeam: null,
             modal: false,
+            modalInfo: constants.getEmptyModalInfo(),
             expanded: {}
         };
 
         this.updateTeam = this.updateTeam.bind(this);
         this.closeModal = this.closeModal.bind(this);
-        this.openModal = this.openModal.bind(this);
         this.deleteTeamButtonClicked = this.deleteTeamButtonClicked.bind(this);
         this.handleRowExpanded = this.handleRowExpanded.bind(this);
     }
@@ -32,47 +34,8 @@ class TeamViewer extends Component {
         }
     }
 
-    // Close the modal
-    closeModal() {
-        this.setState({
-            modal: false
-        })
-    }
-
-    // Close the modal
-    openModal() {
-        this.setState({
-            modal: true
-        })
-    }
-
-    deleteTeamButtonClicked(team) {
-        this.setState({
-            teamToDelete: team,
-            modal: true
-        })
-    }
-
-    deleteTeam(team) {
-        var _this = this;
-        var removeId = team.id;
-
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/removeTeam/" + removeId, "DELETE", constants.useCredentials(), null, true).then(function (result) {
-            var tempTeams = _this.state.teams.filter(t => {
-                return t !== team;
-            });
-
-            _this.setState({
-                teams: tempTeams,
-                teamToDelete: null,
-                modal:false,
-                expanded: {}
-            });
-
-            _this.props.addNotification(<div>Team <b>{team.name}</b> has been deleted.</div>);
-        }).catch(function (error) {
-            _this.props.addNotification(<div>Team <b>{team.name}</b> could not be deleted because: <em>{error.message}</em></div>, 'error');
-        })
+    componentWillMount() {
+        this.getTeams();
     }
 
     getTeams() {
@@ -92,8 +55,63 @@ class TeamViewer extends Component {
         })
     }
 
-    componentWillMount() {
-        this.getTeams();
+    deleteTeam(team) {
+        var _this = this;
+        var removeId = team.id;
+
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/removeTeam/" + removeId, "DELETE", constants.useCredentials(), null, true).then(function (result) {
+            var tempTeams = _this.state.teams.filter(t => {
+                return t !== team;
+            });
+
+            _this.setState({
+                teams: tempTeams,
+                selectedTeam: null,
+                selectedStudent: null,
+                modal:false,
+                modalInfo: constants.getEmptyModalInfo(),
+                expanded: {}
+            });
+
+            _this.props.addNotification(<div>Team <b>{team.name}</b> has been deleted.</div>);
+        }).catch(function (error) {
+            _this.props.addNotification(<div>Team <b>{team.name}</b> could not be deleted because: <em>{error.message}</em></div>, 'error');
+        })
+    }
+
+    removeStudentFromTeam(student, team) {
+
+        var tempStudents = team.students.filter(s => {
+            return s !== student;
+        });
+
+        team.students = tempStudents;
+
+        var _this = this;
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateStudentsInTeam', 'POST', constants.useCredentials(), team, true).then(function (result) {
+            var updatedTeam = result.body;
+
+            var tempTeams = _this.state.teams.filter(t => {
+                return t.id !== team.id;
+            });
+
+            _this.addButtonsToTeam(updatedTeam);
+            tempTeams.push(updatedTeam);
+
+            _this.setState({
+                teams: tempTeams,
+                selectedTeam: null,
+                selectedStudent: null,
+                modal:false,
+                modalInfo: constants.getEmptyModalInfo(),
+                expanded: {}
+            });
+
+            _this.props.addNotification(<div><b>{student.firstName + ' ' + student.lastName}</b> has been removed from <b>{team.name}</b>.</div>);
+        }).catch(function (error) {
+            _this.props.addNotification(<div><b>{team.name}</b> could not be updated at this time.</div>, 'error');
+            console.log(error.message);
+        });
     }
 
     updateTeam(updatedTeam, viewIndex) {
@@ -114,6 +132,62 @@ class TeamViewer extends Component {
         this.handleRowExpanded({}, viewIndex);
     }
 
+    // Close the modal
+    closeModal() {
+        this.setState({
+            modal: false,
+            selectedTeam: null,
+            selectedStudent: null,
+            modalInfo: constants.getEmptyModalInfo()
+        })
+    }
+
+    deleteTeamButtonClicked(team) {
+        this.setState({
+            selectedTeam: team,
+            modal: true,
+            modalInfo: {
+                title: 'Delete Team',
+                body:
+                    <div style={{textAlign: 'center'}}>
+                        <b>Are you sure you wish to delete team <u><em>{team.name}</em></u>?</b>
+                        <br />
+                        Note: This action cannot be undone.
+                    </div>,
+                modalAction: 'DELETE'
+            }
+        });
+    }
+
+    removeStudentFromTeamButtonClicked(student, team) {
+        this.setState({
+            selectedStudent: student,
+            selectedTeam: team,
+            modal: true,
+            modalInfo: {
+                title: 'Update Team',
+                body:
+                    <div style={{textAlign: 'center'}}>
+                        <b>Are you sure you wish to remove student <u><em>{student.firstName + ' ' + student.lastName}</em></u> from team <u><em>{team.name}</em></u>?</b>
+                    </div>,
+                modalAction: 'REMOVESTUDENTFROMTEAM'
+            }
+        })
+    }
+
+    handleModalActionClicked(modalAction) {
+        switch(modalAction) {
+            case 'DELETE':
+                this.deleteTeam(this.state.selectedTeam);
+                break;
+            case 'REMOVESTUDENTFROMTEAM':
+                this.removeStudentFromTeam(this.state.selectedStudent, this.state.selectedTeam);
+                break;
+            default:
+                console.log('fail yo');
+        }
+    }
+
     addButtonsToTeam(team) {
         team.menuActions =
             <div>
@@ -123,13 +197,14 @@ class TeamViewer extends Component {
         for(let studIndex in team.students) {
             team.students[studIndex].menuActions =
                 <div>
-                    <RaisedButton icon={<FontIcon className="pe-7s-less" />} backgroundColor="#FFC300" onClick={event => {console.log("Remove Stud from Team Clicked!!!")}} label="Remove"/>
+                    <RaisedButton icon={<FontIcon className="pe-7s-less" />} backgroundColor="#FFC300" onClick={event => { this.removeStudentFromTeamButtonClicked(team.students[studIndex], team) }} label="Remove"/>
                     &nbsp;&nbsp;
-                    <RaisedButton icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => {console.log("DELETE STUDENT CLICKED")}} label="Delete"/>
+                    <RaisedButton icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => {console.log("DELETE STUDENT CLICKED!!!")}} label="Delete"/>
                 </div>;
         }
     }
 
+    //Handling Row Expansion
     handleRowExpanded(newExpanded, index, event) {
         if(this.state.expanded[index]) {
             this.setState({
@@ -167,21 +242,17 @@ class TeamViewer extends Component {
                             iconElementRight={<FlatButton label="Close"/>}
                             showMenuIconButton={false}
                             onRightIconButtonClick={this.closeModal}
-                            title="Delete Team"
+                            title={this.state.modalInfo.title}
                         /></Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <div style={{textAlign: 'center'}}>
-                            <b>Are you sure you wish to delete team <u><em>{this.state.teamToDelete != null ? this.state.teamToDelete.name : ''}</em></u> ?</b>
-                            <br />
-                            Note: This action cannot be undone.
-                        </div>
+                        {this.state.modalInfo.body}
                     </Modal.Body>
                     <Modal.Footer>
-                        <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} primary={true} label="Cancel"
+                        <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} label="Cancel"
                                       onClick={this.closeModal}/>&nbsp;&nbsp;
-                        <RaisedButton icon={<FontIcon className="pe-7s-like2" />} secondary={true} label="Confirm Delete"
-                                      onClick={e => {this.deleteTeam(this.state.teamToDelete)}}/>
+                        <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label="Confirm"
+                                      onClick={ () => this.handleModalActionClicked(this.state.modalInfo.modalAction)}/>
                     </Modal.Footer>
                 </Modal>
             </div>

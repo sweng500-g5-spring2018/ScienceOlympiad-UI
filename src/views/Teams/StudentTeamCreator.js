@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {MuiThemeProvider, Dialog, Popover, Menu, MenuItem} from 'material-ui';
-import Button from '../../elements/CustomButton/CustomButton';
+import {MuiThemeProvider, Popover, Menu, MenuItem, RaisedButton} from 'material-ui';
 import {Panel, PanelGroup} from 'react-bootstrap';
 
 import StudentAdder from "../../components/Students/StudentAdder";
@@ -37,8 +36,9 @@ class StudentTeamCreator extends Component {
         return (
             <MuiThemeProvider>
                 <div style={{textAlign: 'center'}}>
-                    <Button fill bsStyle="info" onClick={this.handleAddClick}>Create Student/Team</Button>
+                    <RaisedButton primary={true} onClick={this.handleAddClick} label="Create Student/Team"/>
                     <Popover
+                        style={{maxWidth: '200px', width: '200px'}}
                         open={this.state.popOverOpen}
                         anchorEl={this.state.anchorEl}
                         anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
@@ -46,8 +46,8 @@ class StudentTeamCreator extends Component {
                         onRequestClose={ () => {this.setState({popOverOpen: false})}}
                     >
                         <Menu>
-                            <MenuItem primaryText="Create Student" onClick={ () => this.toggleAdd("student")}/>
-                            <MenuItem primaryText="Create Team" onClick={ () => this.toggleAdd("team")}/>
+                            <MenuItem style={{textAlign: 'center', width: '200px'}} primaryText="Create Student" onClick={ () => this.toggleAdd("student")}/>
+                            <MenuItem style={{textAlign: 'center', width: '200px'}} primaryText="Create Team" onClick={ () => this.toggleAdd("team")}/>
                         </Menu>
                     </Popover>
                     <PanelGroup
