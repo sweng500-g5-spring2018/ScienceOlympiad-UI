@@ -48,7 +48,14 @@ class TeamViewer extends Component {
                 _this.addButtonsToTeam(team);
             });
 
-            _this.setState({teams: resultTeams, expanded: {}})
+            _this.setState({
+                teams: resultTeams,
+                expanded: {},
+                selectedTeam: null,
+                selectedStudent: null,
+                modal:false,
+                modalInfo: constants.getEmptyModalInfo(),
+            })
         }).catch(function (error) {
             _this.props.addNotification(<div>Could not retrieve teams at this time. Try again later.</div>, 'error');
             console.log(error);
@@ -76,6 +83,42 @@ class TeamViewer extends Component {
             _this.props.addNotification(<div>Team <b>{team.name}</b> has been deleted.</div>);
         }).catch(function (error) {
             _this.props.addNotification(<div>Team <b>{team.name}</b> could not be deleted because: <em>{error.message}</em></div>, 'error');
+        })
+    }
+
+
+    deleteStudent(student) {
+        var _this = this;
+        var studentId = student.id;
+
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/deleteStudent/" + studentId, "DELETE", constants.useCredentials(), null, true).then(function (result) {
+            // var tempTeams = _this.state.teams.filter(t => {
+            //     return t !== team;
+            // });
+            //
+            // _this.setState({
+            //     teams: tempTeams,
+            //     selectedTeam: null,
+            //     selectedStudent: null,
+            //     modal:false,
+            //     modalInfo: constants.getEmptyModalInfo(),
+            //     expanded: {}
+            // });
+
+            // _this.setState({
+            //     selectedTeam: null,
+            //     selectedStudent: null,
+            //     modal:false,
+            //     modalInfo: constants.getEmptyModalInfo(),
+            //     expanded: {}
+            // }, () => { _this.getTeams(); });
+            _this.getTeams();
+            
+            console.log(result);
+            _this.props.addNotification(<div>Student <b>{student.firstName + ' ' + student.lastName}</b> has been deleted.</div>);
+        }).catch(function (error) {
+            console.log(error);
+            _this.props.addNotification(<div>Student <b>{student.firstName + ' ' + student.lastName}</b> could not be deleted because: <em>{error.message}</em></div>, 'error');
         })
     }
 
@@ -159,6 +202,25 @@ class TeamViewer extends Component {
         });
     }
 
+    deleteStudentClicked(student) {
+        console.log('going to delete student: ' );
+        console.log(student);
+        this.setState({
+            selectedStudent: student,
+            modal: true,
+            modalInfo: {
+                title: 'Delete Student',
+                body:
+                    <div style={{textAlign: 'center'}}>
+                        <b>Are you sure you wish to delete student <u><em>{student.firstName + ' ' + student.lastName}</em></u>?</b>
+                        <br />
+                        Note: This action cannot be undone.
+                    </div>,
+                modalAction: 'DELETESTUDENT'
+            }
+        })
+    }
+
     removeStudentFromTeamButtonClicked(student, team) {
         this.setState({
             selectedStudent: student,
@@ -183,8 +245,10 @@ class TeamViewer extends Component {
             case 'REMOVESTUDENTFROMTEAM':
                 this.removeStudentFromTeam(this.state.selectedStudent, this.state.selectedTeam);
                 break;
-            default:
-                console.log('fail yo');
+            case 'DELETESTUDENT':
+                console.log("WILL DELETE STUDENT YO");
+                this.deleteStudent(this.state.selectedStudent);
+                break;
         }
     }
 
@@ -199,7 +263,7 @@ class TeamViewer extends Component {
                 <div>
                     <RaisedButton icon={<FontIcon className="pe-7s-less" />} backgroundColor="#FFC300" onClick={event => { this.removeStudentFromTeamButtonClicked(team.students[studIndex], team) }} label="Remove"/>
                     &nbsp;&nbsp;
-                    <RaisedButton icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => {console.log("DELETE STUDENT CLICKED!!!")}} label="Delete"/>
+                    <RaisedButton icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => { this.deleteStudentClicked(team.students[studIndex])}} label="Delete"/>
                 </div>;
         }
     }

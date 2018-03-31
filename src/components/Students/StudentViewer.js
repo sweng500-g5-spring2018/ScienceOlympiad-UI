@@ -158,7 +158,7 @@ class StudentViewer extends Component {
                                     this.renderSelectFieldIfContent()
                                 }
                                 <br />
-                                <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} secondary={true} label="Cancel"
+                                <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} label="Cancel"
                                               onClick={this.toggleStudentSelector}/>&nbsp;&nbsp;
                                 <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label="Add Students"
                                               onClick={this.handleSubmit} disabled={this.state.selectedStudents.length === 0 ? true : false}/>
