@@ -25,6 +25,7 @@ class UserProfile extends React.Component {
         this.updateProfile = this.updateProfile.bind(this);
         this.changePassword = this.changePassword.bind(this);
         this.validPassword = this.validPassword.bind(this);
+        this.notify = this.notify.bind(this);
 
         this.state = {
             user : {},
