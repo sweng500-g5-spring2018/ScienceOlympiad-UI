@@ -6,6 +6,8 @@ import HttpRequest from "../../adapters/httpRequest";
 import matchSorter from "match-sorter";
 import StudentViewer from "../Students/StudentViewer";
 
+import Loader from 'react-loader'
+
 import {Modal} from 'react-bootstrap';
 
 class TeamViewer extends Component {
@@ -19,7 +21,8 @@ class TeamViewer extends Component {
             studentToRemoveFromTeam: null,
             modal: false,
             modalInfo: constants.getEmptyModalInfo(),
-            expanded: {}
+            expanded: {},
+            isLoaded: false
         };
 
         this.updateTeam = this.updateTeam.bind(this);
@@ -49,6 +52,7 @@ class TeamViewer extends Component {
             });
 
             _this.setState({
+                isLoaded:true,
                 teams: resultTeams,
                 expanded: {},
                 selectedTeam: null,
@@ -91,31 +95,15 @@ class TeamViewer extends Component {
         var _this = this;
         var studentId = student.id;
 
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/deleteStudent/" + studentId, "DELETE", constants.useCredentials(), null, true).then(function (result) {
-            // var tempTeams = _this.state.teams.filter(t => {
-            //     return t !== team;
-            // });
-            //
-            // _this.setState({
-            //     teams: tempTeams,
-            //     selectedTeam: null,
-            //     selectedStudent: null,
-            //     modal:false,
-            //     modalInfo: constants.getEmptyModalInfo(),
-            //     expanded: {}
-            // });
+        console.log("TRYING TO DELETE STUDENT");
+        console.log(student);
 
-            // _this.setState({
-            //     selectedTeam: null,
-            //     selectedStudent: null,
-            //     modal:false,
-            //     modalInfo: constants.getEmptyModalInfo(),
-            //     expanded: {}
-            // }, () => { _this.getTeams(); });
-            _this.getTeams();
-            
-            console.log(result);
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/deleteStudent/" + studentId, "DELETE", constants.useCredentials(), null, true).then(function (result) {
             _this.props.addNotification(<div>Student <b>{student.firstName + ' ' + student.lastName}</b> has been deleted.</div>);
+
+            _this.getTeams();
+
+            console.log(result);
         }).catch(function (error) {
             console.log(error);
             _this.props.addNotification(<div>Student <b>{student.firstName + ' ' + student.lastName}</b> could not be deleted because: <em>{error.message}</em></div>, 'error');
@@ -285,21 +273,23 @@ class TeamViewer extends Component {
     render() {
         return (
             <div>
-                <ReactTable
-                    data={this.state.teams}
-                    columns={this.columns}
-                    expanded={this.state.expanded}
-                    onExpandedChange={this.handleRowExpanded}
-                    filterable
-                    defaultFilterMethod={(filter, row) =>
-                        String(row[filter.id]) === filter.value }
-                    defaultPageSize={10}
-                    className="-striped -highlight"
-                    defaultSorted={[{id: "name"}]}
-                    SubComponent={row => (
-                        <StudentViewer teamProp={row.original} viewIndex={row.viewIndex} updateTeam={this.updateTeam} updateTable={this.props.updateTable} addNotification={this.props.addNotification}/>
-                    )}
-                />
+                <Loader color="#3498db" loaded={this.state.isLoaded}>
+                    <ReactTable
+                        data={this.state.teams}
+                        columns={this.columns}
+                        expanded={this.state.expanded}
+                        onExpandedChange={this.handleRowExpanded}
+                        filterable
+                        defaultFilterMethod={(filter, row) =>
+                            String(row[filter.id]) === filter.value }
+                        defaultPageSize={10}
+                        className="-striped -highlight"
+                        defaultSorted={[{id: "name"}]}
+                        SubComponent={row => (
+                            <StudentViewer teamProp={row.original} viewIndex={row.viewIndex} updateTeam={this.updateTeam} updateTable={this.props.updateTable} addNotification={this.props.addNotification}/>
+                        )}
+                    />
+                </Loader>
                 <Modal show={this.state.modal} onHide={this.closeModal}>
                     <Modal.Header>
                         <Modal.Title> <AppBar
