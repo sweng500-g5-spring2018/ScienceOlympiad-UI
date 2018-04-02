@@ -46,8 +46,8 @@ class StudentTeamCreator extends Component {
                         onRequestClose={ () => {this.setState({popOverOpen: false})}}
                     >
                         <Menu>
-                            <MenuItem style={{textAlign: 'center', width: '190px'}} primaryText="Create Student" onClick={ () => this.toggleAdd("student")}/>
-                            <MenuItem style={{textAlign: 'center', width: '190px'}} primaryText="Create Team" onClick={ () => this.toggleAdd("team")}/>
+                            <MenuItem style={{textAlign: 'center', width: '200px'}} primaryText="Create Student" onClick={ () => this.toggleAdd("student")}/>
+                            <MenuItem style={{textAlign: 'center', width: '200px'}} primaryText="Create Team" onClick={ () => this.toggleAdd("team")}/>
                         </Menu>
                     </Popover>
                     <PanelGroup

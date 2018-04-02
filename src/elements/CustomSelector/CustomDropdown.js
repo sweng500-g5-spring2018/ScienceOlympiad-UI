@@ -15,15 +15,14 @@ class CustomDropdown extends Component {
         }
 
         this.updateValues = this.updateValues.bind(this);
-        //props
+
+        //INCOMING PROPS:
         //selected - "the item selected"
         //endpoint - "/sweng500/getCoaches"
         //sortKey - "lastName"
         //hintText - "the label before clicking"
         //labelText - "the label"
         //textKeys - ["firstName", "lastName"]
-
-        //
     }
 
     sortByKey(array, key) {
