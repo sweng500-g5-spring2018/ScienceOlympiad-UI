@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {PageHeader, Panel, Grid, Col, Row, } from 'react-bootstrap';
+import {PageHeader, Panel, Grid, Col, Row,} from 'react-bootstrap';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -22,7 +22,7 @@ import {
 class EventDetail extends Component {
     constructor(props) {
         super(props);
-
+        this.formatTimeString = this.formatTimeString.bind(this);
         //for the map
         this.divStyle = {
             height: '300px',
@@ -30,6 +30,7 @@ class EventDetail extends Component {
             position: 'relative',
             overflow: 'scroll'
         };
+
         this.state = {
             loading: false,
 
@@ -41,6 +42,7 @@ class EventDetail extends Component {
             eventDate: '',
             startTime: '',
             endTime: '',
+            buildingName: '',
             judgesDetail: {}
         };
 
@@ -66,18 +68,24 @@ class EventDetail extends Component {
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + this.state.eventId, "get", constants.useCredentials(), null, true).then(function (result) {
-            _this.setState({
-                eventDetail: result.body,
-                latitude: result.body.building.lat,
-                longitude: result.body.building.lng,
-                eventDate: new Date(result.body.eventDate).toDateString(),
-                startTime: new Date(result.body.startTime).toLocaleTimeString(),
-                endTime: new Date(result.body.endTime).toLocaleTimeString(),
-                loading: true
+            const start = _this.formatTimeString(new Date(result.body.startTime));
+            const endT = _this.formatTimeString(new Date(result.body.endTime));
+            const building = result.body.room.buildingID;
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/getBuilding/" + building, "get", constants.useCredentials(), null, true).then(function (buildResult) {
 
-
+                _this.setState({
+                    eventDetail: result.body,
+                    latitude: buildResult.body.lat,
+                    longitude: buildResult.body.lng,
+                    buildingName: buildResult.body.building,
+                    eventDate: new Date(result.body.eventDate).toDateString(),
+                    startTime: start,
+                    endTime: endT,
+                    loading: true
+                })
+            }).catch(function (error) {
+                console.log(error);
             })
-
 
         }).catch(function (error) {
             console.log(error);
@@ -93,6 +101,15 @@ class EventDetail extends Component {
         })
     }
 
+    formatTimeString(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        return hours + ":" + minutes + " " + ampm;
+    }
+
     renderIfEventFound() {
         if (this.state.eventDetail !== null && Object.keys(this.state.eventDetail).length !== 0) {
 
@@ -106,7 +123,8 @@ class EventDetail extends Component {
                                     <PageHeader>
                                         {this.state.eventDetail.name} <br/>
                                         <Divider/>
-                                        <small style={{'overflow-wrap' : 'break-word'}}>{this.state.eventDetail.description}</small>
+                                        <small
+                                            style={{'overflow-wrap': 'break-word'}}>{this.state.eventDetail.description}</small>
                                     </PageHeader>
                                 </Panel.Body>
                             </Panel>
@@ -126,26 +144,8 @@ class EventDetail extends Component {
                         </Col>
                         <Col md={6} xs={8}>
                             <Panel bsStyle="info">
-                                <Panel.Heading>Judges</Panel.Heading>
-                                <Panel.Body><Table selectable={false}>
-                                    <TableHeader displaySelectAll={false}
-                                                 adjustForCheckbox={false}>
-                                        <TableRow>
-                                            <TableHeaderColumn>First Name</TableHeaderColumn>
-                                            <TableHeaderColumn>Last Name</TableHeaderColumn>
-                                        </TableRow>
-                                    </TableHeader>
-                                    {this.renderIfJudgesFound()}
-
-                                </Table></Panel.Body>
-                            </Panel>
-                        </Col>
-
-                    </Row>
-                    <Row>
-                        <Col md={6}>
-                            <Panel bsStyle="info">
-                                <Panel.Heading>Building - {this.state.eventDetail.building.building}</Panel.Heading>
+                                <Panel.Heading>Building: {this.state.buildingName} ----
+                                    Room: {this.state.eventDetail.room.roomName}</Panel.Heading>
                                 <Panel.Body>
                                     <div id="map"
                                          style={{height: 300, width: 400, marginLeft: 'auto', marginRight: 'auto'}}>
@@ -165,6 +165,41 @@ class EventDetail extends Component {
 
                                 </Panel.Body>
 
+                            </Panel>
+                        </Col>
+
+
+                    </Row>
+                    <Row>
+                        <Col md={6} xs={8}>
+                            <Panel bsStyle="info">
+                                <Panel.Heading>Judges</Panel.Heading>
+                                <Panel.Body><Table selectable={false}>
+                                    <TableHeader displaySelectAll={false}
+                                                 adjustForCheckbox={false}>
+                                        <TableRow>
+                                            <TableHeaderColumn>First Name</TableHeaderColumn>
+                                            <TableHeaderColumn>Last Name</TableHeaderColumn>
+                                        </TableRow>
+                                    </TableHeader>
+                                    {this.renderIfJudgesFound()}
+
+                                </Table></Panel.Body>
+                            </Panel>
+                        </Col>
+                        <Col md={6} xs={8}>
+                            <Panel bsStyle="info">
+                                <Panel.Heading>Teams</Panel.Heading>
+                                <Panel.Body><Table selectable={false}>
+                                    <TableHeader displaySelectAll={false}
+                                                 adjustForCheckbox={false}>
+                                        <TableRow>
+                                            <TableHeaderColumn>Team Name</TableHeaderColumn>
+                                            <TableHeaderColumn>School Name</TableHeaderColumn>
+                                        </TableRow>
+                                    </TableHeader>
+
+                                </Table></Panel.Body>
                             </Panel>
                         </Col>
 
