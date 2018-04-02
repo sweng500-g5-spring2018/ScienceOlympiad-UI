@@ -43,7 +43,6 @@ class StudentTeamCreator extends Component {
                         anchorEl={this.state.anchorEl}
                         anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
                         targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                        onRequestClose={ () => {this.setState({popOverOpen: false})}}
                     >
                         <Menu>
                             <MenuItem style={{textAlign: 'center', width: '200px'}} primaryText="Create Student" onClick={ () => this.toggleAdd("student")}/>
