@@ -44,7 +44,7 @@ class StudentAdder extends Component {
                 emailAddress: "",
                 selectedSchool: undefined
             }, () => {
-                _this.props.addNotification(<div><b>{body.firstName + ' ' + body.lastName}</b> has been created.</div>);
+                _this.props.addNotification(<div><b>{body.firstName + ' ' + body.lastName}</b> has been created.</div>, 'success');
                 _this.props.updateTable();
             });
 

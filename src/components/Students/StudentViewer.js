@@ -45,7 +45,7 @@ class StudentViewer extends Component {
             var updatedTeam = result.body;
 
             _this.props.updateTeam(updatedTeam, _this.props.viewIndex);
-            _this.props.addNotification(<div><b>{body.name}</b> has been updated.</div>);
+            _this.props.addNotification(<div><b>{body.name}</b> has been updated.</div>, 'success');
         }).catch(function (error) {
             _this.props.addNotification(<div><b>{body.name}</b> could not be updated at this time.</div>, 'error');
             console.log(error.message);

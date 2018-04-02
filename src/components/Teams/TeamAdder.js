@@ -50,7 +50,7 @@ class TeamAdder extends Component {
                 selectedCoach: undefined,
                 teamName: ""
             }, () => {
-                _this.props.addNotification(<div><b>{body.name}</b> has been created.</div>);
+                _this.props.addNotification(<div><b>{body.name}</b> has been created.</div>, 'success');
                 _this.props.updateTable()
             });
 

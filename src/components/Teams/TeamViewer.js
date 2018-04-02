@@ -84,7 +84,7 @@ class TeamViewer extends Component {
                 expanded: {}
             });
 
-            _this.props.addNotification(<div>Team <b>{team.name}</b> has been deleted.</div>);
+            _this.props.addNotification(<div>Team <b>{team.name}</b> has been deleted.</div>, 'success');
         }).catch(function (error) {
             _this.props.addNotification(<div>Team <b>{team.name}</b> could not be deleted because: <em>{error.message}</em></div>, 'error');
         })
@@ -99,7 +99,7 @@ class TeamViewer extends Component {
         console.log(student);
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/deleteStudent/" + studentId, "DELETE", constants.useCredentials(), null, true).then(function (result) {
-            _this.props.addNotification(<div>Student <b>{student.firstName + ' ' + student.lastName}</b> has been deleted.</div>);
+            _this.props.addNotification(<div>Student <b>{student.firstName + ' ' + student.lastName}</b> has been deleted.</div>, 'success');
 
             _this.getTeams();
 
@@ -138,7 +138,7 @@ class TeamViewer extends Component {
                 expanded: {}
             });
 
-            _this.props.addNotification(<div><b>{student.firstName + ' ' + student.lastName}</b> has been removed from <b>{team.name}</b>.</div>);
+            _this.props.addNotification(<div><b>{student.firstName + ' ' + student.lastName}</b> has been removed from <b>{team.name}</b>.</div>, 'success');
         }).catch(function (error) {
             _this.props.addNotification(<div><b>{team.name}</b> could not be updated at this time.</div>, 'error');
             console.log(error.message);
