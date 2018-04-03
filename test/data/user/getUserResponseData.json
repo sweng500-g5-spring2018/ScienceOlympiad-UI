@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "emailAddress": "admin@sweng500.com",
+      "firstName": "Admin",
+      "id": "5a94933688d0e62eb0ab938d",
+      "lastLoginDate": null,
+      "lastName": "Admin",
+      "minutesBeforeEvent": 10,
+      "name": "Admin Admin",
+      "phoneNumber": "11111111111",
+      "receiveText": false,
+      "siteName": "  "
+    }
+  ]
+}
