@@ -27,7 +27,8 @@ describe('Building Selector Component Tests', function () {
 
         //STUB: Http request to simulate data retrieval from API
         sinon.stub(HttpRequest, 'httpRequest').resolves(
-            //import test data JSON for response
+            //import test data JSON for response,
+            //NOTE this data mimics exeuction for get all rooms and get all buildings
             require('../../../../test/data/buildings/getAllBuildingsResponseData.json')
         )
 
@@ -43,7 +44,8 @@ describe('Building Selector Component Tests', function () {
         await helper.flushPromises();
         component.update();
 
-        expect(component.state().buildingList.length).to.equal(2);
+        expect(component.state().roomList.length).to.equal(2);
+
         expect(component.find(SelectField)).to.have.length(1);
         expect(component.find(MenuItem)).to.have.length(2);
     });

@@ -2,7 +2,7 @@ import React from 'react';
 import sinon from 'sinon';
 import {expect} from 'chai';
 import {shallow, mount} from 'enzyme';
-
+import $ from 'jquery';
 /* Test Helper functions */
 import helper from '../../../../test/helpers/helper';
 
@@ -59,7 +59,7 @@ describe('Event Component Tests', function () {
             //import test data JSON for response
             require('../../../../test/data/events/getEventData.json')
          )
-        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+        //sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
         //STUB: Constants function used as argument to HttpRequest
     })
@@ -67,6 +67,7 @@ describe('Event Component Tests', function () {
     afterEach(function () {
         //Always unstub AuthService.isLoggedIn() in case we want it to return different values
         AuthService.isLoggedIn.restore();
+        AuthService.isUserRoleAllowed.restore();
 
     })
     // Test 1
@@ -74,6 +75,7 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
         //sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
         const component = shallow(<Events />);
@@ -92,6 +94,7 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
        // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
 
@@ -103,6 +106,11 @@ describe('Event Component Tests', function () {
 
         component.instance().setState({modal: true})
         expect(component.find(Modal)).to.have.length(1);
+
+        expect(component.find(RaisedButton).at(1).simulate('click'));
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
     });
 
     //test 3
@@ -111,6 +119,7 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
         //sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
 
@@ -123,6 +132,9 @@ describe('Event Component Tests', function () {
         //click the create event button (should be the first one?)
         expect(component.find(RaisedButton).at(1).simulate('click'));
 
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update()
         expect(component.find(TextField)).to.have.length(5);
         expect(component.find(DatePicker)).to.have.length(1);
         expect(component.find(TimePicker)).to.have.length(2);
@@ -134,6 +146,7 @@ describe('Event Component Tests', function () {
 
         //S imulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
        // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
 
@@ -173,6 +186,7 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
 
         //load full component?
@@ -192,7 +206,7 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
-      //  sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
 
         //load full component?
@@ -213,7 +227,7 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
-      //  sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+       sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
 
         const component = shallow(<Events/>);
@@ -240,7 +254,7 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
-       // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
 
         const component = shallow(<Events/>);
@@ -269,7 +283,7 @@ describe('Event Component Tests', function () {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
-       // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
 
         const component = shallow(<Events />);
@@ -294,12 +308,160 @@ describe('Event Component Tests', function () {
 
         //STUB: AuthService
         judgeStub.stub(AuthService, 'isLoggedIn').returns(true);
-       // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
         const component = shallow(<Events/>);
         await helper.flushPromises();
         component.update();
         expect(component.state().existingJudgeEmails.length).to.equal(2);
+    });
+
+    //Test 11
+    test('Access controls making sure limited buttons are in table', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(false)
+
+
+        //load full component?
+        const component = mount(<Events />);
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        //two fake events view details
+
+        expect(component.find(RaisedButton)).to.have.length(2);
+    });
+
+
+    //Test 12
+    test('Creating or editing an event with no judges', async () => {
+
+        //S imulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true);
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true);
+        // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
+
+        const component = shallow(<Events/>);
+
+        component.instance().addNotification = sinon.spy();
+        component.instance().setState({modal: true});
+        component.instance().setState({editMode: true});
+        component.instance().setState({stepIndex: 2});
+        component.instance().setState({editEventId: 2});
+        component.instance().setState({startTime: new Date()});
+        component.instance().setState({eventDate: new Date()});
+        component.instance().setState({endTime: new Date()});
+        component.instance().setState({eventLocation: 5});
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.find(RaisedButton)).to.have.length(4);
+        expect(component.find(RaisedButton).at(3).simulate('click'));
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+        expect(component.instance().addNotification.getCall(0).args[0]).to.equal("Error: Please assign at least one judge to the event or create a new one.");
+    });
+
+    //Test 13
+    test('Editing event', async () => {
+
+        //S imulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true);
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true);
+        // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
+
+        const component = shallow(<Events/>);
+        var existingJudgeVals = [];
+        existingJudgeVals.push("555555555555555555");
+        component.instance().addNotification = sinon.spy();
+        component.instance().setState({modal: true});
+        component.instance().setState({editMode: true});
+        component.instance().setState({stepIndex: 2});
+        component.instance().setState({editEventId: 2});
+        component.instance().setState({startTime: new Date()});
+        component.instance().setState({eventDate: new Date()});
+        component.instance().setState({endTime: new Date()});
+        component.instance().setState({eventLocation: 5});
+        component.instance().setState({existingJudgeValues:existingJudgeVals});
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.find(RaisedButton)).to.have.length(4);
+        expect(component.find(RaisedButton).at(3).simulate('click'));
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+        expect(component.instance().addNotification.getCall(0).args[0]).to.equal("Success: The event has been saved.");
+
+    });
+//Test 14
+    test('Validate a new judge', async () => {
+
+        //S imulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true);
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true);
+        // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
+        const component = shallow(<Events/>);
+        var existingJudgeVals = [];
+        existingJudgeVals.push("555555555555555555");
+        component.instance().addNotification = sinon.spy();
+        component.instance().setState({modal: true});
+        component.instance().setState({editMode: true});
+        component.instance().setState({stepIndex: 2});
+        component.instance().setState({existingJudgeValues:existingJudgeVals});
+        component.instance().setState({judgeCount:1});
+
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+        //account for the "Remove new judge" button
+        expect(component.find(RaisedButton)).to.have.length(5);
+        //will try to run, but it relies on jquery so skip to extract data so skip for now.
+        expect(component.find(RaisedButton).at(4).simulate('click'));
+    });
+
+    //Test 15
+    test('Test going from existing judges to new judges in stepper', async () => {
+
+        //S imulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true);
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true);
+        // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
+
+        const component = shallow(<Events/>);
+        var existingJudgeVals = [];
+        existingJudgeVals.push("555555555555555555");
+        component.instance().addNotification = sinon.spy();
+        component.instance().setState({modal: true});
+        component.instance().setState({editMode: true});
+        component.instance().setState({stepIndex: 1});
+
+
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+        expect(component.find(RaisedButton)).to.have.length(4);
+        expect(component.find(RaisedButton).at(3).simulate('click'));
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+        expect(component.state().stepIndex).to.equal(2);
     });
 
 });
