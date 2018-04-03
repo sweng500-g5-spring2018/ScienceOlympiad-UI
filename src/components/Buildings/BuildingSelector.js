@@ -12,6 +12,7 @@ class BuildingSelector extends React.Component {
         this.state ={
             errorMsg: this.props.errorMsg,
             buildingList: [],
+            roomList:[],
         }
 
     }
@@ -25,7 +26,12 @@ class BuildingSelector extends React.Component {
 
     componentWillMount() {
         var _this = this;
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getAllRooms', 'GET',constants.useCredentials(), null).then(function (result) {
+            console.log(result.body);
+            _this.setState({roomList: _this.sortByKey(result.body, "roomName")})
+        }).catch(function (error) {
 
+        })
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getBuildings', 'GET',constants.useCredentials(), null).then(function (result) {
             _this.setState({buildingList: _this.sortByKey(result.body, "building")})
         }).catch(function (error) {
@@ -44,7 +50,7 @@ class BuildingSelector extends React.Component {
     }
 
     render() {
-        if (Object.keys(this.state.buildingList).length !== 0) {
+        if (Object.keys(this.state.buildingList).length !== 0 && Object.keys(this.state.roomList).length !== 0 ) {
             return (
                 <SelectField
                     name={"buildings"}
@@ -52,14 +58,22 @@ class BuildingSelector extends React.Component {
                     errorText={this.state.errorMsg}
                     floatingLabelText={this.props.labelText}
                     onChange={this.updateValues}
-                    maxHeight={200}
+                    fullWidth={true}
                     value={this.props.selected}>
                     {
                         Object.keys(this.state.buildingList).map(function (key) {
+                            var items = Object.keys(this.state.roomList).map(function (roomKey){
+                                if(this.state.buildingList[key].id.indexOf(this.state.roomList[roomKey].buildingID) > -1) {
+                                    return (
+                                        <MenuItem key={this.state.roomList[roomKey].id}
+                                                  primaryText={this.state.buildingList[key].building +' -- ' +  this.state.roomList[roomKey].roomName}
+                                                //  secondaryText={this.state.roomList[roomKey].roomName}
+                                                  value={this.state.roomList[roomKey].id}/>
+                                    )
+                                }
+                            }, this)
                             return (
-                                <MenuItem key={this.state.buildingList[key].id}
-                                          primaryText={this.state.buildingList[key].building}
-                                          value={this.state.buildingList[key].id}/>
+                                items
                             )
                         }, this)
 
