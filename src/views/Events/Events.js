@@ -171,11 +171,9 @@ class Events extends Component {
     createEventPost() {
         var _this = this;
         var body = {};
-        var newJudges = {};
         var gatherjudges = {};
         var newJudgeList = [];
         var i;
-        var errorFound = false;
         for (i = 1; i <= this.state.judgeCount; i++) {
             var tempFname = "#judgefname" + i;
             var tempLname = "#judgelname" + i;
@@ -190,9 +188,7 @@ class Events extends Component {
 
 
         }
-        // newJudges.newjudges= newJudgeList;
-        // alert(newJudgeList);
-        if (!errorFound) {
+
             var event = {};
 
             event.name = this.state.eventName;
@@ -296,19 +292,6 @@ class Events extends Component {
                     _this.componentDidMount();
                 })
             }
-        } else {
-            _this.setState({
-                loadCreateEvent: true
-            });
-            _this.addNotification(
-                "Error: There was an error found prior to creating event.",
-                "error",
-                "tc",
-                6
-            );
-            _this.componentDidMount();
-        }
-
     }
 
     closeModal() {
