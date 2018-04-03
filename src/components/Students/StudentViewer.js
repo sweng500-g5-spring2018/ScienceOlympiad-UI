@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {MenuItem, RaisedButton, SelectField} from 'material-ui';
+import {MenuItem, RaisedButton, SelectField, MuiThemeProvider} from 'material-ui';
 import Button from '../../elements/CustomButton/CustomButton';
 import {Panel} from 'react-bootstrap';
 import FontIcon from 'material-ui/FontIcon';
@@ -129,7 +129,7 @@ class StudentViewer extends Component {
 
     render() {
         return (
-            <div>
+            <MuiThemeProvider>
                 <div style={{padding:'20px'}}>
                     <div style={{textAlign: 'center', fontSize: 'large'}}>
                         <em>Students in team: <b>{this.props.teamProp.name}</b></em>
@@ -166,7 +166,7 @@ class StudentViewer extends Component {
                         </Panel>
                     </div>
                 </div>
-            </div>
+            </MuiThemeProvider>
         )
     }
 

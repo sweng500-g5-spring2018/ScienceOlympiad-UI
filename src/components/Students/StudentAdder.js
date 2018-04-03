@@ -57,10 +57,10 @@ class StudentAdder extends Component {
     validateStudentForm() {
         var errors = {};
 
-        if(!this.state.firstName || this.state.firstName.trim() === "") {
+        if(this.state.firstName.trim() === "") {
             errors.firstNameError = "First name is required";
         }
-        if(!this.state.lastName || this.state.lastName.trim() === "") {
+        if(this.state.lastName.trim() === "") {
             errors.lastNameError = "Last name is required";
         }
 

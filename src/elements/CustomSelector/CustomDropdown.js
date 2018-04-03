@@ -60,8 +60,7 @@ class CustomDropdown extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
-        if(JSON.stringify(this.props.errorText) !== JSON.stringify(nextProps.errorText))
+        if(this.state.errorText !== nextProps.errorText)
             this.setState({errorText: nextProps.errorText})
     }
 
