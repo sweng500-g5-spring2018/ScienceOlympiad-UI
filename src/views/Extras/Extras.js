@@ -22,12 +22,16 @@ class Extras extends React.Component {
     constructor(props) {
         super(props);
 
+        this.sendEmail = this.sendEmail.bind(this);
+        this.sendText = this.sendText.bind(this);
+        this.goToEasterEgg = this.goToEasterEgg.bind(this);
+
         this.state = {
             user : {},
             _notificationSystem : null,
-            emailAddress : "",
+            emailAddress : "test@brandonhessler.com",
             phoneNumber : ""
-        }
+        };
 
     }
 
@@ -43,14 +47,13 @@ class Extras extends React.Component {
             console.log(result);
             _this.setState({
                 user: result.body
-            })
+            });
 
         }).catch(function (error) {
             console.log(error);
         })
         //here we will get the user type
-        _this.setState({emailAddress: AuthService.getUserEmail()});
-        _this.setState({phoneNumber: _this.state.user.phoneNumber})
+
     }
 
     componentDidMount() {

@@ -5,6 +5,7 @@ import Schools from '../views/Schools/Schools'
 import Buildings from '../views/Locations/Buildings'
 import Rooms from '../views/Locations/Rooms'
 import TeamManagement from "../views/Teams/TeamManagement";
+import Extras from "../views/Extras/Extras";
 
 const appRoutes = [
     { path: "/app/dashboard", name: "Dashboard", icon: "pe-7s-graph", component: Dashboard },
@@ -14,6 +15,7 @@ const appRoutes = [
     { path: "/app/buildings", name:"Buildings", icon:"pe-7s-map", component: Buildings, users:['ADMIN']},
     { path: "/app/rooms", name:"Rooms", icon:"pe-7s-ribbon", component: Rooms, users:['ADMIN']},
     { path: "/app/teams", name: "Team Management", icon: "pe-7s-users", component : TeamManagement, users:['ADMIN', 'COACH']},
+    { path: "/app/extras", name:"Extras", icon:"pe-7s-gleam", component :Extras},
     { redirect: true, path:"/", to:"/app/dashboard", name: "Dashboard" }
 ];
 
