@@ -33,7 +33,7 @@ describe('HeaderLinks Component Tests', function () {
     test('Should render HeaderLinks with Nav/Menu components', () => {
         const component = shallow(<HeaderLinks />);
 
-        expect(component.find(Nav)).to.have.length(2);
+        expect(component.find(Nav)).to.have.length(1);
         expect(component.find(NavItem)).to.have.length(2);
 
     })
