@@ -256,7 +256,7 @@ class UserProfile extends Component {
         }
         else {
             this.notify(
-                "Please enter your current password and confirm what you would like your new password to change your password.",
+                "Please enter your current password, a new password, and confirm the new password.",
                 "error",
                 "tc",
                 7
