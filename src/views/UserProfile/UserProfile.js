@@ -25,6 +25,7 @@ class UserProfile extends React.Component {
         this.updateProfile = this.updateProfile.bind(this);
         this.changePassword = this.changePassword.bind(this);
         this.validPassword = this.validPassword.bind(this);
+        this.cleanPhone = this.cleanPhone.bind(this);
         this.notify = this.notify.bind(this);
 
         this.state = {
@@ -34,8 +35,9 @@ class UserProfile extends React.Component {
             newPassword : "",
             confirmNewPassword : "",
             imageUrl : "",
-            desc : ""
-        }
+            desc : "",
+            code: 0
+        };
 
     }
 
@@ -48,7 +50,6 @@ class UserProfile extends React.Component {
 
         HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getUserProfile', 'GET',
             constants.useCredentials(), null).then(function (result) {
-            console.log(result);
             _this.setState({
                 user: result.body
             })
@@ -58,7 +59,6 @@ class UserProfile extends React.Component {
         })
         //here we will get the user type
         const userType = AuthService.getUserRole();
-        console.log(userType);
         if (userType === "ADMIN") {
             this.setState({imageUrl : "https://telegram.org/file/811140509/b45/dQTLEwKZ9gs.22232.gif/4580677d940852f30e"});
         } else if (userType === "COACH") {
@@ -90,6 +90,15 @@ class UserProfile extends React.Component {
         });
     }
 
+    cleanPhone(cleanPhoneNumber) {
+        cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
+        cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
+        cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
+        cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
+
+        return cleanPhoneNumber;
+    }
+
     updateProfile(e) {
         var body = {};
         var _this = this;
@@ -99,11 +108,7 @@ class UserProfile extends React.Component {
             body.password = this.state.password;
 
             //update the user, first clean the phone number
-            var cleanPhoneNumber = _this.state.user.phoneNumber;
-            cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
-            cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
-            cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
-            cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
+            var cleanPhoneNumber = this.cleanPhone(this.state.user.phoneNumber);
 
             // this.state.user.phoneNumber = cleanPhoneNumber;
             var tempUser = _this.state.user;
@@ -130,6 +135,7 @@ class UserProfile extends React.Component {
                                 5
                             );
                             document.getElementById('password').value='';
+                            _this.setState({code : 13})
                         }else if(result.status === 409) {
                             _this.notify(
                                 "Could not update",
@@ -137,10 +143,12 @@ class UserProfile extends React.Component {
                                 "tc",
                                 10
                             );
+                            _this.setState({code : 12})
                         }
 
                     }).catch(function (error) {
                         console.log(error);
+                        _this.setState({code : 11})
                     })
                 } else if(result.status === 401) {
                     _this.notify(
@@ -149,10 +157,12 @@ class UserProfile extends React.Component {
                         "tc",
                         10
                     );
+                    this.setState({code : 2})
                 }
 
             }).catch(function (error) {
                 console.log(error);
+                _this.setState({code : 14})
             })
         } else {
             _this.notify(
@@ -161,6 +171,7 @@ class UserProfile extends React.Component {
                 "tc",
                 5
             );
+            _this.setState({code : 1})
         }
     }
 
@@ -181,7 +192,7 @@ class UserProfile extends React.Component {
         var _this = this;
 
         //check to ensure that current password is filled in
-        if (this.state.currentPassword !== "" && this.state.newPassword !== "" && this.state.confirmPassword !== "") {
+            if (this.state.currentPassword !== "" && this.state.newPassword !== "" && this.state.confirmPassword !== "") {
 
             //check to make sure current password is correct
             if (this.state.newPassword === this.state.confirmPassword) {
@@ -202,8 +213,6 @@ class UserProfile extends React.Component {
                             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/changePassword', 'POST',
                                 constants.useCredentials(), body).then(function (result) {
 
-                                console.log(result);
-
                                 if (result.status === 200) {
                                     _this.notify(
                                         "Password Changed",
@@ -214,6 +223,7 @@ class UserProfile extends React.Component {
                                     document.getElementById('currentPassword').value='';
                                     document.getElementById('newPassword').value='';
                                     document.getElementById('confirmPassword').value='';
+                                    _this.setState({code : 8});
                                 }else if(result.status === 409) {
                                     _this.notify(
                                         "Could not update",
@@ -221,10 +231,12 @@ class UserProfile extends React.Component {
                                         "tc",
                                         10
                                     );
+                                    _this.setState({code : 9})
                                 }
 
                             }).catch(function (error) {
                                 console.log(error);
+                                _this.setState({code : 10})
                             })
                         } else {
                             _this.notify(
@@ -233,6 +245,7 @@ class UserProfile extends React.Component {
                                 "tc",
                                 10
                             );
+                            _this.setState({code : 6})
                         }
                     }).catch(function (error) {
                         _this.notify(
@@ -241,6 +254,7 @@ class UserProfile extends React.Component {
                             "tc",
                             10
                         );
+                        _this.setState({code : 7})
                         console.log(error);
                     })
                 } else {
@@ -251,6 +265,7 @@ class UserProfile extends React.Component {
                         "tc",
                         10
                     );
+                    this.setState({code : 4})
                 }
             } else {
                 //put up a notify
@@ -260,13 +275,9 @@ class UserProfile extends React.Component {
                     "tc",
                     5
                 );
+                this.setState({code : 3})
             }
 
-        }
-        else {
-            console.log(this.state.currentPassword !== "");
-            console.log(this.state.newPassword !== "");
-            console.log(this.state.confirmPassword !== "");
         }
     }
 
