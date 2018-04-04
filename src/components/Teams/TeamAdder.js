@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
-import {MuiThemeProvider, AppBar, TextField} from 'material-ui';
-import Button from '../../elements/CustomButton/CustomButton';
-import {Grid, Row, Col, Panel} from 'react-bootstrap';
-
-import ReactTable from 'react-table';
+import {MuiThemeProvider, AppBar, TextField, RaisedButton, FontIcon} from 'material-ui';
+import {Grid, Row, Col} from 'react-bootstrap';
 
 import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
 import Validator from "../../utils/validator";
@@ -45,8 +42,6 @@ class TeamAdder extends Component {
         body.coach = this.state.selectedCoach;
         body.school = this.state.selectedSchool;
 
-        console.log(this.state.selectedSchool);
-
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addTeam/', 'POST', constants.useCredentials(), body, true).then(function (result) {
@@ -54,12 +49,13 @@ class TeamAdder extends Component {
                 selectedSchool: undefined,
                 selectedCoach: undefined,
                 teamName: ""
+            }, () => {
+                _this.props.addNotification(<div><b>{body.name}</b> has been created.</div>, 'success');
+                _this.props.updateTable()
             });
 
-            alert(result.body);
-
         }).catch(function (error) {
-            alert(error.message);
+            _this.props.addNotification(<div><b>{body.name}</b> could not be created because: <em>{error.message}</em></div>, 'error');
         });
     }
 
@@ -91,7 +87,7 @@ class TeamAdder extends Component {
         return (
             <MuiThemeProvider>
                 <div style={{textAlign: 'center'}}>
-                    <AppBar showMenuIconButton={false} title="Register Team"/>
+                    <AppBar showMenuIconButton={false} title="Register Team" style={{zIndex: 10}}/>
                     <Grid>
                         <Row className="show-grid" style={{textAlign:'center'}}>
                             <Col xs={7} md={3}>
@@ -112,12 +108,12 @@ class TeamAdder extends Component {
                                     name={"school"}
                                     labelText={"School"}
                                     hintText={"Select School"}
+                                    errorText={this.state.errors.schoolError}
                                     selected={this.state.selectedSchool}
                                     endpoint={"/sweng500/getSchools"}
                                     sortKey={"schoolName"}
                                     textKeys={["schoolName"]}
                                     selectedValue={this.selectedSchool}
-                                    errorMsg={this.state.errors.schoolError}
                                 />
                             </Col>
                             <Col xs={7} md={3}>
@@ -125,21 +121,21 @@ class TeamAdder extends Component {
                                     name={"coach"}
                                     labelText={"Coach"}
                                     hintText={"Select Coach"}
+                                    errorText={this.state.errors.coachError}
                                     selected={this.state.selectedCoach}
                                     endpoint={"/sweng500/getCoaches"}
                                     sortKey={"lastName"}
                                     textKeys={["firstName","lastName"]}
                                     selectedValue={this.selectedCoach}
-                                    errorMsg={this.state.errors.coachError}
                                 />
                             </Col>
                         </Row>
                         <Row className="show-grid">
                             <Col sm={6} style={{maxWidth: 200}}>
-                                <Button fill block bsStyle="info" onClick={this.validateTeamForm}>Confirm</Button>
+                                <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} label="Cancel" onClick={event => {this.props.togglePanel("")} } />
                             </Col>
                             <Col sm={6} style={{maxWidth: 200}}>
-                                <Button fill block bsStyle="danger" onClick={event => {this.props.togglePanel("")}}>Cancel</Button>
+                                <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} onClick={this.validateTeamForm} label="Confirm"/>
                             </Col>
                         </Row>
                     </Grid>
