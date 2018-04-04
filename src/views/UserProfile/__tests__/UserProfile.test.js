@@ -89,7 +89,7 @@ describe('User profile tests', function () {
         sinon.stub(AuthService, 'getUserRole').returns("ADMIN")
 
         const component = shallow(<UserProfile />);
-
+        component.instance().setState({password: ""});
         component.instance().notify = sinon.spy();
 
         //Wait for setState's to finish and re-render component
@@ -103,9 +103,220 @@ describe('User profile tests', function () {
         await helper.flushPromises();
         component.update();
 
-        console.log(component.instance().notify.getCall(0).args[0]);
-
-        //expect(component.instance().addNotification.getCall(0).args[0]).to.equal("Enter your current password");
+        expect(component.instance().state.code).to.equal(1);
     });
+
+    // Test 4
+    test('Try to update the users information with a wrong password', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'getUserRole').returns("ADMIN")
+        sinon.stub(UserProfile.prototype, 'cleanPhone').returns("+1111111111")
+
+        const component = shallow(<UserProfile />);
+
+        component.instance().notify = sinon.spy();
+        component.instance().setState({password: "WrongPassword!"});
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        let u={};
+        u.phoneNumber = 1111111111;
+        component.instance().setState({user: u});
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        // Simulate clicking the form button
+        expect(component.find(Button).at(0).simulate('click'));
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.instance().state.code).to.equal(11);
+    });
+
+    // Test 5
+    test('Try to update the password with bad input', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'getUserRole').returns("ADMIN")
+
+        const component = shallow(<UserProfile />);
+        component.instance().notify = sinon.spy();
+
+        component.instance().setState({currentPassword: "WrongPassword!"});
+        component.instance().setState({newPassword: "Password1!"});
+        component.instance().setState({confirmPassword: "Password2!"});
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        // Simulate clicking the form button
+        expect(component.find(Button).at(1).simulate('click'));
+
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.instance().state.code).to.equal(3);
+    });
+
+    // Test 6
+    test('Try to update the password with good input but invalid passwords', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'getUserRole').returns("ADMIN")
+
+        const component = shallow(<UserProfile />);
+        component.instance().notify = sinon.spy();
+
+        component.instance().setState({currentPassword: "WrongPassword!"});
+        component.instance().setState({newPassword: "a"});
+        component.instance().setState({confirmPassword: "a"});
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        // Simulate clicking the form button
+        expect(component.find(Button).at(1).simulate('click'));
+
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.instance().state.code).to.equal(4);
+    });
+
+    // Test 7
+    test('Try to update the password with good input but invalid passwords', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'getUserRole').returns("ADMIN")
+
+        const component = shallow(<UserProfile />);
+        component.instance().notify = sinon.spy();
+
+        component.instance().setState({currentPassword: "WrongPassword!"});
+        component.instance().setState({newPassword: "Password1"});
+        component.instance().setState({confirmPassword: "Password1"});
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        // Simulate clicking the form button
+        expect(component.find(Button).at(1).simulate('click'));
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.instance().state.code).to.equal(10);
+    });
+
+    // Test 8
+    test('Check coach profile picture', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'getUserRole').returns("COACH")
+
+        const component = shallow(<UserProfile />);
+        component.instance().notify = sinon.spy();
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.instance().state.imageUrl).to.equal("https://baseballmomstuff.com/wp-content/uploads/2016/02/coach-cartoon.jpg");
+    });
+
+    // Test 9
+    test('Check judge profile picture', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'getUserRole').returns("JUDGE")
+
+        const component = shallow(<UserProfile />);
+        component.instance().notify = sinon.spy();
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.instance().state.imageUrl).to.equal("https://www.how-to-draw-funny-cartoons.com/image-files/cartoon-judge-010.jpg");
+    });
+
+    // Test 10
+    test('Check student profile picture', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'getUserRole').returns("STUDENT")
+
+        const component = shallow(<UserProfile />);
+        component.instance().notify = sinon.spy();
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.instance().state.imageUrl).to.equal("https://classroomclipart.com/images/gallery/Clipart/Science/TN_female-student-holding-flask-and-test-tube-in-science-lab-science-clipart.jpg");
+    });
+
+    // Test 11
+    test('Test phone format', async () => {
+
+        var result = -1;
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'getUserRole').returns("ADMIN")
+
+        const component = shallow(<UserProfile />);
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        result = component.instance().cleanPhone("111-111-1111");
+        expect(result).to.equal("+1111111111");
+    });
+
+    // Test 12
+    test('Handle a failed request', async () => {
+
+        HttpRequest.httpRequest.restore();
+        sinon.stub(HttpRequest, 'httpRequest').resolves({"status": 401});
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'getUserRole').returns("ADMIN")
+
+        const component = shallow(<UserProfile />);
+        component.instance().notify = sinon.spy();
+        const s = sinon.spy(console, 'log');
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(s.callCount).to.equal(1);
+    });
+
 
 });

@@ -25,6 +25,7 @@ class UserProfile extends Component {
         this.updateProfile = this.updateProfile.bind(this);
         this.changePassword = this.changePassword.bind(this);
         this.validPassword = this.validPassword.bind(this);
+        this.cleanPhone = this.cleanPhone.bind(this);
         this.notify = this.notify.bind(this);
 
         this.state = {
@@ -35,8 +36,9 @@ class UserProfile extends Component {
             newPassword : "",
             confirmPassword : "",
             imageUrl : "",
-            desc : ""
-        }
+            desc : "",
+            code: 0
+        };
 
     }
 
@@ -49,7 +51,6 @@ class UserProfile extends Component {
 
         HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getUserProfile', 'GET',
             constants.useCredentials(), null).then(function (result) {
-            console.log(result);
             _this.setState({
                 user: result.body
             })
@@ -95,6 +96,15 @@ class UserProfile extends Component {
         });
     }
 
+    cleanPhone(cleanPhoneNumber) {
+        cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
+        cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
+        cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
+        cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
+
+        return cleanPhoneNumber;
+    }
+
     updateProfile(e) {
         var body = {};
         var _this = this;
@@ -111,46 +121,31 @@ class UserProfile extends Component {
                 body.user = JSON.parse(JSON.stringify(_this.state.user));
 
                 //update the user, first clean the phone number
-                var cleanPhoneNumber = body.user.phoneNumber;
-                cleanPhoneNumber = cleanPhoneNumber.replace(/\s/g, '');         // Remove spaces
-                cleanPhoneNumber = cleanPhoneNumber.replace(/\(|\)/g,'');       // Remove ( and )
-                cleanPhoneNumber = cleanPhoneNumber.replace(/-/g,"");           // Remove -
-                cleanPhoneNumber = '+' + cleanPhoneNumber;                      // Add +
+                body.user.phoneNumber = _this.cleanPhone(body.user.phoneNumber);
 
-                if (result.status === 200) {
-                    //submit the http request
+                  _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser', 'POST', constants.useCredentials(), body.user, true).then(function (result) {
 
-                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser', 'POST', constants.useCredentials(), body.user, true).then(function (result) {
+                      _this.notify(
+                          "Profile Successfully Updated",
+                          "success",
+                          "tc",
+                          5
+                      );
 
-                        _this.notify(
-                            "Profile Successfully Updated",
-                            "success",
-                            "tc",
-                            5
-                        );
+                      _this.setState({
+                          password: ""
+                      })
 
-                        _this.setState({
-                            password: ""
-                        })
-
-                    }).catch(function (error) {
-                        console.log(error);
-                        _this.notify(
-                            "Could not update profile at this time. Please try again later.",
-                            "error",
-                            "tc",
-                            5
-                        );
-                    })
-                } else if(result.status === 401) {
-                    _this.notify(
-                        "Incorrect password",
-                        "error",
-                        "tc",
-                        5
-                    );
-                }
-
+                  }).catch(function (error) {
+                      console.log(error);
+                      _this.notify(
+                          "Could not update profile at this time. Please try again later.",
+                          "error",
+                          "tc",
+                          5
+                      );
+                    _this.setState({code : 11});
+                  })
             }).catch(function (error) {
                 console.log(error);
                 _this.notify(
@@ -159,14 +154,16 @@ class UserProfile extends Component {
                     "tc",
                     5
                 )
+                _this.setState({code : 14})
             })
         } else {
             _this.notify(
-                "Enter your current password",
+                "Please enter your current password",
                 "error",
                 "tc",
                 5
             );
+            _this.setState({code : 1})
         }
     }
 
@@ -213,26 +210,28 @@ class UserProfile extends Component {
                                 5
                             );
 
-                            _this.setState({currentPassword: "", newPassword: "", confirmPassword: ""})
+                            _this.setState({currentPassword: "", newPassword: "", confirmPassword: "", code: 8})
 
                         }).catch(function (error) {
                             console.log(error);
+
                             _this.notify(
                                 "Could not update at this time.  Please try again later.",
                                 "error",
                                 "tc",
                                 7
                             );
+                           _this.setState({code : 10})
                         })
-
                     }).catch(function (error) {
-                        console.log(error);
                         _this.notify(
                             "Incorrect current password.  Please provide your current password",
                             "error",
                             "tc",
                             5
                         );
+
+                        _this.setState({code : 7})
                     })
                 } else {
                     //put up a notify
@@ -242,6 +241,7 @@ class UserProfile extends Component {
                         "tc",
                         10
                     );
+                    this.setState({code : 4})
                 }
             } else {
                 //put up a notify
@@ -251,8 +251,8 @@ class UserProfile extends Component {
                     "tc",
                     5
                 );
+                this.setState({code : 3})
             }
-
         }
         else {
             this.notify(
@@ -263,8 +263,6 @@ class UserProfile extends Component {
             );
         }
     }
-
-
 
     render() {
         return (
