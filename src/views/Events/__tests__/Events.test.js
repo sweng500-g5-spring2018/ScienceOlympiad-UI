@@ -54,19 +54,15 @@ describe('Event Component Tests', function () {
             }
         ]
     }
-    var axiosMock;
-    var sandbox;
     //Set up test data before running any tests
     beforeAll( () => {
-      //  axiosMock = new MockAdapter(axios);
         //STUB: Http request to simulate data retrieval from API
         sinon.stub(HttpRequest, 'httpRequest').resolves(
             //import test data JSON for response
             require('../../../../test/data/events/getEventData.json')
          )
-        //sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
-
-        //STUB: Constants function used as argument to HttpRequest
+        //jquery val method to return an email for certain tests
+        sinon.stub($.prototype,'val').returns('test@test.com');
     })
 
     afterEach(function () {
@@ -100,7 +96,6 @@ describe('Event Component Tests', function () {
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
         sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
-       // sinon.stub(AuthService, 'isUserRoleAllowed').returns(true)
 
 
         const component = shallow(<Events />);
@@ -110,12 +105,21 @@ describe('Event Component Tests', function () {
         component.update();
 
         component.instance().setState({modal: true})
+
         expect(component.find(Modal)).to.have.length(1);
 
-        expect(component.find(RaisedButton).at(1).simulate('click'));
+        //expect(component.find(RaisedButton).at(1).simulate('click'));
         //Wait for setState's to finish and re-render component
+       // await helper.flushPromises();
+       // component.update();
+
+        //render create event button
+        component.instance().setState({stepIndex: 2})
+        component.instance().setState({editMode: false})
         await helper.flushPromises();
         component.update();
+        //add new judge, remove new judge, back to existing and create event buttons
+        expect(component.find(RaisedButton)).to.have.length(4)
     });
 
     //test 3
@@ -469,4 +473,61 @@ describe('Event Component Tests', function () {
         expect(component.state().stepIndex).to.equal(2);
     });
 
+    test('Valid email and close modal',async () => {
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true);
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true);
+        const component = shallow(<Events/>);
+        // Wait for setState's to finish and re-render component
+        component.instance().setState({editEventId: 1});
+        await helper.flushPromises();
+        component.update();
+        //test the validemail funtion
+        expect(component.instance().validEmail('tes@test.com')).to.equal(false);
+        expect(component.instance().validEmail('estest.com')).to.equal(true);
+
+        component.instance().closeModal();
+        await helper.flushPromises();
+        component.update();
+        expect(component.state().modal).to.equal(false);
+        expect(component.state().editMode).to.equal(false);
+        expect(component.state().editEventId).to.equal('');
+
+    });
+
+    test('Test adding a new judge input, mock the jquery email call',async () => {
+        sinon.stub(AuthService, 'isLoggedIn').returns(true);
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true);
+        //not sure how to remove this stub after it executes
+
+        const component = shallow(<Events/>);
+        expect(component.state().judgeInputs.length).to.equal(0);
+        component.instance().setState({judgeCount: 1});
+        component.instance().addJudgeInputs();
+        await helper.flushPromises();
+        component.update();
+        expect(component.state().judgeCount).to.equal(2);
+
+        expect(component.state().judgeInputs.length).to.equal(1);
+
+    });
+
+    test('Test removing a judge, mock the jquery call',async () => {
+        sinon.stub(AuthService, 'isLoggedIn').returns(true);
+        sinon.stub(AuthService, 'isUserRoleAllowed').returns(true);
+
+        const component = shallow(<Events/>);
+        expect(component.state().judgeInputs.length).to.equal(0);
+        component.instance().setState({judgeCount: 1});
+        component.instance().setState({judgeInputs: ['test']});
+
+        expect(component.state().judgeInputs.length).to.equal(1);
+
+        component.instance().removeNewJudge();
+        await helper.flushPromises();
+        component.update();
+        expect(component.state().judgeCount).to.equal(0);
+        expect(component.state().judgeInputs.length).to.equal(0);
+
+    });
 });
