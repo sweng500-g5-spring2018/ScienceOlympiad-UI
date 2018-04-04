@@ -448,7 +448,8 @@ class Events extends Component {
                 if (email != null && email.length > 0) {
                     if (!this.validEmail(email.trim())) {
                         body.emailAddress = email;
-                        promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/emailAvailable', 'POST', null, body));
+                        promises.push(_this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() +
+                            '/sweng500/emailAvailable', 'POST', null, body));
                     } else {
                         validateFields = true;
                         $(idname).parent().parent().parent().parent().find(".errorText").text("Email is not in the correct format");
