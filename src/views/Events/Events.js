@@ -87,18 +87,20 @@ class Events extends Component {
         this.setState({eventLocation: value});
     }
 
-    addNotification(message, level, position, autoDismiss, optionalTitle) {
-        this.state._notificationSystem.addNotification({
-            title: optionalTitle ? optionalTitle : (<span data-notify="icon" className="pe-7s-note2"></span>),
-            message: (
-                <div>
-                    {message}
-                </div>
-            ),
-            level: level ? level : 'info',
-            position: position ? position : 'tc',
-            autoDismiss: autoDismiss ? autoDismiss : 10,
-        });
+    addNotification(message, level, position, autoDismiss) {
+        if(this.state._notificationSystem) {
+            this.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-note2"></span>),
+                message: (
+                    <div>
+                        {message}
+                    </div>
+                ),
+                level: level ? level : 'info',
+                position: position ? position : 'tc',
+                autoDismiss: autoDismiss ? autoDismiss : 10,
+            });
+        }
     }
 
     //launch the modal to enter an event or edit one
@@ -171,11 +173,9 @@ class Events extends Component {
     createEventPost() {
         var _this = this;
         var body = {};
-        var newJudges = {};
         var gatherjudges = {};
         var newJudgeList = [];
         var i;
-        var errorFound = false;
         for (i = 1; i <= this.state.judgeCount; i++) {
             var tempFname = "#judgefname" + i;
             var tempLname = "#judgelname" + i;
@@ -190,9 +190,7 @@ class Events extends Component {
 
 
         }
-        // newJudges.newjudges= newJudgeList;
-        // alert(newJudgeList);
-        if (!errorFound) {
+
             var event = {};
 
             event.name = this.state.eventName;
@@ -296,19 +294,6 @@ class Events extends Component {
                     _this.componentDidMount();
                 })
             }
-        } else {
-            _this.setState({
-                loadCreateEvent: true
-            });
-            _this.addNotification(
-                "Error: There was an error found prior to creating event.",
-                "error",
-                "tc",
-                6
-            );
-            _this.componentDidMount();
-        }
-
     }
 
     closeModal() {
@@ -832,7 +817,10 @@ class Events extends Component {
         }
         if (this.state.renderDetails) {
             return (
-                <EventDetail showEvents={this.showEvents} eventId={this.state.eventId}/>
+                <div class="content">
+                    <NotificationSystem ref="notificationSystem" style={style}/>
+                    <EventDetail addNotification={this.addNotification} showEvents={this.showEvents} eventId={this.state.eventId}/>
+                </div>
             )
         }
 
@@ -884,7 +872,7 @@ class Events extends Component {
 
             <div className="content">
                 <NotificationSystem ref="notificationSystem" style={style}/>
-                <div id='eventPage' key="notFound-key" className="notFoundClass">
+                <div id="eventPage" key="notFound-key" className="notFoundClass">
                     <MuiThemeProvider>
                         <Grid>
                             {createEventBtn}
