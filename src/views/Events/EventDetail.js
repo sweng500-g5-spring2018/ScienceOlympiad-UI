@@ -30,6 +30,7 @@ class EventDetail extends Component {
         super(props);
         this.formatTimeString = this.formatTimeString.bind(this);
         this.selectedTeam = this.selectedTeam.bind(this);
+        this.closeTeamModal = this.closeTeamModal.bind(this);
         //for the map
         this.divStyle = {
             height: '300px',
@@ -55,7 +56,7 @@ class EventDetail extends Component {
             //teams
             teamModal : false,
             //custom dropdown returns an object
-            selectedTeamValue : undefined,
+            selectedTeamValue : null,
             teamSelectorError:'',
             teamsDetail: {},
             loadAddTeam:true
@@ -135,24 +136,27 @@ class EventDetail extends Component {
     }
 
     closeTeamModal() {
-        this.setState({loadAddTeam:true,teamModal:false})
+        this.setState({loadAddTeam:true,teamModal:false,teamSelectorError:''})
     }
 
     selectedTeam(value) {
         this.setState({selectedTeamValue:value})
     }
 
-    registerTeam = () => {
+    registerTeam() {
         var _this = this;
         //custom dropdown stores the entire object so just get the idea
-        if(_this.state.selectedTeamValue.length < 1) {
+        if(_this.state.selectedTeamValue === null) {
             _this.setState({teamSelectorError:'Please select a team'});
         } else {
             _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + _this.state.eventId+"/"+_this.state.selectedTeamValue.id, "POST", constants.useCredentials(), null, true).then(function (judgeResult) {
-                alert("success");
+                _this.setState({loadAddTeam:true,teamModal:false,teamSelectorError:''})
+                _this.props.addNotification("Success, the team has been registered ","success","tc",6);
+
             }).catch(function (error) {
-                console.log(error);
+                _this.setState({teamSelectorError:'Team already registered'});
             })
+
         }
     }
     renderIfEventFound() {
@@ -348,7 +352,7 @@ class EventDetail extends Component {
                                         sortKey={"name"}
                                         textKeys={["name"]}
                                         selectedValue={this.selectedTeam}
-                                        errorMsg={this.state.teamSelectorError}
+                                        errorText={this.state.teamSelectorError}
                                     />
                                 </Col>
                             </Row>
@@ -358,7 +362,7 @@ class EventDetail extends Component {
                         <Modal.Footer>
                             <Loader loaded={this.state.loadAddTeam}></Loader>
                             <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true} label="Register Team"
-                                                                                            onClick={this.registerTeam}/>
+                                                                                            onClick={event => this.registerTeam()}/>
                         </Modal.Footer>
                     </Modal>
                 </MuiThemeProvider>
