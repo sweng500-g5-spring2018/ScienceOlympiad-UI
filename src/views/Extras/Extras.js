@@ -3,19 +3,16 @@ import {
     Grid, Row, Col,
 } from 'react-bootstrap';
 
-import {UserCard} from '../../components/Cards/UserCard.js';
 import InputMask from 'react-input-mask';
 import Button from '../../elements/CustomButton/CustomButton.js';
 
 import {TextField} from "material-ui";
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
-import AuthService from "../../utils/AuthService";
 import NotificationSystem from 'react-notification-system';
 import {style} from "../../variables/Variables";
 import AppBar from 'material-ui/AppBar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import PasswordField from 'material-ui-password-field';
 
 class Extras extends React.Component {
 
