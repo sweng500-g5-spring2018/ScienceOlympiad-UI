@@ -1,0 +1,332 @@
+[
+  {
+    "id": "5aab4534ef6c87cbf0837fd6",
+    "name": "ITSMYTEAM2",
+    "coach": {
+      "id": "5aa9fffed5bc3173f19ee91c",
+      "firstName": "fml",
+      "lastName": "fyl",
+      "emailAddress": "fml@brandonhessler.com",
+      "phoneNumber": "",
+      "minutesBeforeEvent": 10,
+      "receiveText": false,
+      "lastLoginDate": null,
+      "school": {
+        "id": "5a88cf0025acab41344f08af",
+        "schoolName": "Hogwarts",
+        "schoolContactName": "Albus Dumbledore",
+        "schoolContactPhone": "15554837751"
+      },
+      "name": "fml fyl"
+    },
+    "school": {
+      "id": "5a88cf0025acab41344f08af",
+      "schoolName": "Hogwarts",
+      "schoolContactName": "Albus Dumbledore",
+      "schoolContactPhone": "15554837751"
+    },
+    "students": [],
+    "team_events": []
+  },
+  {
+    "id": "5aab45c5ef6c87cbf0837fd9",
+    "name": "ITSMYTEAM4",
+    "coach": {
+      "id": "5a95fab6e4b065afb83e3852",
+      "firstName": "Jeff",
+      "lastName": "Chiampi",
+      "emailAddress": "test@12.com",
+      "phoneNumber": "",
+      "minutesBeforeEvent": 10,
+      "receiveText": false,
+      "lastLoginDate": null,
+      "school": {
+        "id": "5a87826425acab41344f08aa",
+        "schoolName": "Dallas",
+        "schoolContactName": "Seymour Skinner",
+        "schoolContactPhone": "15554343867"
+      },
+      "name": "Jeff Chiampi"
+    },
+    "school": {
+      "id": "5a88fe7825acab41344f08b7",
+      "schoolName": "Abington Heights",
+      "schoolContactName": "Charles Xavier",
+      "schoolContactPhone": "15553982770"
+    },
+    "students": [
+      {
+        "id": "5aac2e64ef6c19943b704f2d",
+        "firstName": "Ryan",
+        "lastName": "IsAwesome",
+        "emailAddress": "ryan@isawesome.com",
+        "phoneNumber": "",
+        "minutesBeforeEvent": 10,
+        "receiveText": false,
+        "lastLoginDate": null,
+        "school": {
+          "id": "5a88fe7825acab41344f08b7",
+          "schoolName": "Abington Heights",
+          "schoolContactName": "Charles Xavier",
+          "schoolContactPhone": "15553982770"
+        },
+        "name": "Ryan IsAwesome"
+      }
+    ],
+    "team_events": []
+  },
+  {
+    "id": "5abe923def6c2285df9c629d",
+    "name": "ITSMYTEAM1",
+    "coach": {
+      "id": "5a95fab6e4b065afb83e3852",
+      "firstName": "Jeff",
+      "lastName": "Chiampi",
+      "emailAddress": "test@12.com",
+      "phoneNumber": "",
+      "minutesBeforeEvent": 10,
+      "receiveText": false,
+      "lastLoginDate": null,
+      "school": {
+        "id": "5a87826425acab41344f08aa",
+        "schoolName": "Dallas",
+        "schoolContactName": "Seymour Skinner",
+        "schoolContactPhone": "15554343867"
+      },
+      "name": "Jeff Chiampi"
+    },
+    "school": {
+      "id": "5a88cf0025acab41344f08af",
+      "schoolName": "Hogwarts",
+      "schoolContactName": "Albus Dumbledore",
+      "schoolContactPhone": "15554837751"
+    },
+    "students": [
+      {
+        "id": "5abf90a7ef6ce8674405bf46",
+        "firstName": "stud2_5",
+        "lastName": "stud2_5",
+        "emailAddress": "stud2_5@test.com",
+        "phoneNumber": "",
+        "minutesBeforeEvent": 10,
+        "receiveText": false,
+        "lastLoginDate": null,
+        "school": {
+          "id": "5a88cf0025acab41344f08af",
+          "schoolName": "Hogwarts",
+          "schoolContactName": "Albus Dumbledore",
+          "schoolContactPhone": "15554837751"
+        },
+        "name": "stud2_5 stud2_5"
+      },
+      {
+        "id": "5ab9cc11ef6c7a9664910c10",
+        "firstName": "stud2_1",
+        "lastName": "stud2_1",
+        "emailAddress": "stud2_1@test.com",
+        "phoneNumber": "",
+        "minutesBeforeEvent": 10,
+        "receiveText": false,
+        "lastLoginDate": null,
+        "school": {
+          "id": "5a88cf0025acab41344f08af",
+          "schoolName": "Hogwarts",
+          "schoolContactName": "Albus Dumbledore",
+          "schoolContactPhone": "15554837751"
+        },
+        "name": "stud2_1 stud2_1"
+      },
+      {
+        "id": "5ab9cc2def6c7a9664910c12",
+        "firstName": "stud2_3",
+        "lastName": "stud2_3",
+        "emailAddress": "stud2_3@test.com",
+        "phoneNumber": "",
+        "minutesBeforeEvent": 10,
+        "receiveText": false,
+        "lastLoginDate": null,
+        "school": {
+          "id": "5a88cf0025acab41344f08af",
+          "schoolName": "Hogwarts",
+          "schoolContactName": "Albus Dumbledore",
+          "schoolContactPhone": "15554837751"
+        },
+        "name": "stud2_3 stud2_3"
+      },
+      {
+        "id": "5abf8f0aef6ce8674405bf45",
+        "firstName": "stud2_4",
+        "lastName": "stud2_4",
+        "emailAddress": "stud2_4@test.com",
+        "phoneNumber": "",
+        "minutesBeforeEvent": 10,
+        "receiveText": false,
+        "lastLoginDate": null,
+        "school": {
+          "id": "5a88cf0025acab41344f08af",
+          "schoolName": "Hogwarts",
+          "schoolContactName": "Albus Dumbledore",
+          "schoolContactPhone": "15554837751"
+        },
+        "name": "stud2_4 stud2_4"
+      },
+      {
+        "id": "5ab9cc1fef6c7a9664910c11",
+        "firstName": "stud2_2",
+        "lastName": "stud2_2",
+        "emailAddress": "stud2_2@test.com",
+        "phoneNumber": "",
+        "minutesBeforeEvent": 10,
+        "receiveText": false,
+        "lastLoginDate": null,
+        "school": {
+          "id": "5a88cf0025acab41344f08af",
+          "schoolName": "Hogwarts",
+          "schoolContactName": "Albus Dumbledore",
+          "schoolContactPhone": "15554837751"
+        },
+        "name": "stud2_2 stud2_2"
+      }
+    ],
+    "team_events": []
+  },
+  {
+    "id": "5abff1f7ef6c4e5fae1630d8",
+    "name": "testingstudentdelete",
+    "coach": {
+      "id": "5a95fab6e4b065afb83e3852",
+      "firstName": "Jeff",
+      "lastName": "Chiampi",
+      "emailAddress": "test@12.com",
+      "phoneNumber": "",
+      "minutesBeforeEvent": 10,
+      "receiveText": false,
+      "lastLoginDate": null,
+      "school": {
+        "id": "5a87826425acab41344f08aa",
+        "schoolName": "Dallas",
+        "schoolContactName": "Seymour Skinner",
+        "schoolContactPhone": "15554343867"
+      },
+      "name": "Jeff Chiampi"
+    },
+    "school": {
+      "id": "5a89002525acab41344f08bc",
+      "schoolName": "Valley View",
+      "schoolContactName": "Oliver Queen",
+      "schoolContactPhone": "15553431182"
+    },
+    "students": [
+      {
+        "id": "5ac177f2ef6c1d0c91ebfddf",
+        "firstName": "testDelete1",
+        "lastName": "testDelete1",
+        "emailAddress": "testDelete1@test.com",
+        "phoneNumber": "",
+        "minutesBeforeEvent": 10,
+        "receiveText": false,
+        "lastLoginDate": null,
+        "school": {
+          "id": "5a89002525acab41344f08bc",
+          "schoolName": "Valley View",
+          "schoolContactName": "Oliver Queen",
+          "schoolContactPhone": "15553431182"
+        },
+        "name": "testDelete1 testDelete1"
+      },
+      {
+        "id": "5ac177ffef6c1d0c91ebfde0",
+        "firstName": "testDelete2",
+        "lastName": "testDelete2",
+        "emailAddress": "testDelete2@test.com",
+        "phoneNumber": "",
+        "minutesBeforeEvent": 10,
+        "receiveText": false,
+        "lastLoginDate": null,
+        "school": {
+          "id": "5a89002525acab41344f08bc",
+          "schoolName": "Valley View",
+          "schoolContactName": "Oliver Queen",
+          "schoolContactPhone": "15553431182"
+        },
+        "name": "testDelete2 testDelete2"
+      },
+      {
+        "id": "5ac17811ef6c1d0c91ebfde1",
+        "firstName": "testDelete3",
+        "lastName": "testDelete3",
+        "emailAddress": "testDelete3@test.com",
+        "phoneNumber": "",
+        "minutesBeforeEvent": 10,
+        "receiveText": false,
+        "lastLoginDate": null,
+        "school": {
+          "id": "5a89002525acab41344f08bc",
+          "schoolName": "Valley View",
+          "schoolContactName": "Oliver Queen",
+          "schoolContactPhone": "15553431182"
+        },
+        "name": "testDelete3 testDelete3"
+      }
+    ],
+    "team_events": []
+  },
+  {
+    "id": "5ac179f2ef6c1d0c91ebfde4",
+    "name": "bald AF",
+    "coach": {
+      "id": "5aa9fffed5bc3173f19ee91c",
+      "firstName": "fml",
+      "lastName": "fyl",
+      "emailAddress": "fml@brandonhessler.com",
+      "phoneNumber": "",
+      "minutesBeforeEvent": 10,
+      "receiveText": false,
+      "lastLoginDate": null,
+      "school": {
+        "id": "5a88cf0025acab41344f08af",
+        "schoolName": "Hogwarts",
+        "schoolContactName": "Albus Dumbledore",
+        "schoolContactPhone": "15554837751"
+      },
+      "name": "fml fyl"
+    },
+    "school": {
+      "id": "5a88feb125acab41344f08b8",
+      "schoolName": "Carbondale Area",
+      "schoolContactName": "Wade Wilson",
+      "schoolContactPhone": "15553991823"
+    },
+    "students": [],
+    "team_events": []
+  },
+  {
+    "id": "5ac2c4a80e69891dd01b8ebd",
+    "name": "KylesTeam",
+    "coach": {
+      "id": "5a96f47288e18fa76c208799",
+      "firstName": "Kyle",
+      "lastName": "Hughes5",
+      "emailAddress": "kyle.hughes@gmail.com",
+      "phoneNumber": "+11111111111",
+      "minutesBeforeEvent": 10,
+      "receiveText": false,
+      "lastLoginDate": null,
+      "school": {
+        "id": "5a88d02425acab41344f08b1",
+        "schoolName": "Crestwood",
+        "schoolContactName": "Natalia Romanova",
+        "schoolContactPhone": "15559948374"
+      },
+      "name": "Kyle Hughes5"
+    },
+    "school": {
+      "id": "5a88d70225acab41344f08b4",
+      "schoolName": "Wilkes-Barre Area",
+      "schoolContactName": "Reed Richards",
+      "schoolContactPhone": "15559382347"
+    },
+    "students": [],
+    "team_events": []
+  }
+]

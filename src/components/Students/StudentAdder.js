@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
-import {MuiThemeProvider, AppBar, TextField} from 'material-ui';
-import Button from '../../elements/CustomButton/CustomButton';
-import {Grid, Row, Col, Panel} from 'react-bootstrap';
+import {MuiThemeProvider, AppBar, TextField, RaisedButton, FontIcon} from 'material-ui';
+import {Grid, Row, Col} from 'react-bootstrap';
 
-import ReactTable from 'react-table';
-import SchoolSelector from "../Schools/SchoolSelector";
 import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
 import constants from "../../utils/constants";
 import Validator from "../../utils/validator";
@@ -38,8 +35,6 @@ class StudentAdder extends Component {
         body.lastName = this.state.lastName;
         body.emailAddress = this.state.emailAddress;
 
-        console.log(this.state.selectedSchool);
-
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/addUser/?userType=STUDENT&schoolID=' + _this.state.selectedSchool.id, 'POST', constants.useCredentials(), body, true).then(function (result) {
@@ -48,21 +43,24 @@ class StudentAdder extends Component {
                 lastName: "",
                 emailAddress: "",
                 selectedSchool: undefined
+            }, () => {
+                _this.props.addNotification(<div><b>{body.firstName + ' ' + body.lastName}</b> has been created.</div>, 'success');
+                _this.props.updateTable();
             });
 
-            alert(result.body);
+            // alert(result.body);
         }).catch(function (error) {
-            alert(error.message);
+            _this.props.addNotification(<div><b>{body.firstName}</b> could not be created because: <em>{error.message}</em></div>, 'error');
         });
     }
 
     validateStudentForm() {
         var errors = {};
 
-        if(!this.state.firstName || this.state.firstName.trim() === "") {
+        if(this.state.firstName.trim() === "") {
             errors.firstNameError = "First name is required";
         }
-        if(!this.state.lastName || this.state.lastName.trim() === "") {
+        if(this.state.lastName.trim() === "") {
             errors.lastNameError = "Last name is required";
         }
 
@@ -87,7 +85,7 @@ class StudentAdder extends Component {
         return (
             <MuiThemeProvider>
                 <div style={{textAlign: 'center'}}>
-                    <AppBar showMenuIconButton={false} title="Register Student"/>
+                    <AppBar showMenuIconButton={false} title="Register Student" style={{zIndex: 10}}/>
                     <Grid>
                         <Row className="show-grid" style={{textAlign:'center'}}>
                             <Col xs={7} md={3}>
@@ -131,6 +129,7 @@ class StudentAdder extends Component {
                                     name={"school"}
                                     labelText={"School"}
                                     hintText={"Select School"}
+                                    errorText={this.state.errors.schoolError}
                                     selected={this.state.selectedSchool}
                                     endpoint={"/sweng500/getSchools"}
                                     sortKey={"schoolName"}
@@ -141,10 +140,10 @@ class StudentAdder extends Component {
                         </Row>
                         <Row className="show-grid">
                             <Col sm={6} style={{maxWidth: 200}}>
-                                <Button fill block bsStyle="info" onClick={this.validateStudentForm}>Confirm</Button>
+                                <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} label="Cancel" onClick={event => {this.props.togglePanel("")} } />
                             </Col>
                             <Col sm={6} style={{maxWidth: 200}}>
-                                <Button fill block bsStyle="danger" onClick={event => {this.props.togglePanel("")} }>Cancel</Button>
+                                <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} onClick={this.validateStudentForm} label="Confirm"/>
                             </Col>
                         </Row>
                     </Grid>

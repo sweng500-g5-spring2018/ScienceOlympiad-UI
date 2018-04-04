@@ -31,6 +31,11 @@ import MockAdapter from 'axios-mock-adapter';
 
 describe('Event Component Tests', function () {
 
+    //TODO: REMOVE IF U WANT TO SEE CONSOLE LOGS...
+    var consoleSpy = sinon.spy();
+    console.log = consoleSpy;
+    console.error = consoleSpy;
+
     const notify = sinon.spy();
     const judgeJson = {
         "status": 200,

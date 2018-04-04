@@ -1,78 +1,59 @@
 import React, {Component} from 'react';
-import {MuiThemeProvider, Dialog, Popover, Menu, MenuItem, RaisedButton} from 'material-ui';
-import Button from '../../elements/CustomButton/CustomButton';
-import {Grid, Row, Col, Panel, PanelGroup} from 'react-bootstrap';
+import {MuiThemeProvider} from 'material-ui';
 
-import ReactTable from 'react-table';
-import StudentAdder from "../../components/Students/StudentAdder";
-import TeamAdder from "../../components/Teams/TeamAdder";
+import TeamViewer from "../../components/Teams/TeamViewer";
+import StudentTeamCreator from "./StudentTeamCreator";
+import {style} from "../../variables/Variables";
+
+import NotificationSystem from 'react-notification-system';
 
 class TeamManagement extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            popOverOpen: false,
-            addPanel: ""
-        };
+            tableUpdateToggler: false,
+            _notificationSystem: null
+        }
 
-        this.handleAddClick = this.handleAddClick.bind(this);
-        this.toggleAdd = this.toggleAdd.bind(this);
+        this.updateTable = this.updateTable.bind(this);
+        this.addNotification = this.addNotification.bind(this);
     }
 
-    handleAddClick(event) {
-        event.preventDefault();
-
+    updateTable() {
         this.setState({
-            popOverOpen: true,
-            anchorEl: event.currentTarget
-        });
+            tableUpdateToggler: !this.state.tableUpdateToggler
+        })
     }
 
-
-    toggleAdd(type) {
-        this.setState({popOverOpen: false, addPanel: type});
+    addNotification(message, level, position, autoDismiss) {
+        if(this.state._notificationSystem) {
+            this.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-info"></span>),
+                message: (
+                    <div>
+                        {message}
+                    </div>
+                ),
+                level: level ? level : 'info',
+                position: position ? position : 'tr',
+                autoDismiss: autoDismiss ? autoDismiss : 5,
+            });
+        }
     }
 
+    componentDidMount() {
+        this.setState({_notificationSystem: this.refs.notificationSystem});
+    }
     render() {
         return (
             <MuiThemeProvider>
-                <div className="content">
-                    <Button fill bsStyle="info" onClick={this.handleAddClick}>Add Student/Team</Button>
-                    <Popover
-                        open={this.state.popOverOpen}
-                        anchorEl={this.state.anchorEl}
-                        anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                        targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                        onRequestClose={ () => {this.setState({popOverOpen: false})}}
-                    >
-                        <Menu>
-                            <MenuItem primaryText="Add Student" onClick={ () => this.toggleAdd("student")}/>
-                            <MenuItem primaryText="Add Team" onClick={ () => this.toggleAdd("team")}/>
-                        </Menu>
-                    </Popover>
-                    <PanelGroup
-                        id="add-collapsible-panel-group"
-                        accordion
-                        activeKey={this.state.addPanel}
-                        onSelect={() => {}}
-                        key="add-collapsible-panel-group"
-                    >
-                        <Panel id="add-user-collapsible-panel" eventKey={"student"} style={{border: 0}}>
-                            <Panel.Body collapsible>
-                                <br />
-                                <StudentAdder togglePanel={this.toggleAdd}/>
-                            </Panel.Body>
-                        </Panel>
-                        <Panel id="add-team-collapsible-panel" eventKey={"team"} style={{border:0}}>
-                            <Panel.Body collapsible>
-                                <TeamAdder togglePanel={this.toggleAdd}/>
-                            </Panel.Body>
-                        </Panel>
-                    </PanelGroup>
+                <div className="content" style={{textAlign: 'center'}}>
+                    <NotificationSystem ref="notificationSystem" style={style}/>
+                    <StudentTeamCreator updateTable={this.updateTable} addNotification={this.addNotification}/>
+                    <TeamViewer updateTable={this.updateTable} tableUpdateToggler={this.state.tableUpdateToggler} addNotification={this.addNotification} />
                 </div>
             </MuiThemeProvider>
-
         )
     }
 
