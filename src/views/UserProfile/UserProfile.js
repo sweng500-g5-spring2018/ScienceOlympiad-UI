@@ -17,7 +17,7 @@ import AppBar from 'material-ui/AppBar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import PasswordField from 'material-ui-password-field';
 
-class UserProfile extends React.Component {
+class UserProfile extends Component {
 
     constructor(props) {
         super(props);
@@ -29,11 +29,12 @@ class UserProfile extends React.Component {
         this.notify = this.notify.bind(this);
 
         this.state = {
-            user : {},
+            user : {firstName: "", lastName: "", phoneNumber: "", receiveText: false, minutesBeforeEvent: "0"},
             _notificationSystem : null,
+            password: "",
             currentPassword : "",
             newPassword : "",
-            confirmNewPassword : "",
+            confirmPassword : "",
             imageUrl : "",
             desc : "",
             code: 0
@@ -59,16 +60,21 @@ class UserProfile extends React.Component {
         })
         //here we will get the user type
         const userType = AuthService.getUserRole();
+
         if (userType === "ADMIN") {
             this.setState({imageUrl : "https://telegram.org/file/811140509/b45/dQTLEwKZ9gs.22232.gif/4580677d940852f30e"});
         } else if (userType === "COACH") {
-            this.setState({imageUrl : "https://baseballmomstuff.com/wp-content/uploads/2016/02/coach-cartoon.jpg"});
-            this.setState({desc : "School: " + this.state.user.school});
+            this.setState({
+                imageUrl : "https://baseballmomstuff.com/wp-content/uploads/2016/02/coach-cartoon.jpg",
+                desc : "School: " + this.state.user.school
+            });
         } else if (userType === "JUDGE") {
             this.setState({imageUrl : "https://www.how-to-draw-funny-cartoons.com/image-files/cartoon-judge-010.jpg"});
         } else if (userType === "STUDENT") {
-            this.setState({imageUrl : "https://classroomclipart.com/images/gallery/Clipart/Science/TN_female-student-holding-flask-and-test-tube-in-science-lab-science-clipart.jpg"});
-            this.setState({desc : "Coach: " + this.state.user.coach});
+            this.setState({
+                imageUrl : "https://classroomclipart.com/images/gallery/Clipart/Science/TN_female-student-holding-flask-and-test-tube-in-science-lab-science-clipart.jpg",
+                desc : "Coach: " + this.state.user.coach
+            });
         }
     }
 
@@ -107,66 +113,52 @@ class UserProfile extends React.Component {
 
             body.password = this.state.password;
 
-            //update the user, first clean the phone number
-            var cleanPhoneNumber = this.cleanPhone(this.state.user.phoneNumber);
-
-            // this.state.user.phoneNumber = cleanPhoneNumber;
-            var tempUser = _this.state.user;
-            tempUser.phoneNumber = cleanPhoneNumber;
-            _this.setState({user : tempUser}); //, () => {}
-
             //check to ensure the password matches
             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate', 'POST',
-                constants.useCredentials(), body).then(function (result) {
+                constants.useCredentials(), body, true).then(function (result) {
 
-                body.user = _this.state.user;
+                //Create deep copy of user object
+                body.user = JSON.parse(JSON.stringify(_this.state.user));
 
-                if (result.status === 200) {
-                    //submit the http request
+                //update the user, first clean the phone number
+                body.user.phoneNumber = _this.cleanPhone(body.user.phoneNumber);
 
-                    _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser', 'POST', constants.useCredentials(), body.user).then(function (result) {
+                  _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/updateUser', 'POST', constants.useCredentials(), body.user, true).then(function (result) {
 
-                        if (result.status === 200) {
-                            //use the app.notify to put something on the screen
-                            _this.notify(
-                                "Profile Successfully Updated",
-                                "success",
-                                "tc",
-                                5
-                            );
-                            document.getElementById('password').value='';
-                            _this.setState({code : 13})
-                        }else if(result.status === 409) {
-                            _this.notify(
-                                "Could not update",
-                                "error",
-                                "tc",
-                                10
-                            );
-                            _this.setState({code : 12})
-                        }
+                      _this.notify(
+                          "Profile Successfully Updated",
+                          "success",
+                          "tc",
+                          5
+                      );
 
-                    }).catch(function (error) {
-                        console.log(error);
-                        _this.setState({code : 11})
-                    })
-                } else if(result.status === 401) {
-                    _this.notify(
-                        "Incorrect password",
-                        "error",
-                        "tc",
-                        10
-                    );
-                    this.setState({code : 2})
-                }
+                      _this.setState({
+                          password: ""
+                      })
 
+                  }).catch(function (error) {
+                      console.log(error);
+                      _this.notify(
+                          "Could not update profile at this time. Please try again later.",
+                          "error",
+                          "tc",
+                          5
+                      );
+                    _this.setState({code : 11});
+                  })
             }).catch(function (error) {
                 console.log(error);
+                _this.notify(
+                    "Please provide the correct password in order to update your profile.",
+                    "error",
+                    "tc",
+                    5
+                )
                 _this.setState({code : 14})
             })
         } else {
             _this.notify(
-                "Enter your current password",
+                "Please enter your current password",
                 "error",
                 "tc",
                 5
@@ -192,7 +184,7 @@ class UserProfile extends React.Component {
         var _this = this;
 
         //check to ensure that current password is filled in
-            if (this.state.currentPassword !== "" && this.state.newPassword !== "" && this.state.confirmPassword !== "") {
+        if (this.state.currentPassword !== "" && this.state.newPassword !== "" && this.state.confirmPassword !== "") {
 
             //check to make sure current password is correct
             if (this.state.newPassword === this.state.confirmPassword) {
@@ -205,61 +197,45 @@ class UserProfile extends React.Component {
                     _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/validate', 'POST',
                         constants.useCredentials(), body).then(function (result) {
 
-                        if (result.status === 200) {
+                        //then change the password
+                        body.password = _this.state.newPassword;
 
-                            //then change the password
-                            body.password = _this.state.newPassword;
+                        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/changePassword', 'POST',
+                            constants.useCredentials(), body).then(function (result) {
 
-                            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/changePassword', 'POST',
-                                constants.useCredentials(), body).then(function (result) {
-
-                                if (result.status === 200) {
-                                    _this.notify(
-                                        "Password Changed",
-                                        "success",
-                                        "tc",
-                                        5
-                                    );
-                                    document.getElementById('currentPassword').value='';
-                                    document.getElementById('newPassword').value='';
-                                    document.getElementById('confirmPassword').value='';
-                                    _this.setState({code : 8});
-                                }else if(result.status === 409) {
-                                    _this.notify(
-                                        "Could not update",
-                                        "error",
-                                        "tc",
-                                        10
-                                    );
-                                    _this.setState({code : 9})
-                                }
-
-                            }).catch(function (error) {
-                                console.log(error);
-                                _this.setState({code : 10})
-                            })
-                        } else {
                             _this.notify(
-                                "Incorrect current password",
+                                "Password changed successfully.",
+                                "success",
+                                "tc",
+                                5
+                            );
+
+                            _this.setState({currentPassword: "", newPassword: "", confirmPassword: "", code: 8})
+
+                        }).catch(function (error) {
+                            console.log(error);
+
+                            _this.notify(
+                                "Could not update at this time.  Please try again later.",
                                 "error",
                                 "tc",
-                                10
+                                7
                             );
-                            _this.setState({code : 6})
-                        }
+                           _this.setState({code : 10})
+                        })
                     }).catch(function (error) {
                         _this.notify(
-                            "Incorrect current password",
+                            "Incorrect current password.  Please provide your current password",
                             "error",
                             "tc",
-                            10
+                            5
                         );
+
                         _this.setState({code : 7})
-                        console.log(error);
                     })
                 } else {
                     //put up a notify
-                    _this.notify(
+                    this.notify(
                         "ERROR: Your password must be 8 or more characters, contain capital letters, lower case letters, and at least one number.",
                         "error",
                         "tc",
@@ -269,7 +245,7 @@ class UserProfile extends React.Component {
                 }
             } else {
                 //put up a notify
-                _this.notify(
+                this.notify(
                     "New passwords do not match",
                     "error",
                     "tc",
@@ -277,11 +253,16 @@ class UserProfile extends React.Component {
                 );
                 this.setState({code : 3})
             }
-
+        }
+        else {
+            this.notify(
+                "Please enter your current password, a new password, and confirm the new password.",
+                "error",
+                "tc",
+                7
+            );
         }
     }
-
-
 
     render() {
         return (
@@ -289,7 +270,7 @@ class UserProfile extends React.Component {
                 <NotificationSystem ref="notificationSystem" style={style}/>
                 <MuiThemeProvider>
                     <Grid fluid>
-                        <Row classname="show-grid">
+                        <Row className="show-grid">
                             <Col md={4}>
                                 <UserCard
                                     bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
@@ -302,18 +283,18 @@ class UserProfile extends React.Component {
                                 />
                             </Col>
                         </Row>
-                        <Row classname="show-grid">
+                        <Row className="show-grid">
                             <Col md={12}>
                                 <AppBar showMenuIconButton={false} title="User Profile"/>
                             </Col>
                         </Row>
-                        <Row classname="show-grid">
+                        <Row className="show-grid">
                             <Col md={4}>
                                 <TextField
                                     name="fname"
                                     hintText="First name"
                                     floatingLabelText="First name"
-                                    onChange = {(event, newValue) => {var ryanRocks = this.state.user;
+                                    onChange = {(event, newValue) => { var ryanRocks = this.state.user;
                                         ryanRocks.firstName = event.target.value;
                                         this.setState({user : ryanRocks})}}
                                     value={this.state.user.firstName}
@@ -331,7 +312,7 @@ class UserProfile extends React.Component {
                                 />
                             </Col>
                         </Row>
-                        <Row classname="show-grid">
+                        <Row className="show-grid">
                             <Col md = {4}>
                                 <TextField
                                     name="phone"
@@ -360,7 +341,7 @@ class UserProfile extends React.Component {
                                 </TextField>
                             </Col>
                         </Row>
-                        <Row classname="show-grid">
+                        <Row className="show-grid">
                             <Col md={4}>
 
                             </Col>
@@ -375,7 +356,7 @@ class UserProfile extends React.Component {
                                 />
                             </Col>
                         </Row>
-                        <Row classname="show-grid">
+                        <Row className="show-grid">
                             <Col md={4}>
                                 <input
                                     name="receiveText"
@@ -401,15 +382,15 @@ class UserProfile extends React.Component {
                                 </Button>
                             </Col>
                         </Row>
-                        <Row classname={"show-grid"}>
+                        <Row className={"show-grid"}>
                             <label>
 
                             </label>
                         </Row>
-                        <Row classname={"show-grid"}>
+                        <Row className={"show-grid"}>
                             <AppBar showMenuIconButton={false} title="Change Password"/>
                         </Row>
-                        <Row classname={"show-grid"}>
+                        <Row className={"show-grid"}>
                             <Col md={12}>
                                 <PasswordField
                                     name="currentPassword"
@@ -421,7 +402,7 @@ class UserProfile extends React.Component {
                                 />
                             </Col>
                         </Row>
-                        <Row classname={"show-grid"}>
+                        <Row className={"show-grid"}>
                             <Col md={12}>
                                 <PasswordField
                                     name="newPassword"
@@ -433,7 +414,7 @@ class UserProfile extends React.Component {
                                 />
                             </Col>
                         </Row>
-                        <Row classname={"show-grid"}>
+                        <Row className={"show-grid"}>
                             <Col md={12}>
                                 <PasswordField
                                     name="confirmPassword"
@@ -445,7 +426,7 @@ class UserProfile extends React.Component {
                                 />
                             </Col>
                         </Row>
-                        <Row classname={"show-grid"}>
+                        <Row className={"show-grid"}>
                             <Col md={6}>
                                 <Button
                                     bsStyle="info"
