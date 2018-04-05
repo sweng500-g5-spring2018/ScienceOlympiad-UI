@@ -234,7 +234,6 @@ class TeamViewer extends Component {
                 this.removeStudentFromTeam(this.state.selectedStudent, this.state.selectedTeam);
                 break;
             case 'DELETESTUDENT':
-                console.log("WILL DELETE STUDENT YO");
                 this.deleteStudent(this.state.selectedStudent);
                 break;
         }
