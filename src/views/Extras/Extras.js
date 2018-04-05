@@ -13,6 +13,7 @@ import NotificationSystem from 'react-notification-system';
 import {style} from "../../variables/Variables";
 import AppBar from 'material-ui/AppBar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Sudoku from 'sudoku-react-component';
 
 class Extras extends React.Component {
 
@@ -147,12 +148,12 @@ class Extras extends React.Component {
                 <MuiThemeProvider>
                     <Grid fluid>
                         <Row classname="show-grid">
-                            <Col md={12}>
+                            <Col md={8}>
                                 <AppBar showMenuIconButton={false} title="Test Email"/>
                             </Col>
                         </Row>
                         <Row classname="show-grid">
-                            <Col md={6}>
+                            <Col md={4}>
                                 <TextField
                                     name="emailAddress"
                                     hintText="Email Address"
@@ -161,7 +162,7 @@ class Extras extends React.Component {
                                     value={this.state.emailAddress}
                                 />
                             </Col>
-                            <Col md={6}>
+                            <Col md={4}>
                                 <Button
                                     bsStyle="info"
                                     pullRight
@@ -174,12 +175,12 @@ class Extras extends React.Component {
                             </Col>
                         </Row>
                         <Row classname="show-grid">
-                            <Col md={12}>
+                            <Col md={8}>
                                 <AppBar showMenuIconButton={false} title="Test Text"/>
                             </Col>
                         </Row>
                         <Row classname="show-grid">
-                            <Col md = {6}>
+                            <Col md = {4}>
                                 <TextField
                                     name="phone"
                                     floatingLabelText="Phone number"
@@ -190,7 +191,7 @@ class Extras extends React.Component {
                                                value={this.state.phoneNumber}/>
                                 </TextField>
                             </Col>
-                            <Col md={6}>
+                            <Col md={4}>
                                 <Button
                                     bsStyle="info"
                                     pullRight
@@ -203,22 +204,14 @@ class Extras extends React.Component {
                             </Col>
                         </Row>
                         <Row classname="show-grid">
-                            <Col md={12}>
+                            <Col md={8}>
                                 <AppBar showMenuIconButton={false} title="Easter Egg"/>
                             </Col>
                         </Row>
                         <Row classname="show-grid">
-                            <Col md={12}>
-                                <Button
-                                    bsStyle="info"
-                                    pullRight
-                                    fill
-                                    type="submit"
-                                    onClick={this.goToEasterEgg}
-                                >
-                                    Easter Egg
-                                </Button>
-                            </Col>
+                            <div id='sudoku-container' style={{width : '70%', paddingLeft:'10%', paddingRight:'0%'}}>
+                                <Sudoku />
+                            </div>
                         </Row>
                     </Grid>
                 </MuiThemeProvider>
