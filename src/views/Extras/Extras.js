@@ -137,10 +137,6 @@ class Extras extends React.Component {
         })
     }
 
-    goToEasterEgg() {
-        //This is where I want to launch the easter egg
-    }
-
     render() {
         return (
             <div className="content">
@@ -149,7 +145,8 @@ class Extras extends React.Component {
                     <Grid fluid>
                         <Row classname="show-grid">
                             <Col md={8}>
-                                <AppBar showMenuIconButton={false} title="Test Email"/>
+                                <AppBar showMenuIconButton={true} title="Test Email"/>
+                                {/*https://react-bootstrap.github.io/components/panel/*/}
                             </Col>
                         </Row>
                         <Row classname="show-grid">
