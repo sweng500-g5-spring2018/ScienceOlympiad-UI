@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal,PageHeader, Panel, Grid, Col, Row,} from 'react-bootstrap';
+import {Modal, PageHeader, Panel, Grid, Col, Row,} from 'react-bootstrap';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -23,6 +23,7 @@ import {
     TableRowColumn,
 } from 'material-ui/Table';
 import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
+import AuthService from "../../utils/AuthService";
 
 
 class EventDetail extends Component {
@@ -54,12 +55,12 @@ class EventDetail extends Component {
             judgesDetail: {},
 
             //teams
-            teamModal : false,
+            teamModal: false,
             //custom dropdown returns an object
-            selectedTeamValue : null,
-            teamSelectorError:'',
+            selectedTeamValue: null,
+            teamSelectorError: '',
             teamsDetail: {},
-            loadAddTeam:true
+            loadAddTeam: true
         };
 
     }
@@ -82,7 +83,18 @@ class EventDetail extends Component {
 
     componentDidMount() {
         var _this = this;
-
+        //hide things from non admins and coaches just for now to test
+        let modifyRoles = ['COACH', 'ADMIN'];
+        let allowModify = AuthService.isUserRoleAllowed(modifyRoles);
+        if (allowModify) {
+            _this.setState({
+                showRegisterBtn: true
+            });
+        } else {
+            _this.setState({
+                showRegisterBtn: false
+            });
+        }
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + this.state.eventId, "get", constants.useCredentials(), null, true).then(function (result) {
             const start = _this.formatTimeString(new Date(result.body.startTime));
             const endT = _this.formatTimeString(new Date(result.body.endTime));
@@ -136,29 +148,30 @@ class EventDetail extends Component {
     }
 
     closeTeamModal() {
-        this.setState({loadAddTeam:true,teamModal:false,teamSelectorError:''})
+        this.setState({loadAddTeam: true, teamModal: false, teamSelectorError: ''})
     }
 
     selectedTeam(value) {
-        this.setState({selectedTeamValue:value})
+        this.setState({selectedTeamValue: value})
     }
 
     registerTeam() {
         var _this = this;
         //custom dropdown stores the entire object so just get the idea
-        if(_this.state.selectedTeamValue === null) {
-            _this.setState({teamSelectorError:'Please select a team'});
+        if (_this.state.selectedTeamValue === null) {
+            _this.setState({teamSelectorError: 'Please select a team'});
         } else {
-            _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + _this.state.eventId+"/"+_this.state.selectedTeamValue.id, "POST", constants.useCredentials(), null, true).then(function (judgeResult) {
-                _this.setState({loadAddTeam:true,teamModal:false,teamSelectorError:''})
-                _this.props.addNotification("Success, the team has been registered ","success","tc",6);
+            _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + _this.state.eventId + "/" + _this.state.selectedTeamValue.id, "POST", constants.useCredentials(), null, true).then(function (judgeResult) {
+                _this.setState({loadAddTeam: true, teamModal: false, teamSelectorError: ''})
+                _this.props.addNotification("Success, the team has been registered ", "success", "tc", 6);
 
             }).catch(function (error) {
-                _this.setState({teamSelectorError:'Team already registered'});
+                _this.setState({teamSelectorError: 'Team already registered'});
             })
 
         }
     }
+
     renderIfEventFound() {
         if (this.state.eventDetail !== null && Object.keys(this.state.eventDetail).length !== 0) {
 
@@ -303,12 +316,26 @@ class EventDetail extends Component {
     }
 
     render() {
-        let modalTitleBar= <AppBar
+        let modalTitleBar = <AppBar
             iconElementRight={<FlatButton label="Close"/>}
             showMenuIconButton={false}
             onRightIconButtonClick={(event) => this.closeTeamModal()}
             title="Register a team to an event"
         />
+
+        let cardButtons=null;
+        //only show register buttons to admins and coaches
+        if (this.state.showRegisterBtn) {
+            cardButtons = <div><RaisedButton icon={<FontIcon className="pe-7s-angle-left-circle"/>} primary={true}
+                                        label="Go back to events"
+                                        onClick={event => this.props.showEvents(event)}/>&nbsp;&nbsp;
+                <RaisedButton icon={<FontIcon className="pe-7s-study"/>} primary={true} label="Register a Team"
+                          onClick={event => this.showTeamModal(event)}/></div>
+
+        } else {
+            cardButtons =   <RaisedButton icon={<FontIcon className="pe-7s-angle-left-circle" />} primary={true} label="Go back to events"
+                                          onClick={event => this.props.showEvents(event)}/>
+        }
         return (
             <div className="content">
 
@@ -321,10 +348,7 @@ class EventDetail extends Component {
                                     // title={this.state.eventDetail.eventName}
                                     category={
                                         <div>
-                                            <RaisedButton primary={true} label="Go back to events"
-                                                          onClick={event => this.props.showEvents(event)}/> &nbsp;&nbsp;
-                                            <RaisedButton primary={true} label="Register a Team"
-                                                          onClick={event => this.showTeamModal(event)}/>
+                                            {cardButtons}
                                         </div>}
                                     content={
                                         <Loader color="#3498db" loaded={this.state.loading}>
@@ -342,27 +366,28 @@ class EventDetail extends Component {
                         <Modal.Body>
                             <Grid>
                                 <Row>
-                                <Col xs={7} md={3}>
-                                    <CustomDropdown
-                                        name={"team"}
-                                        labelText={"Team"}
-                                        hintText={"Select team"}
-                                        selected={this.state.selectedTeamValue}
-                                        endpoint={"/sweng500/getTeamsByUser"}
-                                        sortKey={"name"}
-                                        textKeys={["name"]}
-                                        selectedValue={this.selectedTeam}
-                                        errorText={this.state.teamSelectorError}
-                                    />
-                                </Col>
-                            </Row>
+                                    <Col xs={7} md={3}>
+                                        <CustomDropdown
+                                            name={"team"}
+                                            labelText={"Team"}
+                                            hintText={"Select team"}
+                                            selected={this.state.selectedTeamValue}
+                                            endpoint={"/sweng500/getTeamsByUser"}
+                                            sortKey={"name"}
+                                            textKeys={["name"]}
+                                            selectedValue={this.selectedTeam}
+                                            errorText={this.state.teamSelectorError}
+                                        />
+                                    </Col>
+                                </Row>
                             </Grid>
                         </Modal.Body>
 
                         <Modal.Footer>
                             <Loader loaded={this.state.loadAddTeam}></Loader>
-                            <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true} label="Register Team"
-                                                                                            onClick={event => this.registerTeam()}/>
+                            <RaisedButton icon={<FontIcon className="pe-7s-like2"/>} primary={true}
+                                          label="Register Team"
+                                          onClick={event => this.registerTeam()}/>
                         </Modal.Footer>
                     </Modal>
                 </MuiThemeProvider>
@@ -373,7 +398,7 @@ class EventDetail extends Component {
     }
 
     showTeamModal(event) {
-        this.setState({teamModal:true})
+        this.setState({teamModal: true})
     }
 }
 

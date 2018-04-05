@@ -740,19 +740,19 @@ class Events extends Component {
                 if (this.state.showDeletebtn) {
                     this.state.events[value].status = "edit";
                     this.state.events[value].menuActions = <div>
-                        <RaisedButton
+                        <RaisedButton icon={<FontIcon className="pe-7s-note2" />}
                             primary={true} label="View Details"
                             onClick={(event) => this.eventDetails(this.state.events[value].id)}/>&nbsp;&nbsp;
-                        <RaisedButton
+                        <RaisedButton icon={<FontIcon className="pe-7s-edit" />}
                             primary={true} label="Edit"
                             onClick={this.createNewEvent.bind(this, this.state.events[value])}/>&nbsp;&nbsp;
-                        <RaisedButton
+                        <RaisedButton icon={<FontIcon className="pe-7s-trash" />}
                             secondary={true} label="Delete"
                             onClick={this.confirmEventDelete.bind(this, this.state.events[value])}/>
                     </div>
                 } else {
                     this.state.events[value].menuActions = <div>
-                        <RaisedButton
+                        <RaisedButton icon={<FontIcon className="pe-7s-note2" />}
                             primary={true} label="View Details"
                             onClick={(event) => this.eventDetails(this.state.events[value].id)}/></div>
                 }
@@ -846,7 +846,7 @@ class Events extends Component {
         if (this.state.showDeletebtn) {
             createEventBtn = <Row className="show-grid">
                 <Col md={4} mdOffset={4}>
-                    <RaisedButton primary={true} label="Create New Event"
+                    <RaisedButton icon={<FontIcon className="pe-7s-display1" />} primary={true} label="Create New Event"
                                   onClick={this.createNewEvent}/>
                     <br/>
                 </Col>
