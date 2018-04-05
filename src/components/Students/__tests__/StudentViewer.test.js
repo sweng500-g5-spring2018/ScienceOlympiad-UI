@@ -17,8 +17,16 @@ import ReactTable from 'react-table';
 import StudentViewer from '../StudentViewer';
 import HttpRequest from "../../../adapters/httpRequest";
 
+//MOCK AXIOS
+/* Test Helper functions */
+import MockAdapter from 'axios-mock-adapter';
+import axios from 'axios';
+import constants from '../../../utils/constants';
+
+
 describe('StudentViewer Component Tests', function () {
 
+    var axiosMock;
     var teamJson;
     var props;
 
@@ -30,6 +38,7 @@ describe('StudentViewer Component Tests', function () {
     //Set up test data before running any tests
     beforeAll(function () {
         teamJson = require('../../../../test/data/teams/getAllTeamsResponseData');
+        axiosMock = new MockAdapter(axios);
 
         props = {
             addNotification: notifySpy,
@@ -47,7 +56,7 @@ describe('StudentViewer Component Tests', function () {
     });
 
     // Test 1
-    test('Should render StudentViewer with expected children components', async () => {
+    test('Should render StudentViewer with expected children components and column filter methods', async () => {
         sandbox.stub(HttpRequest, 'httpRequest').rejects("GOODBYE");
 
         const component = shallow(<StudentViewer {... props} teamProp={teamJson[1]}/>);
@@ -60,23 +69,24 @@ describe('StudentViewer Component Tests', function () {
         expect(component.find(Button)).to.be.length(1);
         expect(component.find(RaisedButton)).to.be.length(2);
 
+        component.instance().columns2[0].filterMethod({value: 'firstName'},[]);
+        component.instance().columns2[1].filterMethod({value: 'lastName'},[]);
+        component.instance().columns2[2].filterMethod({value: 'emailAddress'},[]);
     });
 
-    // // Test 1
-    // test('Should render StudentViewer without SelectField because no students can be added', async () => {
-    //     sandbox.stub(HttpRequest, 'httpRequest').rejects("GOODBYE");
-    //
-    //     const component = shallow(<StudentViewer {... props} teamProp={teamJson[1]}/>);
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(component.find(MuiThemeProvider)).to.be.length(1);
-    //     expect(component.find(ReactTable)).to.be.length(1);
-    //     expect(component.find(Panel)).to.be.length(1);
-    //     expect(component.find(Button)).to.be.length(1);
-    //     expect(component.find(RaisedButton)).to.be.length(2);
-    //
-    // });
+    // Test 1
+    test('Should render StudentViewer without SelectField because no students can be added', async () => {
+        // axiosMock.onGet(constants.getServerUrl() + '/sweng500/updateStudentsInTeam').reply(happyResponse.status, happyResponse.data);
+
+        sandbox.stub(HttpRequest, 'httpRequest').rejects("GOODBYE");
+
+        const component = shallow(<StudentViewer {... props} teamProp={teamJson[1]}/>);
+        await helper.flushPromises();
+        component.update();
+
+
+
+    });
 
     // // Test 2
     // test('Should handle field changes', async () => {

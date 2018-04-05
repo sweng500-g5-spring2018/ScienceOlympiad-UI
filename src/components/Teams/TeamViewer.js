@@ -243,15 +243,14 @@ class TeamViewer extends Component {
     addButtonsToTeam(team) {
         team.menuActions =
             <div>
-                <RaisedButton icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => {this.deleteTeamButtonClicked(team)}} label="Delete Team"/>
+                <RaisedButton style={{minWidth: '30%'}} icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => {this.deleteTeamButtonClicked(team)}} />
             </div>;
 
         for(let studIndex in team.students) {
             team.students[studIndex].menuActions =
-                <div>
-                    <RaisedButton icon={<FontIcon className="pe-7s-less" />} backgroundColor="#FFC300" onClick={event => { this.removeStudentFromTeamButtonClicked(team.students[studIndex], team) }} label="Remove"/>
-                    &nbsp;&nbsp;
-                    <RaisedButton icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => { this.deleteStudentClicked(team.students[studIndex])}} label="Delete"/>
+                <div >
+                    <RaisedButton style={{minWidth: '40%'}} icon={<FontIcon className="pe-7s-less" />} backgroundColor="#FFC300" onClick={event => { this.removeStudentFromTeamButtonClicked(team.students[studIndex], team) }} />
+                    <RaisedButton style={{minWidth: '40%'}} icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => { this.deleteStudentClicked(team.students[studIndex])}} />
                 </div>;
         }
     }
@@ -280,8 +279,6 @@ class TeamViewer extends Component {
                         expanded={this.state.expanded}
                         onExpandedChange={this.handleRowExpanded}
                         filterable
-                        defaultFilterMethod={(filter, row) =>
-                            String(row[filter.id]) === filter.value }
                         defaultPageSize={10}
                         className="-striped -highlight"
                         defaultSorted={[{id: "name"}]}
