@@ -14,6 +14,7 @@ import {style} from "../../variables/Variables";
 import AppBar from 'material-ui/AppBar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Sudoku from 'sudoku-react-component';
+import {Panel, PanelGroup} from 'react-bootstrap';
 
 class Extras extends React.Component {
 
@@ -22,15 +23,15 @@ class Extras extends React.Component {
 
         this.sendEmail = this.sendEmail.bind(this);
         this.sendText = this.sendText.bind(this);
-        this.goToEasterEgg = this.goToEasterEgg.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
 
         this.state = {
             user : {},
             _notificationSystem : null,
             emailAddress : "",
-            phoneNumber : ""
+            phoneNumber : "",
+            activeKey: '1'
         };
-
     }
 
     componentWillMount() {
@@ -71,6 +72,11 @@ class Extras extends React.Component {
             autoDismiss: autoDismiss ? autoDismiss : 10,
         });
     }
+
+    handleSelect(activeKey) {
+        this.setState({ activeKey });
+    }
+
 
     sendEmail(e) {
         var body = {};
@@ -143,73 +149,82 @@ class Extras extends React.Component {
                 <NotificationSystem ref="notificationSystem" style={style}/>
                 <MuiThemeProvider>
                     <Grid fluid>
-                        <Row classname="show-grid">
-                            <Col md={8}>
-                                <AppBar showMenuIconButton={true} title="Test Email"/>
-                                {/*https://react-bootstrap.github.io/components/panel/*/}
-                            </Col>
-                        </Row>
-                        <Row classname="show-grid">
-                            <Col md={4}>
-                                <TextField
-                                    name="emailAddress"
-                                    hintText="Email Address"
-                                    floatingLabelText="Email Address"
-                                    onChange={(event, newValue) => this.setState({emailAddress: newValue})}
-                                    value={this.state.emailAddress}
-                                />
-                            </Col>
-                            <Col md={4}>
-                                <Button
-                                    bsStyle="info"
-                                    pullRight
-                                    fill
-                                    type="submit"
-                                    onClick={this.sendEmail}
-                                >
-                                    Send Email
-                                </Button>
-                            </Col>
-                        </Row>
-                        <Row classname="show-grid">
-                            <Col md={8}>
-                                <AppBar showMenuIconButton={false} title="Test Text"/>
-                            </Col>
-                        </Row>
-                        <Row classname="show-grid">
-                            <Col md = {4}>
-                                <TextField
-                                    name="phone"
-                                    floatingLabelText="Phone number"
-                                    onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
-                                    value={this.state.phoneNumber}
-                                >
-                                    <InputMask mask="9 (999) 999-9999" maskChar="#"
-                                               value={this.state.phoneNumber}/>
-                                </TextField>
-                            </Col>
-                            <Col md={4}>
-                                <Button
-                                    bsStyle="info"
-                                    pullRight
-                                    fill
-                                    type="submit"
-                                    onClick={this.sendText}
-                                >
-                                    Send Text
-                                </Button>
-                            </Col>
-                        </Row>
-                        <Row classname="show-grid">
-                            <Col md={8}>
-                                <AppBar showMenuIconButton={false} title="Easter Egg"/>
-                            </Col>
-                        </Row>
-                        <Row classname="show-grid">
-                            <div id='sudoku-container' style={{width : '70%', paddingLeft:'10%', paddingRight:'0%'}}>
-                                <Sudoku />
-                            </div>
-                        </Row>
+                        <PanelGroup accordion
+                                    activeKey={this.state.activeKey}
+                                    onSelect={this.handleSelect}>
+                            <Panel id="email-panel" eventKey="1">
+                                <Panel.Heading  style={{backgroundColor: '#194287'}}>
+                                    <Panel.Title toggle style={{color: 'white'}}>
+                                        Test Email Functionality
+                                    </Panel.Title>
+                                </Panel.Heading>
+                                <Panel.Collapse>
+                                    <Panel.Body collapsible>
+                                        <TextField
+                                            name="emailAddress"
+                                            hintText="Email Address"
+                                            floatingLabelText="Email Address"
+                                            onChange={(event, newValue) => this.setState({emailAddress: newValue})}
+                                            value={this.state.emailAddress}
+                                        />
+                                        {    }
+                                        <Button
+                                            bsStyle="info"
+                                            fill
+                                            type="submit"
+                                            onClick={this.sendEmail}
+                                            style={{backgroundColor: '#194287', borderColor : '#194287'}}
+                                        >
+                                            Send Email
+                                        </Button>
+                                    </Panel.Body>
+                                </Panel.Collapse>
+                            </Panel>
+                            <Panel id="text-panel" eventKey="2">
+                                <Panel.Heading  style={{backgroundColor: '#194287'}}>
+                                    <Panel.Title toggle style={{color: 'white'}}>
+                                        Test SMS Texting Functionality
+                                    </Panel.Title>
+                                </Panel.Heading>
+                                <Panel.Collapse>
+                                    <Panel.Body collapsible>
+                                        <TextField
+                                            name="phone"
+                                            floatingLabelText="Phone number"
+                                            onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
+                                            value={this.state.phoneNumber}
+                                        >
+                                            <InputMask mask="9 (999) 999-9999" maskChar="#"
+                                                       value={this.state.phoneNumber}/>
+                                        </TextField>
+                                        {    }
+                                        <Button
+                                            bsStyle="info"
+                                            fill
+                                            type="submit"
+                                            onClick={this.sendText}
+                                            style={{backgroundColor: '#194287', borderColor : '#194287'}}
+                                        >
+                                            Send Text
+                                        </Button>
+                                    </Panel.Body>
+                                </Panel.Collapse>
+                            </Panel>
+                            <Panel id="egg-panel" eventKey="3">
+                                <Panel.Heading  style={{backgroundColor: '#194287'}}>
+                                    <Panel.Title toggle style={{color: 'white'}}>
+                                        Easter Egg
+                                    </Panel.Title>
+                                </Panel.Heading>
+                                <Panel.Collapse>
+                                    <Panel.Body collapsible>
+                                        <div id='sudoku-container' style={{width : '70%', paddingLeft:'10%', paddingRight:'0%'}}>
+                                            <Sudoku />
+                                        </div>
+                                    </Panel.Body>
+                                </Panel.Collapse>
+                            </Panel>
+                        </PanelGroup>
                     </Grid>
                 </MuiThemeProvider>
             </div>
