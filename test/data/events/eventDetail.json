@@ -1,0 +1,12 @@
+  {
+    "id": "5ac5175b0e6990ce65f873e9",
+    "startTime" : "2018-04-04 18:19:44.719Z",
+    "endTime" : "2018-04-04 18:19:44.719Z",
+    "eventDate" : "2018-04-04 18:19:44.719Z",
+    "room" : {
+      "roomName":"roomNAme",
+      "buildingID" : "5a9222c025ac8ff0785f4d58"
+    },
+    "description":"Test desc",
+    "eventName":"event name1"
+  }
