@@ -52,7 +52,7 @@ describe('Extras Component Tests', function () {
 
         expect(component.find(MuiThemeProvider)).to.have.length(1);
         expect(component.find(TextField)).to.have.length(2);
-        expect(component.find(Button)).to.have.length(3);
+        expect(component.find(Button)).to.have.length(2);
     });
 
     // // Test 2
