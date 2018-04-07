@@ -236,30 +236,23 @@ class TeamViewer extends Component {
     addButtonsToTeam(team) {
         team.menuActions =
             <div>
-                <RaisedButton style={{minWidth: '30%'}} icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => {this.deleteTeamButtonClicked(team)}} />
+                <RaisedButton style={{minWidth: '30%'}} icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={this.deleteTeamButtonClicked.bind(this, team) } />
             </div>;
 
         for(let studIndex in team.students) {
             team.students[studIndex].menuActions =
                 <div >
-                    <RaisedButton style={{minWidth: '40%'}} icon={<FontIcon className="pe-7s-less" />} backgroundColor="#FFC300" onClick={event => { this.removeStudentFromTeamButtonClicked(team.students[studIndex], team) }} />
-                    <RaisedButton style={{minWidth: '40%'}} icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => { this.deleteStudentClicked(team.students[studIndex])}} />
+                    <RaisedButton style={{minWidth: '40%'}} icon={<FontIcon className="pe-7s-less" />} backgroundColor="#FFC300" onClick={this.removeStudentFromTeamButtonClicked.bind(this, team.students[studIndex], team)} />
+                    <RaisedButton style={{minWidth: '40%'}} icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={this.deleteStudentClicked.bind(this, team.students[studIndex])} />
                 </div>;
         }
     }
 
     //Handling Row Expansion
-    handleRowExpanded(newExpanded, index, event) {
-        if(this.state.expanded[index]) {
-            this.setState({
-                expanded: {[index]: false}
-            })
-        } else {
-            this.setState({
-                // we override newExpanded, keeping only current selected row expanded
-                expanded: {[index]: true}
-            });
-        }
+    handleRowExpanded(newExpanded, index) {
+        this.setState({
+            expanded: {[index]: !this.state.expanded[index]}
+        })
     }
 
     render() {

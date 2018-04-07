@@ -23,6 +23,7 @@ import MockAdapter from 'axios-mock-adapter';
 import axios from 'axios';
 import constants from '../../../utils/constants';
 import AuthService from "../../../utils/AuthService";
+import StudentViewer from "../../Students/StudentViewer";
 
 describe('TeamViewer Component Tests', function () {
 
@@ -67,7 +68,7 @@ describe('TeamViewer Component Tests', function () {
         axiosMock = new MockAdapter(axios);
 
         //Ignore console logs
-        // console.log = consoleSpy;
+        console.log = consoleSpy;
     });
 
     beforeEach( () => {
@@ -114,17 +115,10 @@ describe('TeamViewer Component Tests', function () {
         await helper.flushPromises();
         component.update();
 
-
-        // console.log(component.debug());
-        //
-        // console.log(component.find(ReactTable).props
-        // console.log(component.find(ReactTable).props().SubComponent({original: teamJson[0], viewIndex: 0}));
-        //
-        // console.log(subComp);
     });
 
 
-    // Test 1
+    // Test 2
     test('Should render TeamViewer and handle delete of team', async () => {
         let tempTeamJson = JSON.parse(JSON.stringify(teamJson));
 
@@ -161,7 +155,7 @@ describe('TeamViewer Component Tests', function () {
         notifySpy.resetHistory();
     });
 
-    // Test 1
+    // Test 3
     test('Should render TeamViewer and handle delete of team', async () => {
         let tempTeamJson = JSON.parse(JSON.stringify(teamJson));
         let studentID = JSON.parse(JSON.stringify(tempTeamJson[1].students[0].id));
@@ -197,141 +191,199 @@ describe('TeamViewer Component Tests', function () {
         expect(notifySpy.called).to.be.true;
         notifySpy.resetHistory();
     });
-    // // Test 2
-    // test('Should render StudentViewer with students selectable', async () => {
-    //     sandbox.stub(AuthService, 'isAuthorized').returns(true);
-    //     axiosMock.onGet(constants.getServerUrl() + '/sweng500/getStudentsFromSchool/?schoolId=' + teamJson[2].school.id).reply(200, [studentJson]);
-    //
-    //     const component = shallow(<StudentViewer {... props} teamProp={teamJson[2]}/>);
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     const button = component.find(Button);
-    //
-    //     expect(button.simulate('click'));
-    //
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(component.find(SelectField)).to.be.length(1);
-    //     expect(component.find(MenuItem)).to.be.length(1);
-    // });
-    //
-    // //test 3
-    // test('Should render StudentViewer and add students to studentsSelectable state', async () => {
-    //     sandbox.stub(AuthService, 'isAuthorized').returns(true);
-    //     const component = shallow(<StudentViewer {... props} teamProp={teamJson[2]}/>);
-    //
-    //     //Set initial state
-    //     component.instance().setState({studentsSelectable: [studentJson], openStudentSelector: true});
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(component.state().selectedStudents).to.be.length(0);
-    //
-    //     const selectField = component.find(SelectField);
-    //
-    //     expect(selectField.simulate('change', {}, null, [studentJson]));
-    //
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(component.state().selectedStudents).to.be.length(1);
-    // });
-    //
-    // //test 4
-    // test('Should render StudentViewer and add selected students to team', async () => {
-    //     sandbox.stub(AuthService, 'isAuthorized').returns(true);
-    //     axiosMock.onPost(constants.getServerUrl() + '/sweng500/updateStudentsInTeam').reply(200, "yay good things");
-    //
-    //     const component = shallow(<StudentViewer {... props} teamProp={teamJson[2]}/>);
-    //
-    //     //Set initial state
-    //     component.instance().setState({studentsSelectable: [studentJson], selectedStudents: [studentJson], openStudentSelector: true});
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(component.state().selectedStudents).to.be.length(1);
-    //
-    //     const addStudentsButton = component.find(RaisedButton);
-    //
-    //     expect(addStudentsButton.at(1).simulate('click'));
-    //
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(notifySpy.called).to.be.true;
-    //     expect(updateTableSpy.called).to.be.true;
-    //     expect(component.state().openStudentSelector).to.be.false;
-    //     notifySpy.resetHistory();
-    //     updateTableSpy.resetHistory();
-    // });
-    //
-    // // Test 5
-    // test('Should render StudentViewer with selection renderer', async () => {
-    //     sandbox.stub(HttpRequest, 'httpRequest').rejects("GOODBYE");
-    //
-    //     const component = shallow(<StudentViewer {... props} teamProp={teamJson[0]}/>);
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(component.instance().selectionRenderer()).to.equal('');
-    //
-    //     component.instance().setState({selectedStudents:[studentJson]})
-    //     expect(component.instance().selectionRenderer()).to.contain(studentJson.firstName);
-    //
-    //     component.instance().setState({selectedStudents:[studentJson, studentJson]})
-    //     expect(component.instance().selectionRenderer()).to.contain(2);
-    //
-    // });
-    //
-    // // Test 6
-    // test('Should render StudentViewer and fail to obtain students for selectable students', async () => {
-    //     sandbox.stub(AuthService, 'isAuthorized').returns(true);
-    //     axiosMock.onGet(constants.getServerUrl() + '/sweng500/getStudentsFromSchool/?schoolId=' + teamJson[2].school.id).reply(400, "well this sucks");
-    //
-    //     const component = shallow(<StudentViewer {... props} teamProp={teamJson[2]}/>);
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     const button = component.find(Button);
-    //
-    //     expect(button.simulate('click'));
-    //
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(component.find(SelectField)).to.be.length(0);
-    //     expect(component.find(MenuItem)).to.be.length(0);
-    //
-    //     expect(component.state().studentsSelectable).to.be.length(0);
-    // });
-    //
-    // //test 7
-    // test('Should render StudentViewer and fail to add student to team', async () => {
-    //     sandbox.stub(AuthService, 'isAuthorized').returns(true);
-    //     axiosMock.onPost(constants.getServerUrl() + '/sweng500/updateStudentsInTeam').reply(400, "yay good things");
-    //
-    //     const component = shallow(<StudentViewer {... props} teamProp={teamJson[2]}/>);
-    //
-    //     //Set initial state
-    //     component.instance().setState({studentsSelectable: [studentJson], selectedStudents: [studentJson], openStudentSelector: true});
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(component.state().selectedStudents).to.be.length(1);
-    //
-    //     const addStudentsButton = component.find(RaisedButton);
-    //
-    //     expect(addStudentsButton.at(1).simulate('click'));
-    //
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(notifySpy.called).to.be.true;
-    //     expect(updateTableSpy.called).to.be.false;
-    //     expect(component.state().openStudentSelector).to.be.false;
-    //     notifySpy.resetHistory();
-    //     updateTableSpy.resetHistory();
-    // });
+
+    // Test 4
+    test('Should render TeamViewer and handle remove student from team', async () => {
+
+        let tempTeamJson = JSON.parse(JSON.stringify(teamJson));
+        let tempTeamSelected = tempTeamJson[1];
+        let tempStudentSelected = tempTeamSelected.students[0];
+
+        expect(tempTeamJson[1].students.length).to.equal(1);
+
+        sandbox.stub(AuthService, 'isAuthorized').returns(true);
+        axiosMock.onGet(constants.getServerUrl() + '/sweng500/getTeams').reply(200, tempTeamJson);
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/updateStudentsInTeam').reply(200, tempTeamSelected);
+
+        const component = shallow(<TeamViewer {... props} />);
+        await helper.flushPromises();
+        component.update();
+
+        component.instance().removeStudentFromTeamButtonClicked(tempStudentSelected, tempTeamSelected);
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().modal).to.be.true;
+        expect(component.state().selectedStudent.id).to.equal(tempStudentSelected.id);
+        expect(component.state().selectedTeam.id).to.equal(tempTeamSelected.id);
+        expect(component.state().modalInfo.modalAction).to.equal("REMOVESTUDENTFROMTEAM");
+
+        const modalButtons = component.find(Modal.Footer).find(RaisedButton);
+        expect(modalButtons).to.be.length(2);
+
+        expect(modalButtons.at(1).simulate('click'));
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().selectedTeam).to.equal(null);
+        expect(component.state().selectedStudent).to.equal(null);
+        expect(component.state().expanded).to.deep.equal({});
+        expect(component.state().modal).to.be.false
+        expect(notifySpy.called).to.be.true;
+        notifySpy.resetHistory();
+
+        let changedTeam = component.state().teams.find( (team) => {
+            return team.id ===tempTeamSelected.id;
+        });
+
+        expect(changedTeam.students.length).to.equal(0);
+    });
+
+    // Test 5
+    test('Should render TeamViewer with working updateTeam function to pass to child', async () => {
+        let tempTeamJson = JSON.parse(JSON.stringify(teamJson));
+        let tempTeamSelected = tempTeamJson[1];
+
+        let updatedTeam = JSON.parse(JSON.stringify(tempTeamSelected));
+        updatedTeam.students = [];
+
+        sandbox.stub(AuthService, 'isAuthorized').returns(true);
+        axiosMock.onGet(constants.getServerUrl() + '/sweng500/getTeams').reply(200, tempTeamJson);
+
+        const component = shallow(<TeamViewer {... props} />);
+        await helper.flushPromises();
+        component.update();
+
+        let theExpandedThing = [0];
+        component.setState({expanded: theExpandedThing});
+
+        let teamThatWillBeUpdated = component.state().teams.find( (team) => {
+            return team.id === tempTeamSelected.id;
+        });
+
+        expect(teamThatWillBeUpdated.students).to.be.length(1);
+
+        component.instance().updateTeam(updatedTeam, theExpandedThing);
+
+        await helper.flushPromises();
+        component.update();
+
+        let teamThatWasUpdated = component.state().teams.find( (team) => {
+            return team.id === tempTeamSelected.id;
+        });
+
+        expect(teamThatWasUpdated.students).to.be.length(0);
+    });
+
+    // Test 6
+    test('Should render TeamViewer and handle errors', async () => {
+
+        let tempTeamJson = JSON.parse(JSON.stringify(teamJson));
+        let tempTeamSelected = tempTeamJson[1];
+        let tempStudentSelected = tempTeamSelected.students[0];
+
+        expect(tempTeamJson[1].students.length).to.equal(1);
+
+        sandbox.stub(AuthService, 'isAuthorized').returns(true);
+        axiosMock.onGet(constants.getServerUrl() + '/sweng500/getTeams').reply(400, "fail");
+
+        const studentlessComponent = shallow(<TeamViewer {... props} />);
+        await helper.flushPromises();
+        studentlessComponent.update();
+
+        expect(notifySpy.called).to.be.true;
+        notifySpy.resetHistory();
+
+        axiosMock.onGet(constants.getServerUrl() + '/sweng500/getTeams').reply(200, tempTeamJson);
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/updateStudentsInTeam').reply(400, "fail");
+        axiosMock.onDelete(constants.getServerUrl() + "/sweng500/deleteStudent/" + tempStudentSelected.id).reply(400, "fail");
+        axiosMock.onDelete(constants.getServerUrl() + "/sweng500/removeTeam/" + tempTeamSelected.id).reply(400, "fail");
+
+        const component = shallow(<TeamViewer {... props} />);
+        await helper.flushPromises();
+        component.update();
+
+        //REMOVE STUDENT FROM TEAM
+        expect(notifySpy.called).to.be.false;
+        component.instance().removeStudentFromTeamButtonClicked(tempStudentSelected, tempTeamSelected);
+
+        let modalButtons = component.find(Modal.Footer).find(RaisedButton);
+        expect(modalButtons).to.be.length(2);
+
+        expect(modalButtons.at(1).simulate('click'));
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(notifySpy.called).to.be.true;
+        notifySpy.resetHistory();
+
+        //DELETE STUDENT
+        expect(notifySpy.called).to.be.false;
+        component.instance().deleteStudentClicked(tempTeamJson[2].students[0]);
+
+        modalButtons = component.find(Modal.Footer).find(RaisedButton);
+        expect(modalButtons).to.be.length(2);
+
+        expect(modalButtons.at(1).simulate('click'));
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(notifySpy.called).to.be.true;
+        notifySpy.resetHistory();
+
+        //DELETE TEAM
+        expect(notifySpy.called).to.be.false;
+        component.instance().deleteTeamButtonClicked(tempTeamSelected);
+
+        modalButtons = component.find(Modal.Footer).find(RaisedButton);
+        expect(modalButtons).to.be.length(2);
+
+        expect(modalButtons.at(1).simulate('click'));
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(notifySpy.called).to.be.true;
+        notifySpy.resetHistory();
+    });
+
+    // Test 7
+    test('Should render TeamViewer and add buttons to team which are clickable', async () => {
+
+        let tempTeamJson = JSON.parse(JSON.stringify(teamJson));
+
+        sandbox.stub(AuthService, 'isAuthorized').returns(true);
+        axiosMock.onGet(constants.getServerUrl() + '/sweng500/getTeams').reply(200, tempTeamJson);
+
+        const component = mount(<TeamViewer {... props} />);
+        await helper.flushPromises();
+        component.update();
+
+        let cols = component.find('Td.rt-expandable');
+
+        expect(cols.at(1).simulate('click'));
+
+        await helper.flushPromises();
+        component.update();
+
+        let studentViewer = component.find(StudentViewer);
+
+        let studentButtons = studentViewer.find(RaisedButton);
+        expect(studentButtons).to.be.length(12);
+
+        expect(studentButtons.at(0).simulate('click'));
+        expect(studentButtons.at(1).simulate('click'));
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.find(RaisedButton).at(0).simulate('click'));
+        await helper.flushPromises();
+        component.update();
+    });
+
 });
