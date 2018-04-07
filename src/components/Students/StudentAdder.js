@@ -97,7 +97,9 @@ class StudentAdder extends Component {
                                     onChange={(event, newValue) => this.setState({firstName: newValue.trim()})}
                                     value={this.state.firstName}
                                     fullWidth={true}
-                                    required={true}/>
+                                    required={true}
+                                    style={{textAlign: 'left'}}
+                                />
                             </Col>
                             <Col xs={7} md={3}>
                                 <TextField
@@ -108,7 +110,9 @@ class StudentAdder extends Component {
                                     onChange={(event, newValue) => this.setState({lastName: newValue.trim()})}
                                     value={this.state.lastName}
                                     fullWidth={true}
-                                    required={true}/>
+                                    required={true}
+                                    style={{textAlign: 'left'}}
+                                />
                             </Col>
                         </Row>
                         <Row className="show-grid">
@@ -121,7 +125,9 @@ class StudentAdder extends Component {
                                     onChange={(event, newValue) => this.setState({emailAddress: newValue.trim()})}
                                     value={this.state.emailAddress}
                                     fullWidth={true}
-                                    required={true}/>
+                                    required={true}
+                                    style={{textAlign: 'left'}}
+                                />
                             </Col>
                             <Col xs={7} md={3}>
                                 <CustomDropdown

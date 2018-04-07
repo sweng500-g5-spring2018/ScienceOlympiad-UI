@@ -92,7 +92,6 @@ class TeamAdder extends Component {
                         <Row className="text-center">
                             <Col xs={14} md={6}>
                                 <TextField
-                                    style={{margin: '1px'}}
                                     name="tname"
                                     hintText="Team's Name"
                                     errorText={this.state.errors.teamNameError}
@@ -100,7 +99,9 @@ class TeamAdder extends Component {
                                     onChange={(event, newValue) => this.setState({teamName: newValue})}
                                     value={this.state.teamName}
                                     fullWidth={true}
-                                    required={true}/>
+                                    required={true}
+                                    style={{margin: '1px', textAlign: 'left'}}
+                                />
                             </Col>
                             <Col xs={7} md={3}></Col>
                         </Row>
