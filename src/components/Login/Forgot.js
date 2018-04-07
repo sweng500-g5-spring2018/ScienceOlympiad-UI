@@ -11,6 +11,7 @@ import AuthService from '../../utils/AuthService';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import {style} from "../../variables/Variables";
+import $ from "jquery";
 
 class Forgot extends Component {
     constructor(props) {
@@ -53,28 +54,23 @@ class Forgot extends Component {
             var _this = this;
 
             body.emailAddress = this.state.email;
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/resetPassword',
-                'POST', constants.useCredentials(), body).then(function (result) {
-                console.log("Sending email to: " + this.state.email);
-                if (result.status === 200) {
-                    _this.setState({email : ""});
-                    _this.notify(
-                        "Password Reset email sent",
-                        "success",
-                        "tc",
-                        5
-                    )
-                } else if(result.status === 409) {
-                    _this.notify(
-                        "Could not send email",
-                        "error",
-                        "tc",
-                        10
-                    );
-                }
 
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/resetPassword', 'POST', constants.useCredentials(), body).then(function (result) {
+                _this.setState({email : ""});
+                _this.props.notify(
+                    "Success: Password reset email sent",
+                    "success",
+                    "tc",
+                    10
+                );
+                $('#reset-container').addClass('collapse');
             }).catch(function (error) {
-                console.log(error);
+                _this.props.notify(
+                    "Error: Could not send password reset email",
+                    "error",
+                    "tc",
+                    10
+                );
             })
 
         } else {
@@ -99,18 +95,20 @@ class Forgot extends Component {
                 <div id='login-div'>
                     <NotificationSystem ref="notificationSystem" style={style}/>
                     <MuiThemeProvider>
-                        <div>
+                       <div>
                             <AppBar showMenuIconButton={false} title="Password Recovery"/>
-                            <TextField
-                                hintText="Enter your email address"
-                                errorText={this.state.emailRequired}
-                                floatingLabelText="Email Address"
-                                onChange={(event, newValue) => this.setState({email: newValue})}
-                                required={true}
-                            />
-                            <br/>
-                            <RaisedButton label="Submit" primary={true} style={{margin:15}}
-                                          onClick={(event) => this.handleClick(event)}/>
+                           <div id='reset-container'>
+                                <TextField
+                                    hintText="Enter your email address"
+                                    errorText={this.state.emailRequired}
+                                    floatingLabelText="Email Address"
+                                    onChange={(event, newValue) => this.setState({email: newValue})}
+                                    required={true}
+                                />
+                                <br/>
+                                <RaisedButton label="Submit" primary={true} style={{margin:15}}
+                                              onClick={(event) => this.handleClick(event)}/>
+                           </div>
                         </div>
                     </MuiThemeProvider>
                 </div>
