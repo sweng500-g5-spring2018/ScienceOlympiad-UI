@@ -50,7 +50,7 @@ class Sidebar extends Component{
                         {
                             appRoutes.map((prop,key) => {
                                 //DO NOT RENDER SIDEBAR LINK IF USER IS NOT ALLOWED TO VIEW
-                                if(prop.redirect || (prop.users && !AuthService.isUserRoleAllowed(prop.users))) {
+                                if(prop.redirect || prop.linkOnly ||(prop.users && !AuthService.isUserRoleAllowed(prop.users))) {
                                     return null;
                                 }
 
