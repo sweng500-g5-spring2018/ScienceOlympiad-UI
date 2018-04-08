@@ -12,6 +12,8 @@ import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import {style} from "../../variables/Variables";
 import $ from "jquery";
+import Login from "./Login";
+import PropTypes from "prop-types";
 
 class Forgot extends Component {
     constructor(props) {
@@ -57,7 +59,7 @@ class Forgot extends Component {
 
             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/resetPassword', 'POST', constants.useCredentials(), body).then(function (result) {
                 _this.setState({email : ""});
-                _this.notify(
+                _this.props.notify(
                     "Success: Password reset email sent",
                     "success",
                     "tc",
@@ -65,7 +67,7 @@ class Forgot extends Component {
                 );
                 $('#reset-container').addClass('collapse');
             }).catch(function (error) {
-                _this.notify(
+                _this.props.notify(
                     "Error: Could not send password reset email",
                     "error",
                     "tc",
@@ -119,6 +121,13 @@ class Forgot extends Component {
             )
         }
     }
+}
+
+Forgot.propTypes = {
+    notify: PropTypes.any,
+}
+Forgot.defaultProps = {
+    notify : null
 }
 
 export default Forgot;
