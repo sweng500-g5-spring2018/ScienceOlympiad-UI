@@ -57,7 +57,7 @@ class Forgot extends Component {
 
             _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/resetPassword', 'POST', constants.useCredentials(), body).then(function (result) {
                 _this.setState({email : ""});
-                _this.props.notify(
+                _this.notify(
                     "Success: Password reset email sent",
                     "success",
                     "tc",
@@ -65,7 +65,7 @@ class Forgot extends Component {
                 );
                 $('#reset-container').addClass('collapse');
             }).catch(function (error) {
-                _this.props.notify(
+                _this.notify(
                     "Error: Could not send password reset email",
                     "error",
                     "tc",
