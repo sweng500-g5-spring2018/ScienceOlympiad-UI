@@ -27,7 +27,6 @@ class BuildingSelector extends React.Component {
     componentWillMount() {
         var _this = this;
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getAllRooms', 'GET',constants.useCredentials(), null).then(function (result) {
-            console.log(result.body);
             _this.setState({roomList: _this.sortByKey(result.body, "roomName")})
         }).catch(function (error) {
 
