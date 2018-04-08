@@ -43,14 +43,34 @@ describe('Building Component Tests', function () {
     })
 
     // Test 1
-    test('Should render card when data is fetched', async () => {
+    test('Should render buttons when data is fetched', async () => {
 
         //Simulate the user be logged on
         sinon.stub(AuthService, 'isLoggedIn').returns(true)
 
-        //const component = mount(<Buildings />);
+        const component = mount(<Buildings />);
 
-        //expect(component.state().buildingList.length).to.equal(2);
-        //expect(component.find(Card)).to.have.length(1);
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.find(RaisedButton).length).to.equal(5);
+    });
+
+    // Test 2
+    test('Should not render buttons when data is not fetched', async () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+
+        HttpRequest.httpRequest.restore();
+
+        const component = mount(<Buildings />);
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.find(RaisedButton).length).to.equal(1);
     });
 });
