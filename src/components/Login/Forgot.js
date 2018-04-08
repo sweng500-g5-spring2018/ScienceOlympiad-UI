@@ -29,20 +29,6 @@ class Forgot extends Component {
         this.AuthService = new AuthService();
     }
 
-    notify(message, level, position, autoDismiss) {
-        this.state._notificationSystem.addNotification({
-            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
-            message: (
-                <div>
-                    {message}
-                </div>
-            ),
-            level: level ? level : 'error',
-            position: position ? position : 'tc',
-            autoDismiss: autoDismiss ? autoDismiss : 10,
-        });
-    }
-
     handleClick(event) {
 
         if(this.state.email.trim()) {
