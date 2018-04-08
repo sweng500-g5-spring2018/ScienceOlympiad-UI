@@ -87,7 +87,7 @@ class StudentAdder extends Component {
                 <div style={{textAlign: 'center'}}>
                     <AppBar showMenuIconButton={false} title="Register Student" style={{zIndex: 10}}/>
                     <Grid>
-                        <Row className="show-grid" style={{textAlign:'center'}}>
+                        <Row className="text-center" >
                             <Col xs={7} md={3}>
                                 <TextField
                                     name="fname"
@@ -97,7 +97,9 @@ class StudentAdder extends Component {
                                     onChange={(event, newValue) => this.setState({firstName: newValue.trim()})}
                                     value={this.state.firstName}
                                     fullWidth={true}
-                                    required={true}/>
+                                    required={true}
+                                    style={{textAlign: 'left'}}
+                                />
                             </Col>
                             <Col xs={7} md={3}>
                                 <TextField
@@ -108,7 +110,9 @@ class StudentAdder extends Component {
                                     onChange={(event, newValue) => this.setState({lastName: newValue.trim()})}
                                     value={this.state.lastName}
                                     fullWidth={true}
-                                    required={true}/>
+                                    required={true}
+                                    style={{textAlign: 'left'}}
+                                />
                             </Col>
                         </Row>
                         <Row className="show-grid">
@@ -121,7 +125,9 @@ class StudentAdder extends Component {
                                     onChange={(event, newValue) => this.setState({emailAddress: newValue.trim()})}
                                     value={this.state.emailAddress}
                                     fullWidth={true}
-                                    required={true}/>
+                                    required={true}
+                                    style={{textAlign: 'left'}}
+                                />
                             </Col>
                             <Col xs={7} md={3}>
                                 <CustomDropdown
@@ -138,11 +144,11 @@ class StudentAdder extends Component {
                                 />
                             </Col>
                         </Row>
-                        <Row className="show-grid">
-                            <Col sm={6} style={{maxWidth: 200}}>
+                        <Row className="center-block">
+                            <Col sm={6} smOffset={1} style={{maxWidth: 200}}>
                                 <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} label="Cancel" onClick={event => {this.props.togglePanel("")} } />
                             </Col>
-                            <Col sm={6} style={{maxWidth: 200}}>
+                            <Col sm={6}  style={{maxWidth: 200}}>
                                 <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} onClick={this.validateStudentForm} label="Confirm"/>
                             </Col>
                         </Row>

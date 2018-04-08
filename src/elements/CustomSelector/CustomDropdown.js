@@ -79,6 +79,7 @@ class CustomDropdown extends Component {
                     onChange={this.updateValues}
                     value={this.props.selected}
                     maxHeight={200}
+                    fullWidth={true}
                     style={{textAlign: 'left'}}>
                     {
                         Object.keys(this.state.list).map(function (key) {

@@ -105,61 +105,58 @@ describe('TeamAdder Component Tests', function () {
         expect(component.state().errors.teamNameError).to.not.equal(undefined);
 
         textFields.at(0).simulate('change', null, "HELLOO");
-        // textFields.at(0).simulate('change', null, {trim: () => {return "HELLO"}});
         await helper.flushPromises();
         component.update();
-        // expect(buttons.at(1).simulate('click'));
-        // expect(component.state().errors.firstNameError).to.equal(undefined);
-        // expect(component.state().errors.lastNameError).to.not.equal(undefined);
-        //
-        // textFields.at(1).simulate('change', null, "hello");
-        // await helper.flushPromises();
-        // component.update();
-        // expect(buttons.at(1).simulate('click'));
-        // expect(component.state().errors.emailAddressError).to.not.equal(undefined);
-        //
-        // textFields.at(2).simulate('change', null, "hello@hello.com");
-        // await helper.flushPromises();
-        // component.update();
-        // expect(buttons.at(1).simulate('click'));
-        // expect(component.state().errors.schoolError).to.not.equal(undefined);
-        //
-        // component.instance().selectedSchool({ selectedSchool: {id: "23839829", schoolName: "hi school"}});
-        // component.instance().selectedSchool({ selectedSchool: {id: "23839829", schoolName: "hi school"}});
-        //
-        // await helper.flushPromises();
-        // component.update();
-        //
-        // expect(buttons.at(1).simulate('click'));
-        //
-        // await helper.flushPromises();
-        // component.update();
-        //
-        // expect(component.state().errors).to.deep.equal({});
-        // expect(updateTableSpy.called).to.be.true;
+
+        component.instance().selectedCoach({ selectedCoach: {id: "23839829", name: "hi coach"}});
+        component.instance().selectedSchool({ selectedSchool: {id: "23839829", schoolName: "hi school"}});
+
+        expect(buttons.at(1).simulate('click'));
+        await helper.flushPromises();
+        component.update();
+
+        expect(notifySpy.called).to.be.true;
+        expect(updateTableSpy.called).to.be.true;
+        notifySpy.resetHistory();
+        updateTableSpy.resetHistory();
+
     });
-    //
-    // // Test 3
-    // test('Should handle button clicks and manipulate state', async () => {
-    //     sandbox.stub(HttpRequest, 'httpRequest').rejects({message: "GOODBYE"});
-    //     props.addNotification = sinon.spy();
-    //
-    //     const component = shallow(<StudentAdder {... props} />);
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     var buttons = component.find(RaisedButton);
-    //
-    //     component.instance().setState({firstName: "cats", lastName: "dogs", emailAddress: "dogs@cats.com", selectedSchool: {id: "23839829", schoolName: "hi school"}});
-    //
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(buttons.at(1).simulate('click'));
-    //
-    //     await helper.flushPromises();
-    //     component.update();
-    //
-    //     expect(notifySpy.called).to.be.true;
-    // });
+
+    // Test 4
+    test('Should handle button clicks and manipulate state and handle errors appropriately', async () => {
+        sandbox.stub(HttpRequest, 'httpRequest').rejects("GOODBYE");
+
+        const component = shallow(<TeamAdder {... props} />);
+        await helper.flushPromises();
+        component.update();
+
+        var buttons = component.find(RaisedButton);
+
+        //Submit Student button functions appropriately
+        expect(buttons.at(1).simulate('click'));
+        await helper.flushPromises();
+        component.update();
+        expect(component.state().errors.teamNameError).to.not.equal(undefined);
+        expect(component.state().errors.schoolError).to.not.equal(undefined);
+        expect(component.state().errors.coachError).to.not.equal(undefined);
+
+        await helper.flushPromises();
+        component.update();
+
+        component.setState({
+            selectedCoach: {id: "23839829", name: "hi coach"},
+            selectedSchool: {id: "23839829", schoolName: "hi school"},
+            teamName: "HELLLOO TEAM"
+        })
+
+        expect(buttons.at(1).simulate('click'));
+        await helper.flushPromises();
+        component.update();
+
+        expect(notifySpy.called).to.be.true;
+        expect(updateTableSpy.called).to.be.false;
+        notifySpy.resetHistory();
+        updateTableSpy.resetHistory();
+
+    });
 });
