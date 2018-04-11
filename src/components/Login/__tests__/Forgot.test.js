@@ -94,7 +94,28 @@ describe('School Component Tests', function () {
         expect(component.state().emailRequired).to.equal(null);
     });
 
-    // test 5
+    // Test 5
+    test('Test an email address fails because it exists', async () => {
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/resetPassword').reply(400, "CRAP");
+
+        sinon.stub(AuthService, 'isLoggedIn').returns(false);
+
+        const component = shallow(<Forgot notify={notify}/>);
+        component.state().email = "test@test.com";
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.find(RaisedButton)).to.have.length(1);
+        expect(component.find(RaisedButton).simulate('click'));
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().emailRequired).to.not.equal(null);
+    });
+
+    // test 6
     test('Should update state of emailAddress onChange of TextField', async () => {
         //STUB: console logs in component and spy on them if called
         const consoleSpy = sinon.spy();
