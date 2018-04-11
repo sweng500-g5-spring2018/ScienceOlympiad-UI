@@ -23,34 +23,57 @@ import {Route} from "react-router-dom";
 
 describe('Building Component Tests', function () {
 
+    var sandbox;
     const notify = sinon.spy();
+    const consoleSpy = sinon.spy();
 
-    //Set up test data before running any tests
-    beforeAll(function () {
+    const data = require('../../../../test/data/buildings/getAllBuildingsResponseData.json');
 
-        //STUB: Http request to simulate data retrieval from API
-        sinon.stub(HttpRequest, 'httpRequest').resolves(
-            //import test data JSON for response
-            require('../../../../test/data/buildings/getAllBuildingsResponseData.json')
-        )
-        //STUB: Constants function used as argument to HttpRequest
-        sinon.stub(constants, 'getServerUrl').returns("wow tests are stupid")
+    beforeAll( () => {
+        console.log = consoleSpy;
+        console.error = consoleSpy;
     })
 
-    afterEach(function () {
-        //Always unstub AuthService.isLoggedIn() in case we want it to return different values
-        AuthService.isLoggedIn.restore();
-    })
+    beforeEach( () => {
+        sandbox = sinon.sandbox.create();
+    });
+
+    afterEach( () => {
+        sandbox.restore();
+    });
 
     // Test 1
-    test('Should render card when data is fetched', async () => {
+    test('Should render buttons when data is fetched', async () => {
 
         //Simulate the user be logged on
-        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sandbox.stub(AuthService, 'isLoggedIn').returns(true);
+        sandbox.stub(HttpRequest, 'httpRequest').resolves(data);
+        sandbox.stub(constants, 'getServerUrl').returns("wow tests are stupid");
 
-        //const component = mount(<Buildings />);
+        const component = mount(<Buildings />);
 
-        //expect(component.state().buildingList.length).to.equal(2);
-        //expect(component.find(Card)).to.have.length(1);
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        HttpRequest.httpRequest.restore();
+        expect(component.find(RaisedButton).length).to.equal(5);
+    });
+
+    // Test 2
+    test('Should not render buttons when data is not fetched', async () => {
+
+        //Simulate the user be logged on
+        sandbox.stub(AuthService, 'isLoggedIn').returns(true)
+        sandbox.stub(HttpRequest, 'httpRequest').rejects("crap");
+        sinon.stub(constants, 'getServerUrl').returns("wow tests are stupid");
+
+        const component = mount(<Buildings />);
+
+        //Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.find(RaisedButton).length).to.equal(1);
     });
 });

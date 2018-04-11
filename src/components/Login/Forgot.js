@@ -11,70 +11,51 @@ import AuthService from '../../utils/AuthService';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import {style} from "../../variables/Variables";
+import $ from "jquery";
+import Login from "./Login";
+import PropTypes from "prop-types";
 
 class Forgot extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            email: '',
-            _notificationSystem : null
-        }
+            email: ''
+        };
 
         this.handleClick = this.handleClick.bind(this);
-
-        this.AuthService = new AuthService();
-    }
-
-    notify(message, level, position, autoDismiss) {
-        this.state._notificationSystem.addNotification({
-            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
-            message: (
-                <div>
-                    {message}
-                </div>
-            ),
-            level: level ? level : 'error',
-            position: position ? position : 'tc',
-            autoDismiss: autoDismiss ? autoDismiss : 10,
-        });
     }
 
     handleClick(event) {
 
-        if(this.state.email.trim()) {
-
-            this.setState({
-                email: this.state.email.trim(),
-                emailRequired: null
-            })
-
+        if(this.state.email.trim() !== '') {
             var body = {};
             var _this = this;
 
-            body.emailAddress = this.state.email;
-            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/resetPassword',
-                'POST', constants.useCredentials(), body).then(function (result) {
-                console.log("Sending email to: " + this.state.email);
-                if (result.status === 200) {
-                    _this.setState({email : ""});
-                    _this.notify(
-                        "Password Reset email sent",
+            body.emailAddress = this.state.email.trim();;
+
+            _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/resetPassword', 'POST', constants.useCredentials(), body).then(function (result) {
+                _this.setState({email : "", emailRequired: null}, () => {
+                    _this.props.notify(
+                        "Success: Password reset email sent",
                         "success",
                         "tc",
                         5
-                    )
-                } else if(result.status === 409) {
-                    _this.notify(
-                        "Could not send email",
+                    );
+                    $('#reset-container').addClass('collapse');
+                });
+            }).catch(function (error) {
+                _this.setState({
+                    email: _this.state.email.trim(),
+                    emailRequired: "Provide valid email address."
+                }, () => {
+                    _this.props.notify(
+                        "Error: Could not send password reset email.  Provide a valid email address.",
                         "error",
                         "tc",
-                        10
+                        5
                     );
-                }
-
-            }).catch(function (error) {
-                console.log(error);
+                });
             })
 
         } else {
@@ -85,22 +66,13 @@ class Forgot extends Component {
         }
     }
 
-    componentDidMount() {
-        if(AuthService.isLoggedIn()) {
-            this.setState({
-                redirect: true
-            })
-        }
-    }
-
     render() {
-        if(!this.state.redirect) {
-            return (
-                <div id='login-div'>
-                    <NotificationSystem ref="notificationSystem" style={style}/>
-                    <MuiThemeProvider>
-                        <div>
-                            <AppBar showMenuIconButton={false} title="Password Recovery"/>
+        return (
+            <div id='login-div'>
+                <MuiThemeProvider>
+                   <div>
+                        <AppBar showMenuIconButton={false} title="Password Recovery"/>
+                       <div id='reset-container'>
                             <TextField
                                 hintText="Enter your email address"
                                 errorText={this.state.emailRequired}
@@ -111,15 +83,11 @@ class Forgot extends Component {
                             <br/>
                             <RaisedButton label="Submit" primary={true} style={{margin:15}}
                                           onClick={(event) => this.handleClick(event)}/>
-                        </div>
-                    </MuiThemeProvider>
-                </div>
-            )
-        } else {
-            return (
-                <Redirect from="/" to="/app/dashboard" />
-            )
-        }
+                       </div>
+                    </div>
+                </MuiThemeProvider>
+            </div>
+        )
     }
 }
 
