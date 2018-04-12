@@ -34,26 +34,25 @@ class Extras extends React.Component {
         };
     }
 
-    componentWillMount() {
-        var _this = this;
+    // componentWillMount() {
+    //     var _this = this;
         //This is good shit to remember for later
         // AuthService.getUserEmail();
         // AuthService.getUserRole();
         //This sends our credentials in the header
 
-        HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getUserProfile', 'GET',
-            constants.useCredentials(), null).then(function (result) {
-            console.log(result);
-            _this.setState({
-                user: result.body
-            });
-
-        }).catch(function (error) {
-            console.log(error);
-        })
+        // HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getUserProfile', 'GET',
+        //     constants.useCredentials(), null).then(function (result) {
+        //     console.log(result);
+        //     _this.setState({
+        //         user: result.body
+        //     });
+        //
+        // }).catch(function (error) {
+        //     console.log(error);
+        // })
         //here we will get the user type
-
-    }
+    // }
 
     componentDidMount() {
         this.setState({_notificationSystem: this.refs.notificationSystem});
@@ -85,25 +84,20 @@ class Extras extends React.Component {
         body.emailAddress = this.state.emailAddress;
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/sendTestEmail', 'POST',
             constants.useCredentials(), body).then(function (result) {
-
-            if (result.status === 200) {
-                _this.notify(
-                    "Test email sent",
-                    "success",
-                    "tc",
-                    5
-                )
-            } else if(result.status === 409) {
-                _this.notify(
-                    "Could not send email",
-                    "error",
-                    "tc",
-                    10
-                );
-            }
-
+            _this.setState({emailAddress: ""});
+            _this.notify(
+                "Test email sent",
+                "success",
+                "tc",
+                5
+            )
         }).catch(function (error) {
-            console.log(error);
+            _this.notify(
+                "Could not send email because: " + error.message,
+                "error",
+                "tc",
+                10
+            );
         })
     }
 
@@ -121,25 +115,21 @@ class Extras extends React.Component {
         body.phoneNumber = cleanPhoneNumber;
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/sendTestText', 'POST',
             constants.useCredentials(), body).then(function (result) {
-
-            if (result.status === 200) {
-                _this.notify(
-                    "Test text sent",
-                    "success",
-                    "tc",
-                    5
-                )
-            } else if(result.status === 409) {
-                _this.notify(
-                    "Could not send text",
-                    "error",
-                    "tc",
-                    10
-                );
-            }
+            _this.setState({phoneNumber: ""});
+            _this.notify(
+                "Test text sent",
+                "success",
+                "tc",
+                5
+            )
 
         }).catch(function (error) {
-            console.log(error);
+            _this.notify(
+                "Could not send text because: " + error.message,
+                "error",
+                "tc",
+                10
+            );
         })
     }
 
