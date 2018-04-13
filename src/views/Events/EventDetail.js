@@ -93,10 +93,10 @@ class EventDetail extends Component {
 
     componentDidMount() {
         var _this = this;
-        //hide things from non admins and coaches just for now to test
-        let modifyRoles = ['COACH', 'ADMIN'];
+        //hide things from non admins
+        let modifyRoles = ['ADMIN','COACH'];
         //eventually only allow an admin to delete judges and teams
-        let deleteRole = ['ADMIN','COACH'];
+        let deleteRole = ['ADMIN'];
         let allowModify = AuthService.isUserRoleAllowed(modifyRoles);
         let allowDelete = AuthService.isUserRoleAllowed(deleteRole);
             _this.setState({
@@ -318,7 +318,7 @@ class EventDetail extends Component {
     confirmJudgeDelete = (s) => {
         this.setState({
             confirmDialog:true,
-            confirmMessage:'Are you sure you want to delete the following judge ' + s.firstName + " " + s.lastName,
+            confirmMessage:'Are you sure you want to delete the following judge:  ' + s.firstName + " " + s.lastName,
             deleteTeam:false,
             deleteJudge:true,
             deleteId:s.id

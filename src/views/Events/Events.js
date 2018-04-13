@@ -621,7 +621,7 @@ class Events extends Component {
                     //ugly way to add error text
 
                     $(idname).attr("disabled", false);
-                    $(idname).parent().parent().parent().parent().find(".errorText").text("Email already exists");
+                    $(idname).parent().parent().parent().parent().find(".errorText").text("Email is already in use");
                     $(idname).parent().parent().parent().parent().find(".errorText").css("display", "block");
 
                 });
@@ -678,18 +678,13 @@ class Events extends Component {
     }
 
     componentDidMount() {
-        //hide things from non admins and coaches just for now to test
-        let modifyRoles = ['COACH', 'ADMIN'];
+        //hide things from non admins
+        let modifyRoles = ['ADMIN'];
         let allowModify = AuthService.isUserRoleAllowed(modifyRoles);
-        if (allowModify) {
             this.setState({
-                showDeletebtn: true
+                showDeletebtn: allowModify
             });
-        } else {
-            this.setState({
-                showDeletebtn: false
-            });
-        }
+
         //Make call out to backend
         var _this = this;
         this.setState({_notificationSystem: this.refs.notificationSystem});
@@ -740,19 +735,19 @@ class Events extends Component {
                 if (this.state.showDeletebtn) {
                     this.state.events[value].status = "edit";
                     this.state.events[value].menuActions = <div>
-                        <RaisedButton icon={<FontIcon className="pe-7s-note2" />}
+                        <RaisedButton style={{minWidth: '30%'}} icon={<FontIcon className="pe-7s-note2" />}
                             primary={true} label="View Details"
                             onClick={(event) => this.eventDetails(this.state.events[value].id)}/>&nbsp;&nbsp;
-                        <RaisedButton icon={<FontIcon className="pe-7s-edit" />}
+                        <RaisedButton style={{minWidth: '30%'}} icon={<FontIcon className="pe-7s-edit" />}
                             primary={true} label="Edit"
                             onClick={this.createNewEvent.bind(this, this.state.events[value])}/>&nbsp;&nbsp;
-                        <RaisedButton icon={<FontIcon className="pe-7s-trash" />}
+                        <RaisedButton style={{minWidth: '30%'}} icon={<FontIcon className="pe-7s-trash" />}
                             secondary={true} label="Delete"
                             onClick={this.confirmEventDelete.bind(this, this.state.events[value])}/>
                     </div>
                 } else {
                     this.state.events[value].menuActions = <div>
-                        <RaisedButton icon={<FontIcon className="pe-7s-note2" />}
+                        <RaisedButton style={{minWidth: '30%'}} icon={<FontIcon className="pe-7s-note2" />}
                             primary={true} label="View Details"
                             onClick={(event) => this.eventDetails(this.state.events[value].id)}/></div>
                 }
@@ -874,7 +869,7 @@ class Events extends Component {
                 <NotificationSystem ref="notificationSystem" style={style}/>
                 <div id="eventPage" key="notFound-key" className="notFoundClass">
                     <MuiThemeProvider>
-                        <Grid>
+                        <Grid fluid>
                             {createEventBtn}
                             <br/>
                             <br/>
