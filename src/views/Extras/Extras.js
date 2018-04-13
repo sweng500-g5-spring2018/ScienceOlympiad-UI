@@ -92,7 +92,8 @@ class Extras extends React.Component {
                     "success",
                     "tc",
                     5
-                )
+                );
+                _this.setState( { emailAddress : "" } );
             } else if(result.status === 409) {
                 _this.notify(
                     "Could not send email",
@@ -128,7 +129,8 @@ class Extras extends React.Component {
                     "success",
                     "tc",
                     5
-                )
+                );
+                _this.setState( { phoneNumber : "" } );
             } else if(result.status === 409) {
                 _this.notify(
                     "Could not send text",
@@ -149,9 +151,10 @@ class Extras extends React.Component {
                 <NotificationSystem ref="notificationSystem" style={style}/>
                 <MuiThemeProvider>
                     <Grid fluid>
-                        <PanelGroup accordion
-                                    activeKey={this.state.activeKey}
-                                    onSelect={this.handleSelect}>
+                        <PanelGroup id="group"
+                            accordion
+                            activeKey={this.state.activeKey}
+                            onSelect={this.handleSelect}>
                             <Panel id="email-panel" eventKey="1">
                                 <Panel.Heading  style={{backgroundColor: '#194287'}}>
                                     <Panel.Title toggle style={{color: 'white'}}>
