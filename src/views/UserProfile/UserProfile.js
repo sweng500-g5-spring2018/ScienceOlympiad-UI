@@ -83,17 +83,19 @@ class UserProfile extends Component {
     }
 
     notify(message, level, position, autoDismiss) {
-        this.state._notificationSystem.addNotification({
-            title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
-            message: (
-                <div>
-                    {message}
-                </div>
-            ),
-            level: level ? level : 'error',
-            position: position ? position : 'tc',
-            autoDismiss: autoDismiss ? autoDismiss : 10,
-        });
+        if(this.state._notificationSystem) {
+            this.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-door-lock"></span>),
+                message: (
+                    <div>
+                        {message}
+                    </div>
+                ),
+                level: level ? level : 'error',
+                position: position ? position : 'tc',
+                autoDismiss: autoDismiss ? autoDismiss : 10,
+            });
+        }
     }
 
     cleanPhone(cleanPhoneNumber) {

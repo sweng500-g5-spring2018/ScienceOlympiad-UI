@@ -19,21 +19,28 @@ import UserProfile from '../UserProfile';
 import AuthService from "../../../utils/AuthService";
 import RaisedButton from "material-ui/RaisedButton/index";
 import PasswordField from 'material-ui-password-field';
+import NotificationSystem from "react-notification-system";
+import Loader from "react-loader";
+import ReactTable from "react-table";
+import {AppBar} from "material-ui";
+import MockAdapter from 'axios-mock-adapter';
+import axios from 'axios';
 
 describe('User profile tests', function () {
     const nextTick = () => new Promise(res => process.nextTick(res));
     const notify = sinon.spy();
-    var s;
+    let s;
+    var axiosMock;
 
     var userData = require('../../../../test/data/user/getUserResponseData')
 
     var sandbox = sinon.sandbox.create();
-
     //Set up test data before running any tests
     beforeAll(function () {
         //STUB: Constants function used as argument to HttpRequest
         sinon.stub(constants, 'getServerUrl').returns("wow tests are stupid")
 
+        axiosMock = new MockAdapter(axios);
     })
 
     beforeEach(function () {
@@ -91,6 +98,9 @@ describe('User profile tests', function () {
         component.update();
 
         result = component.instance().validPassword("t");
+        expect(result).to.equal(false);
+
+        result = component.instance().validPassword("buttsbuttsbutts");
         expect(result).to.equal(false);
 
         result = component.instance().validPassword("Password1");
@@ -380,4 +390,259 @@ describe('User profile tests', function () {
         expect(s.callCount).to.equal(1);
     });
 
+    // Test 1
+    test('Should render UserProfile with working notificationSystem', async () => {
+        //STUB: Http request to simulate data retrieval from API
+        sandbox.stub(HttpRequest, 'httpRequest').resolves(
+            //import test data JSON for response
+            userData
+        )
+
+        //Simulate the user be logged on
+        sandbox.stub(AuthService, 'isLoggedIn').returns(true)
+        sandbox.stub(AuthService, 'getUserRole').returns("ADMIN")
+
+        const component = shallow(<UserProfile />);
+
+        await helper.flushPromises();
+        component.update();
+
+        component.instance().notify("YO");
+        component.instance().setState({_notificationSystem: {addNotification: () => {} }});
+        component.instance().componentDidMount();
+        component.update();
+        await helper.flushPromises();
+        component.update();
+
+        //Renders children Components
+        expect(component.find(NotificationSystem)).to.have.length(1);
+
+        component.instance().setState({_notificationSystem: {addNotification: () => {} }});
+        component.instance().notify("YO", "yo", "yo", 2);
+        component.instance().notify("YO");
+    });
+
+    // Test 1
+    test('Should render UserProfile and properly update user', async () => {
+
+        //Simulate the user be logged on
+        sandbox.stub(AuthService, 'isLoggedIn').returns(true);
+        sandbox.stub(AuthService, 'getUserRole').returns("ADMIN");
+        sandbox.stub(AuthService, 'isAuthorized').returns(true);
+
+
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/validate').reply(200, "YAY");
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/updateUser').reply(200, userData.body);
+
+        const component = shallow(<UserProfile />);
+
+        await helper.flushPromises();
+        component.update();
+
+        component.setState({
+            user: {
+                firstName: "testerFirst",
+                lastName: "testerLast",
+                phoneNumber: "14127607290",
+                receiveText: false,
+                minutesBeforeEvent: "0"
+            },
+            password: "helllllloooooo"
+        });
+
+
+        component.instance().updateProfile({});
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().password).to.equal("");
+    });
+
+    // Test 1
+    test('Should render UserProfile and fail to update user', async () => {
+
+        //Simulate the user be logged on
+        sandbox.stub(AuthService, 'isLoggedIn').returns(true);
+        sandbox.stub(AuthService, 'getUserRole').returns("ADMIN");
+        sandbox.stub(AuthService, 'isAuthorized').returns(true);
+
+
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/validate').reply(200, "YAY");
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/updateUser').reply(400, "wow this is stupid");
+
+        const component = shallow(<UserProfile />);
+
+        await helper.flushPromises();
+        component.update();
+
+        component.setState({
+            user: {
+                firstName: "testerFirst",
+                lastName: "testerLast",
+                phoneNumber: "14127607290",
+                receiveText: false,
+                minutesBeforeEvent: "0"
+            },
+            password: "helllllloooooo"
+        });
+
+
+        component.instance().updateProfile({});
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().password).to.not.equal("");
+    });
+
+
+    // Test 1
+    test('Should render UserProfile and update password', async () => {
+
+        //Simulate the user be logged on
+        sandbox.stub(AuthService, 'isLoggedIn').returns(true);
+        sandbox.stub(AuthService, 'getUserRole').returns("ADMIN");
+        sandbox.stub(AuthService, 'isAuthorized').returns(true);
+
+
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/validate').reply(200, "YAY");
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/changePassword').reply(200, "wow this is stupid");
+
+        const component = shallow(<UserProfile />);
+
+        await helper.flushPromises();
+        component.update();
+
+        component.setState({
+            user: {
+                firstName: "testerFirst",
+                lastName: "testerLast",
+                phoneNumber: "14127607290",
+                receiveText: false,
+                minutesBeforeEvent: "0"
+            },
+            currentPassword: "helllllloooooo",
+            newPassword: "Iamsexy12345!",
+            confirmPassword: "",
+        });
+
+        await helper.flushPromises();
+        component.update();
+
+        component.instance().changePassword({});
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().currentPassword).to.equal("helllllloooooo");
+
+        component.setState({
+            currentPassword: "helllllloooooo",
+            newPassword: "Iamsexy12345!",
+            confirmPassword: "Iamsexy12345!",
+        });
+
+        component.instance().changePassword({});
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().currentPassword).to.equal("");
+        expect(component.state().newPassword).to.equal("");
+        expect(component.state().confirmPassword).to.equal("");
+    });
+
+
+    // Test 1
+    test('Should render UserProfile and fail to update password after final API call', async () => {
+
+        //Simulate the user be logged on
+        sandbox.stub(AuthService, 'isLoggedIn').returns(true);
+        sandbox.stub(AuthService, 'getUserRole').returns("ADMIN");
+        sandbox.stub(AuthService, 'isAuthorized').returns(true);
+
+
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/validate').reply(200, "YAY");
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/changePassword').reply(400, "wow this is stupid");
+
+        const component = shallow(<UserProfile />);
+
+        await helper.flushPromises();
+        component.update();
+
+        component.setState({
+            user: {
+                firstName: "testerFirst",
+                lastName: "testerLast",
+                phoneNumber: "14127607290",
+                receiveText: false,
+                minutesBeforeEvent: "0"
+            },
+            currentPassword: "helllllloooooo",
+            newPassword: "Iamsexy12345!",
+            confirmPassword: "Iamsexy12345!",
+        });
+
+        await helper.flushPromises();
+        component.update();
+
+        component.instance().changePassword({});
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().currentPassword).to.not.equal("");
+        expect(component.state().newPassword).to.not.equal("");
+        expect(component.state().confirmPassword).to.not.equal("");
+    });
+
+    // Test 1
+    test('Should render UserProfile and have clickies', async () => {
+
+        //Simulate the user be logged on
+        sandbox.stub(AuthService, 'isLoggedIn').returns(true);
+        sandbox.stub(AuthService, 'getUserRole').returns("butts");
+        sandbox.stub(AuthService, 'isAuthorized').returns(true);
+
+
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/validate').reply(200, "YAY");
+        axiosMock.onPost(constants.getServerUrl() + '/sweng500/changePassword').reply(400, "wow this is stupid");
+
+        const component = shallow(<UserProfile />);
+
+        await helper.flushPromises();
+        component.update();
+
+        component.setState({
+            user: {
+                firstName: "testerFirst",
+                lastName: "testerLast",
+                phoneNumber: "14127607290",
+                receiveText: false,
+                minutesBeforeEvent: "0"
+            },
+            currentPassword: "helllllloooooo",
+            newPassword: "Iamsexy12345!",
+            confirmPassword: "Iamsexy12345!",
+        });
+
+        let textFields = component.find(TextField);
+
+        textFields.forEach( (textField) => {
+            expect(textField.simulate('change', {target: {value: "yup"}}, "YAY"));
+        });
+
+        let passFields = component.find(PasswordField);
+
+        passFields.forEach( (passField) => {
+            expect(passField.simulate('change', {target: {value: "yup"}}, "YAY"));
+        });
+
+        let inputFields = component.find('input');
+
+        inputFields.forEach( (inputField) => {
+            expect(inputField.simulate('change', {target: {value: "yup"}}, "YAY"));
+        });
+    });
 });

@@ -13,6 +13,7 @@ import HeaderLinks from '../HeaderLinks.js';
 
 //COMPONENT TO TEST
 import Header from '../Header';
+import Dashboard from "../../../views/Dashboard/Dashboard";
 
 describe('Header Component Tests', function () {
 
@@ -28,7 +29,7 @@ describe('Header Component Tests', function () {
 
     // Test 1
     test('Should render Header component with React Bootstrap Navbar components', () => {
-        const component = shallow(<Header {... reactRouterData} />);
+        const component = shallow(<Header {... reactRouterData} location={"app/dashboard"}/>);
 
         expect(component.find(Navbar)).to.have.length(1);
         expect(component.find(Navbar.Header)).to.have.length(1);
@@ -66,4 +67,24 @@ describe('Header Component Tests', function () {
         expect(component.instance().state.sidebarExists).to.equal(true);
     })
 
+    // Test 4
+    test('Should render Header but fail finding sidebar"', () => {
+        var myNode;
+        document.body.appendChild = (node) => {myNode = node};
+        document = {createElement: () => { return new Node('div')}};
+
+        sinon.stub(document, 'createElement').returns({});
+
+        const component = shallow(<Header {... reactRouterData} location={{pathname: "/app/dashboard"}}/>);
+        component.instance().parentElement = {removeChild: () => {}};
+
+        component.setState({sidebarExists: true});
+
+        component.instance().mobileSidebarToggle({preventDefault: () => {}})
+        try{
+            myNode.onclick();
+        } catch(e) {
+
+        }
+    })
 });

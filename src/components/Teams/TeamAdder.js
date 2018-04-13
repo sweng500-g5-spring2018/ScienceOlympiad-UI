@@ -89,8 +89,8 @@ class TeamAdder extends Component {
                 <div style={{textAlign: 'center'}}>
                     <AppBar showMenuIconButton={false} title="Register Team" style={{zIndex: 10}}/>
                     <Grid>
-                        <Row className="show-grid" style={{textAlign:'center'}}>
-                            <Col xs={7} md={3}>
+                        <Row className="text-center">
+                            <Col xs={14} md={6}>
                                 <TextField
                                     name="tname"
                                     hintText="Team's Name"
@@ -99,8 +99,11 @@ class TeamAdder extends Component {
                                     onChange={(event, newValue) => this.setState({teamName: newValue})}
                                     value={this.state.teamName}
                                     fullWidth={true}
-                                    required={true}/>
+                                    required={true}
+                                    style={{margin: '1px', textAlign: 'left'}}
+                                />
                             </Col>
+                            <Col xs={7} md={3}></Col>
                         </Row>
                         <Row className="show-grid">
                             <Col xs={7} md={3}>
@@ -130,8 +133,8 @@ class TeamAdder extends Component {
                                 />
                             </Col>
                         </Row>
-                        <Row className="show-grid">
-                            <Col sm={6} style={{maxWidth: 200}}>
+                        <Row className="center-block">
+                            <Col sm={6} smOffset={1} style={{maxWidth: 200}}>
                                 <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} label="Cancel" onClick={event => {this.props.togglePanel("")} } />
                             </Col>
                             <Col sm={6} style={{maxWidth: 200}}>

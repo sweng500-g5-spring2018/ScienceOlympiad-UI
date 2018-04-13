@@ -14,7 +14,7 @@ class Footer extends Component {
                                 </a>
                             </li>
                             <li>
-                                <a href="www.psu.edu">
+                                <a href="http://www.psu.edu">
                                     PSU
                                 </a>
                             </li>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, PageHeader, Panel, Grid, Col, Row,} from 'react-bootstrap';
+import { Modal, PageHeader, Panel, Grid, Col, Row,} from 'react-bootstrap';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -12,6 +12,8 @@ import Divider from 'material-ui/Divider';
 import AppBar from 'material-ui/AppBar'
 import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
+import Dialog from 'material-ui/Dialog';
+
 
 
 import {
@@ -32,6 +34,8 @@ class EventDetail extends Component {
         this.formatTimeString = this.formatTimeString.bind(this);
         this.selectedTeam = this.selectedTeam.bind(this);
         this.closeTeamModal = this.closeTeamModal.bind(this);
+        this.removeJudge = this.removeJudge.bind(this);
+        this.removeTeam = this.removeTeam.bind(this);
         //for the map
         this.divStyle = {
             height: '300px',
@@ -60,7 +64,14 @@ class EventDetail extends Component {
             selectedTeamValue: null,
             teamSelectorError: '',
             teamsDetail: {},
-            loadAddTeam: true
+            loadAddTeam: true,
+            //delete
+            showDeleteBtn:true,
+            deleteTeam:false,
+            deleteJudge:false,
+            deleteId:'',
+            confirmDialog:false,
+            confirmMessage:''
         };
 
     }
@@ -75,7 +86,6 @@ class EventDetail extends Component {
     //This component gets called initially with main events page, need to update when this is called with a no prop
     componentWillReceiveProps(nextProps) {
         var _this = this;
-        console.log(nextProps.eventId)
         _this.setState({
             eventId: nextProps.eventId
         });
@@ -85,16 +95,16 @@ class EventDetail extends Component {
         var _this = this;
         //hide things from non admins and coaches just for now to test
         let modifyRoles = ['COACH', 'ADMIN'];
+        //eventually only allow an admin to delete judges and teams
+        let deleteRole = ['ADMIN','COACH'];
         let allowModify = AuthService.isUserRoleAllowed(modifyRoles);
-        if (allowModify) {
+        let allowDelete = AuthService.isUserRoleAllowed(deleteRole);
             _this.setState({
-                showRegisterBtn: true
+                showRegisterBtn: allowModify,
+                showDeleteBtn:allowDelete
             });
-        } else {
-            _this.setState({
-                showRegisterBtn: false
-            });
-        }
+
+
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + this.state.eventId, "get", constants.useCredentials(), null, true).then(function (result) {
             const start = _this.formatTimeString(new Date(result.body.startTime));
             const endT = _this.formatTimeString(new Date(result.body.endTime));
@@ -112,11 +122,9 @@ class EventDetail extends Component {
                     loading: true
                 })
             }).catch(function (error) {
-                console.log(error);
             })
 
         }).catch(function (error) {
-            console.log(error);
         })
 
         _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/judges/" + _this.state.eventId, "get", constants.useCredentials(), null, true).then(function (judgeResult) {
@@ -125,7 +133,6 @@ class EventDetail extends Component {
             })
 
         }).catch(function (error) {
-            console.log(error);
         })
 
         _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/teams/" + _this.state.eventId, "get", constants.useCredentials(), null, true).then(function (teamResult) {
@@ -134,7 +141,6 @@ class EventDetail extends Component {
             })
 
         }).catch(function (error) {
-            console.log(error);
         })
     }
 
@@ -162,8 +168,9 @@ class EventDetail extends Component {
             _this.setState({teamSelectorError: 'Please select a team'});
         } else {
             _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + _this.state.eventId + "/" + _this.state.selectedTeamValue.id, "POST", constants.useCredentials(), null, true).then(function (judgeResult) {
-                _this.setState({loadAddTeam: true, teamModal: false, teamSelectorError: ''})
                 _this.props.addNotification("Success, the team has been registered ", "success", "tc", 6);
+                _this.setState({loadAddTeam: true, teamModal: false, teamSelectorError: ''})
+                _this.componentDidMount();
 
             }).catch(function (error) {
                 _this.setState({teamSelectorError: 'Team already registered'});
@@ -174,7 +181,11 @@ class EventDetail extends Component {
 
     renderIfEventFound() {
         if (this.state.eventDetail !== null && Object.keys(this.state.eventDetail).length !== 0) {
-
+            //only display delete events if an admin
+            let showActionBar=null;
+            if(this.state.showDeleteBtn) {
+                showActionBar = <TableHeaderColumn>Action</TableHeaderColumn>
+            }
             return (
                 <MuiThemeProvider>
                     <Row>
@@ -242,6 +253,7 @@ class EventDetail extends Component {
                                         <TableRow>
                                             <TableHeaderColumn>First Name</TableHeaderColumn>
                                             <TableHeaderColumn>Last Name</TableHeaderColumn>
+                                            {showActionBar}
                                         </TableRow>
                                     </TableHeader>
                                     {this.renderIfJudgesFound()}
@@ -258,6 +270,7 @@ class EventDetail extends Component {
                                         <TableRow>
                                             <TableHeaderColumn>Team Name</TableHeaderColumn>
                                             <TableHeaderColumn>School Name</TableHeaderColumn>
+                                            {showActionBar}
                                         </TableRow>
                                     </TableHeader>
                                     {this.renderIfTeamsFound()}
@@ -274,15 +287,24 @@ class EventDetail extends Component {
     //Return the judges for this event, only show first and last name
     renderIfJudgesFound() {
         if (this.state.judgesDetail !== null && Object.keys(this.state.judgesDetail).length !== 0) {
+            let deleteBtnJudge = null;
             return (
                 <TableBody displayRowCheckbox={false}
                            showRowHover={true}>
                     {
                         Object.keys(this.state.judgesDetail).map(function (key) {
+                            if(this.state.showDeleteBtn) {
+                                deleteBtnJudge=  <TableRowColumn><RaisedButton icon={<FontIcon className="pe-7s-trash" />}
+                                                              secondary={true} label="Delete"
+                                                              onClick={this.confirmJudgeDelete.bind(this, this.state.judgesDetail[key])}/>
+                                                </TableRowColumn>
+                            }
                             return (
                                 <TableRow key={key}>
                                     <TableRowColumn>{this.state.judgesDetail[key].firstName}</TableRowColumn>
                                     <TableRowColumn>{this.state.judgesDetail[key].lastName}</TableRowColumn>
+                                    {deleteBtnJudge}
+
                                 </TableRow>
                             )
 
@@ -291,20 +313,65 @@ class EventDetail extends Component {
                 </TableBody>
             )
         }
+    }
+
+    confirmJudgeDelete = (s) => {
+        this.setState({
+            confirmDialog:true,
+            confirmMessage:'Are you sure you want to delete the following judge ' + s.firstName + " " + s.lastName,
+            deleteTeam:false,
+            deleteJudge:true,
+            deleteId:s.id
+        })
+    }
+
+    removeJudge() {
+
+        var _this = this;
+        var removeId = _this.state.deleteId;
+        //just making remove a post for now
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/"+this.state.eventId+"/removeJudge/" + removeId, "DELETE", constants.useCredentials(), null, true).then(function (result) {
+            _this.setState({confirmDialog: false});
+            _this.props.addNotification(
+                "Success: The judge has been removed",
+                "info",
+                "tc",
+                6
+            );
+            _this.componentDidMount();
+        }).catch(function (error) {
+            _this.setState({confirmDialog: false});
+            _this.props.addNotification(
+                "Error: The judge could not be removed",
+                "error",
+                "tc",
+                6
+            );
+        })
     }
 
     //Return the judges for this event, only show first and last name
     renderIfTeamsFound() {
         if (this.state.teamsDetail !== null && Object.keys(this.state.teamsDetail).length !== 0) {
+            let deleteBtnTeam =null;
+
             return (
                 <TableBody displayRowCheckbox={false}
                            showRowHover={true}>
                     {
                         Object.keys(this.state.teamsDetail).map(function (key) {
+                            if(this.state.showDeleteBtn) {
+                                deleteBtnTeam= <TableRowColumn> <RaisedButton icon={<FontIcon className="pe-7s-trash" />}
+                                                              secondary={true} label="Delete"
+                                                              onClick={this.confirmTeamDelete.bind(this, this.state.teamsDetail[key])}/>
+                                </TableRowColumn>
+                            }
                             return (
                                 <TableRow key={key}>
                                     <TableRowColumn>{this.state.teamsDetail[key].name}</TableRowColumn>
                                     <TableRowColumn>{this.state.teamsDetail[key].school.schoolName}</TableRowColumn>
+                                    {deleteBtnTeam}
+
                                 </TableRow>
                             )
 
@@ -314,8 +381,73 @@ class EventDetail extends Component {
             )
         }
     }
+    confirmTeamDelete = (s) => {
+        this.setState({
+            confirmDialog:true,
+            confirmMessage:'Are you sure you want to delete the following team: ' + s.name,
+            deleteTeam:true,
+            deleteJudge:false,
+            deleteId:s.id
+        })
+    }
+
+    removeTeam() {
+        var _this = this;
+        var removeId = _this.state.deleteId;
+        //just making remove a post for now
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/"+this.state.eventId+"/removeTeam/" + removeId, "DELETE", constants.useCredentials(), null, true).then(function (result) {
+            _this.setState({confirmDialog: false});
+            _this.props.addNotification(
+                "Success: The team has been removed",
+                "info",
+                "tc",
+                6
+            );
+            _this.componentDidMount();
+        }).catch(function (error) {
+            _this.setState({confirmDialog: false});
+            _this.props.addNotification(
+                "Error: The team could not be removed",
+                "error",
+                "tc",
+                6
+            );
+        })
+    }
+
+    closeConfirmDialog = () => {
+        this.setState({confirmDialog: false});
+    }
 
     render() {
+        let deleteActions=null;
+        if(this.state.deleteTeam) {
+             deleteActions = [
+                <FlatButton
+                    label="Cancel"
+                    primary={true}
+                    onClick={this.closeConfirmDialog}
+                />,
+                <FlatButton
+                    label="Delete"
+                    primary={true}
+                    onClick={this.removeTeam}
+                />,
+            ];
+        } else {
+             deleteActions = [
+                <FlatButton
+                    label="Cancel"
+                    primary={true}
+                    onClick={this.closeConfirmDialog}
+                />,
+                <FlatButton
+                    label="Delete"
+                    primary={true}
+                    onClick={this.removeJudge}
+                />,
+            ];
+        }
         let modalTitleBar = <AppBar
             iconElementRight={<FlatButton label="Close"/>}
             showMenuIconButton={false}
@@ -390,6 +522,14 @@ class EventDetail extends Component {
                                           onClick={event => this.registerTeam()}/>
                         </Modal.Footer>
                     </Modal>
+                    <Dialog
+                        actions={deleteActions}
+                        modal={false}
+                        open={this.state.confirmDialog}
+                        onRequestClose={this.closeConfirmDialog}
+                    >
+                        {this.state.confirmMessage}
+                    </Dialog>
                 </MuiThemeProvider>
 
             </div>

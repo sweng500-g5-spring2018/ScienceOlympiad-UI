@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {RaisedButton, AppBar, FontIcon, FlatButton} from 'material-ui';
+import {RaisedButton, AppBar, FontIcon, FlatButton, MuiThemeProvider} from 'material-ui';
 import ReactTable from 'react-table';
 import constants from "../../utils/constants";
 import HttpRequest from "../../adapters/httpRequest";
@@ -95,15 +95,11 @@ class TeamViewer extends Component {
         var _this = this;
         var studentId = student.id;
 
-        console.log("TRYING TO DELETE STUDENT");
-        console.log(student);
-
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/deleteStudent/" + studentId, "DELETE", constants.useCredentials(), null, true).then(function (result) {
             _this.props.addNotification(<div>Student <b>{student.firstName + ' ' + student.lastName}</b> has been deleted.</div>, 'success');
 
             _this.getTeams();
 
-            console.log(result);
         }).catch(function (error) {
             console.log(error);
             _this.props.addNotification(<div>Student <b>{student.firstName + ' ' + student.lastName}</b> could not be deleted because: <em>{error.message}</em></div>, 'error');
@@ -191,8 +187,6 @@ class TeamViewer extends Component {
     }
 
     deleteStudentClicked(student) {
-        console.log('going to delete student: ' );
-        console.log(student);
         this.setState({
             selectedStudent: student,
             modal: true,
@@ -234,7 +228,6 @@ class TeamViewer extends Component {
                 this.removeStudentFromTeam(this.state.selectedStudent, this.state.selectedTeam);
                 break;
             case 'DELETESTUDENT':
-                console.log("WILL DELETE STUDENT YO");
                 this.deleteStudent(this.state.selectedStudent);
                 break;
         }
@@ -243,73 +236,65 @@ class TeamViewer extends Component {
     addButtonsToTeam(team) {
         team.menuActions =
             <div>
-                <RaisedButton icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => {this.deleteTeamButtonClicked(team)}} label="Delete Team"/>
+                <RaisedButton style={{minWidth: '30%'}} icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={this.deleteTeamButtonClicked.bind(this, team) } />
             </div>;
 
         for(let studIndex in team.students) {
             team.students[studIndex].menuActions =
-                <div>
-                    <RaisedButton icon={<FontIcon className="pe-7s-less" />} backgroundColor="#FFC300" onClick={event => { this.removeStudentFromTeamButtonClicked(team.students[studIndex], team) }} label="Remove"/>
-                    &nbsp;&nbsp;
-                    <RaisedButton icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={event => { this.deleteStudentClicked(team.students[studIndex])}} label="Delete"/>
+                <div >
+                    <RaisedButton style={{minWidth: '40%'}} icon={<FontIcon className="pe-7s-less" />} backgroundColor="#FFC300" onClick={this.removeStudentFromTeamButtonClicked.bind(this, team.students[studIndex], team)} />
+                    <RaisedButton style={{minWidth: '40%'}} icon={<FontIcon className="pe-7s-trash" />} secondary={true} onClick={this.deleteStudentClicked.bind(this, team.students[studIndex])} />
                 </div>;
         }
     }
 
     //Handling Row Expansion
-    handleRowExpanded(newExpanded, index, event) {
-        if(this.state.expanded[index]) {
-            this.setState({
-                expanded: {[index]: false}
-            })
-        } else {
-            this.setState({
-                // we override newExpanded, keeping only current selected row expanded
-                expanded: {[index]: true}
-            });
-        }
+    handleRowExpanded(newExpanded, index) {
+        this.setState({
+            expanded: {[index]: !this.state.expanded[index]}
+        })
     }
 
     render() {
         return (
-            <div>
-                <Loader color="#3498db" loaded={this.state.isLoaded}>
-                    <ReactTable
-                        data={this.state.teams}
-                        columns={this.columns}
-                        expanded={this.state.expanded}
-                        onExpandedChange={this.handleRowExpanded}
-                        filterable
-                        defaultFilterMethod={(filter, row) =>
-                            String(row[filter.id]) === filter.value }
-                        defaultPageSize={10}
-                        className="-striped -highlight"
-                        defaultSorted={[{id: "name"}]}
-                        SubComponent={row => (
-                            <StudentViewer teamProp={row.original} viewIndex={row.viewIndex} updateTeam={this.updateTeam} updateTable={this.props.updateTable} addNotification={this.props.addNotification}/>
-                        )}
-                    />
-                </Loader>
-                <Modal show={this.state.modal} onHide={this.closeModal}>
-                    <Modal.Header>
-                        <Modal.Title> <AppBar
-                            iconElementRight={<FlatButton label="Close"/>}
-                            showMenuIconButton={false}
-                            onRightIconButtonClick={this.closeModal}
-                            title={this.state.modalInfo.title}
-                        /></Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {this.state.modalInfo.body}
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} label="Cancel"
-                                      onClick={this.closeModal}/>&nbsp;&nbsp;
-                        <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label="Confirm"
-                                      onClick={ () => this.handleModalActionClicked(this.state.modalInfo.modalAction)}/>
-                    </Modal.Footer>
-                </Modal>
-            </div>
+            <MuiThemeProvider>
+                <div>
+                    <Loader color="#3498db" loaded={this.state.isLoaded}>
+                        <ReactTable
+                            data={this.state.teams}
+                            columns={this.columns}
+                            expanded={this.state.expanded}
+                            onExpandedChange={this.handleRowExpanded}
+                            filterable
+                            defaultPageSize={10}
+                            className="-striped -highlight"
+                            defaultSorted={[{id: "name"}]}
+                            SubComponent={row => (
+                                <StudentViewer teamProp={row.original} viewIndex={row.viewIndex} updateTeam={this.updateTeam} updateTable={this.props.updateTable} addNotification={this.props.addNotification}/>
+                            )}
+                        />
+                    </Loader>
+                    <Modal show={this.state.modal} onHide={this.closeModal}>
+                        <Modal.Header>
+                            <Modal.Title> <AppBar
+                                iconElementRight={<FlatButton label="Close"/>}
+                                showMenuIconButton={false}
+                                onRightIconButtonClick={this.closeModal}
+                                title={this.state.modalInfo.title}
+                            /></Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            {this.state.modalInfo.body}
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} label="Cancel"
+                                          onClick={this.closeModal}/>&nbsp;&nbsp;
+                            <RaisedButton icon={<FontIcon className="pe-7s-like2" />} primary={true} label="Confirm"
+                                          onClick={ () => this.handleModalActionClicked(this.state.modalInfo.modalAction)}/>
+                        </Modal.Footer>
+                    </Modal>
+                </div>
+            </MuiThemeProvider>
         )
     }
 

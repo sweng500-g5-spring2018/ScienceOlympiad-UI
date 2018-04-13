@@ -138,8 +138,6 @@ class StudentViewer extends Component {
                         data={this.props.teamProp.students}
                         columns={this.columns2}
                         filterable
-                        defaultFilterMethod={(filter, row) =>
-                            String(row[filter.id]) === filter.value }
                         defaultPageSize={this.props.teamProp.students.length}
                         showPagination={false}
                         className="-striped -highlight"
