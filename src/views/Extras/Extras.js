@@ -105,6 +105,12 @@ class Extras extends React.Component {
 
         }).catch(function (error) {
             console.log(error);
+            _this.notify(
+                "Could not send email",
+                "error",
+                "tc",
+                10
+            );
         })
     }
 
@@ -142,6 +148,12 @@ class Extras extends React.Component {
 
         }).catch(function (error) {
             console.log(error);
+            _this.notify(
+                "Could not send text",
+                "error",
+                "tc",
+                10
+            );
         })
     }
 
