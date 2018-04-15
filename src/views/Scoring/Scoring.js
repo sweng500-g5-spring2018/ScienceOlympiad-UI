@@ -1,21 +1,25 @@
 import React, {Component} from 'react';
-import {MuiThemeProvider} from 'material-ui';
-
 import {style} from "../../variables/Variables";
 
 import NotificationSystem from 'react-notification-system';
 import constants from "../../utils/constants";
 import HttpRequest from "../../adapters/httpRequest";
+import {RaisedButton, AppBar, FontIcon, FlatButton, MuiThemeProvider, TextField} from 'material-ui';
+import ReactTable from "react-table";
+import matchSorter from "match-sorter";
+import EventScores from './EventScores';
 
 class Scoring extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            expanded: {},
             _notificationSystem: null
         }
 
         this.addNotification = this.addNotification.bind(this);
+        this.handleRowExpanded = this.handleRowExpanded.bind(this);
     }
 
     getTeamEvents() {
@@ -26,6 +30,7 @@ class Scoring extends Component {
             var teamMap = new Map();
 
             teamEvents.forEach(function (teamEvent) {
+                // if(teamEvent.score == null) {teamEvent.score = undefined;}
                 if(teamMap.has(teamEvent.eventId)) {
                     let teamEventUpdate = teamMap.get(teamEvent.eventId);
                     teamEventUpdate.push(teamEvent);
@@ -36,28 +41,35 @@ class Scoring extends Component {
                 }
             });
 
-            console.log(teamMap);
+            let eventTeamList = [];
+
+            for(let key of teamMap.keys()) {
+                let localEvent = {};
+                let teList = teamMap.get(key);
+
+                localEvent.eventId = teList[0].eventId;
+                localEvent.eventName = teList[0].eventName;
+                localEvent.teams = [... teList];
+
+                let allScored = true;
+                teList.forEach(function (te) {
+                    if(te.score == null) {
+                        allScored = false;
+                    }
+                });
+
+                localEvent.allScored = allScored ? "Scored" : "Pending";
+                eventTeamList.push(localEvent);
+            }
+
+            console.log(eventTeamList);
 
             _this.setState({
-                teamMap: teamMap
+                eventTeamsList: eventTeamList
             });
 
-            // console.log(result);
-            // resultTeams.forEach(function (team) {
-            //     _this.addButtonsToTeam(team);
-            // });
-            //
-            // _this.setState({
-            //     isLoaded:true,
-            //     teams: resultTeams,
-            //     expanded: {},
-            //     selectedTeam: null,
-            //     selectedStudent: null,
-            //     modal:false,
-            //     modalInfo: constants.getEmptyModalInfo(),
-            // })
         }).catch(function (error) {
-            _this.props.addNotification(<div>Could not retrieve teams at this time. Try again later.</div>, 'error');
+            this.addNotification(<div>Could not retrieve teams at this time. Try again later.</div>, 'error');
             console.log(error);
         })
     }
@@ -86,6 +98,12 @@ class Scoring extends Component {
         });
     }
 
+    //Handling Row Expansion
+    handleRowExpanded(newExpanded, index) {
+        this.setState({
+            expanded: {[index]: !this.state.expanded[index]}
+        })
+    }
 
     render() {
         return (
@@ -93,10 +111,42 @@ class Scoring extends Component {
                 <div className="content" style={{textAlign: 'center'}}>
                     <NotificationSystem ref="notificationSystem" style={style}/>
                     <div>HELLOOOO</div>
+                    <ReactTable
+                        data={this.state.eventTeamsList}
+                        columns={this.columns}
+                        expanded={this.state.expanded}
+                        onExpandedChange={this.handleRowExpanded}
+                        filterable
+                        defaultPageSize={10}
+                        className="-striped -highlight"
+                        defaultSorted={[{id: "eventName"}]}
+                        SubComponent={row => (
+                            <EventScores teams={row.original.teams} label={row.original.eventName} addNotification={this.addNotification}/>
+
+                        )}
+                    />
                 </div>
             </MuiThemeProvider>
         )
     }
+
+    columns = [
+        {
+            Header: 'Event Name',
+            filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, {keys: ["eventName"]}),
+            filterAll: true,
+            accessor: 'eventName' // String-based value accessors!
+        },
+        {
+            Header: 'Scoring Status',
+            maxWidth: 200,
+            filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, {keys: ["allScored"]}),
+            filterAll: true,
+            accessor: 'allScored' // String-based value accessors!
+        }
+    ];
 
 }
 
