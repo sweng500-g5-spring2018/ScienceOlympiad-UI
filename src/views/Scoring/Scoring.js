@@ -63,8 +63,6 @@ class Scoring extends Component {
                 eventTeamList.push(localEvent);
             }
 
-            console.log(eventTeamList);
-
             _this.setState({
                 eventTeamsList: eventTeamList
             });
@@ -100,17 +98,16 @@ class Scoring extends Component {
         allScored = allScored ? "Scored" : "Pending";
 
         if(eventObjRef && eventObjRef.allScored !== allScored) {
-
-            console.log("HOLY SHIT RESETTING ALL DA SHIT");
             eventObjRef.allScored = allScored;
             tempEventTeamsList = JSON.parse(JSON.stringify(tempEventTeamsList));
+            if(eventObjRef.allScored === "Scored") {
+                this.addNotification(<div>All scores have been submitted for event: <em>{teamEvent.eventName}</em>.</div>, 'info');
+            }
         }
 
         this.setState({
             eventTeamsList: tempEventTeamsList
-        }, () => {
-            console.log(this.state.eventTeamsList);
-        })
+        });
     }
 
     addNotification(message, level, position, autoDismiss) {
@@ -149,7 +146,6 @@ class Scoring extends Component {
             <MuiThemeProvider>
                 <div className="content" style={{textAlign: 'center'}}>
                     <NotificationSystem ref="notificationSystem" style={style}/>
-                    <div>HELLOOOO</div>
                     <ReactTable
                         data={this.state.eventTeamsList}
                         columns={this.columns}

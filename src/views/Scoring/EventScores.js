@@ -24,13 +24,9 @@ class EventScores extends Component {
     }
 
     handleSingleScoreUpdate(teamEvent, resetScore) {
-        console.log(teamEvent);
-
         var body = {score: null};
 
-        console.log("reset score is: " + resetScore);
         if(!resetScore) {
-            console.log("no reset score")
             body = {score: this.state.internalScores[teamEvent.id].score};
         }
 
@@ -41,7 +37,7 @@ class EventScores extends Component {
 
         var _this = this;
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/addScore/" + teamEvent.id, "POST", constants.useCredentials(), body, true).then(function (result) {
-            _this.props.addNotification(<div>Successfully submitted score for team <em>{teamEvent.teamName}</em> for event <em>{teamEvent.eventName}</em>.</div>, 'info');
+            // _this.props.addNotification(<div>Successfully submitted score for team <em>{teamEvent.teamName}</em> for event <em>{teamEvent.eventName}</em>.</div>, 'info');
 
             let tempScores = _this.state.internalScores;
             tempScores[teamEvent.id].hasBeenScored = !resetScore;
