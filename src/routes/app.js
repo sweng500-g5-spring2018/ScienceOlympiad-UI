@@ -15,7 +15,7 @@ const appRoutes = [
     { path: "/app/buildings", name:"Buildings", icon:"pe-7s-map", component: Buildings, users:['ADMIN']},
     { path: "/app/rooms", name:"Rooms", icon:"pe-7s-ribbon", component: Rooms, users:['ADMIN']},
     { path: "/app/teams", name: "Team Management", icon: "pe-7s-users", component : TeamManagement, users:['ADMIN', 'COACH']},
-    { path: "/app/scoring", name: "Event Scoring", icon: "pe-7s-medal", component : Scoring, users:['ADMIN', 'JUDGE']},
+    { path: "/app/scoring", name: "Event Scoring", icon: "pe-7s-medal", component : Scoring },
     { path: "/app/extras", name:"Extras", icon:"pe-7s-gleam", component :Extras, users:['ADMIN']},
     { linkOnly: true, path: "/app/user", name:"User Profile", icon:"pe-7s-global", component :UserProfile},
     { redirect: true, path:"/", to:"/app/dashboard", name: "Dashboard" }
