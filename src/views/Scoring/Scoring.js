@@ -172,16 +172,16 @@ class Scoring extends Component {
     columns = [
         {
             Header: 'Event Name',
-            filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, {keys: ["eventName"]}),
+            filterMethod: (filter, rows) => {this.setState({expanded: {}});
+                return matchSorter(rows, filter.value, {keys: ["eventName"]}) },
             filterAll: true,
             accessor: 'eventName' // String-based value accessors!
         },
         {
             Header: 'Scoring Status',
             maxWidth: 200,
-            filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, {keys: ["allScored"]}),
+            filterMethod: (filter, rows) =>{ this.setState({expanded: {}});
+                return matchSorter(rows, filter.value, {keys: ["allScored"]}) },
             filterAll: true,
             accessor: 'allScored' // String-based value accessors!
         }
