@@ -15,11 +15,13 @@ class Scoring extends Component {
 
         this.state = {
             expanded: {},
+            eventTeamsList: undefined,
             _notificationSystem: null
         }
 
         this.addNotification = this.addNotification.bind(this);
         this.handleRowExpanded = this.handleRowExpanded.bind(this);
+        this.updateScores = this.updateScores.bind(this);
     }
 
     getTeamEvents() {
@@ -30,7 +32,6 @@ class Scoring extends Component {
             var teamMap = new Map();
 
             teamEvents.forEach(function (teamEvent) {
-                // if(teamEvent.score == null) {teamEvent.score = undefined;}
                 if(teamMap.has(teamEvent.eventId)) {
                     let teamEventUpdate = teamMap.get(teamEvent.eventId);
                     teamEventUpdate.push(teamEvent);
@@ -71,6 +72,44 @@ class Scoring extends Component {
         }).catch(function (error) {
             this.addNotification(<div>Could not retrieve teams at this time. Try again later.</div>, 'error');
             console.log(error);
+        })
+    }
+
+    updateScores(teamEvent, score) {
+        let tempEventTeamsList = this.state.eventTeamsList;
+
+        let eventObjRef;
+        let allScored = true;
+
+        for(let i in tempEventTeamsList) {
+            if(tempEventTeamsList[i].eventId !== teamEvent.eventId) continue;
+
+            eventObjRef = tempEventTeamsList[i];
+
+            for(let j in tempEventTeamsList[i].teams) {
+                if(tempEventTeamsList[i].teams[j].id === teamEvent.id) {
+                    tempEventTeamsList[i].teams[j].score = score;
+                }
+
+                if(tempEventTeamsList[i].teams[j].score == null) {
+                    allScored = false;
+                }
+            }
+        }
+
+        allScored = allScored ? "Scored" : "Pending";
+
+        if(eventObjRef && eventObjRef.allScored !== allScored) {
+
+            console.log("HOLY SHIT RESETTING ALL DA SHIT");
+            eventObjRef.allScored = allScored;
+            tempEventTeamsList = JSON.parse(JSON.stringify(tempEventTeamsList));
+        }
+
+        this.setState({
+            eventTeamsList: tempEventTeamsList
+        }, () => {
+            console.log(this.state.eventTeamsList);
         })
     }
 
@@ -121,7 +160,7 @@ class Scoring extends Component {
                         className="-striped -highlight"
                         defaultSorted={[{id: "eventName"}]}
                         SubComponent={row => (
-                            <EventScores teams={row.original.teams} label={row.original.eventName} addNotification={this.addNotification}/>
+                            <EventScores teams={row.original.teams} label={row.original.eventName} updateScores={this.updateScores} addNotification={this.addNotification}/>
 
                         )}
                     />

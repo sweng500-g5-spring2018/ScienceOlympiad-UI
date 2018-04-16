@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import constants from "../../utils/constants";
 import HttpRequest from "../../adapters/httpRequest";
-import {RaisedButton, AppBar, FontIcon, FlatButton, MuiThemeProvider, TextField} from 'material-ui';
+import {RaisedButton, AppBar, FontIcon, FlatButton, MuiThemeProvider, TextField, IconButton} from 'material-ui';
 import Card from '../../components/Cards/Card';
 
 import AuthService from '../../utils/AuthService';
@@ -23,17 +23,39 @@ class EventScores extends Component {
         }
     }
 
-    handleSingleScoreUpdate(teamEvent) {
+    handleSingleScoreUpdate(teamEvent, resetScore) {
         console.log(teamEvent);
 
-        let tempScores = this.state.internalScores;
-        tempScores[teamEvent.id].hasBeenScored = true;
+        var body = {score: null};
 
-        this.setState({
-            internalScores: tempScores
+        console.log("reset score is: " + resetScore);
+        if(!resetScore) {
+            console.log("no reset score")
+            body = {score: this.state.internalScores[teamEvent.id].score};
+        }
+
+        if(body.score != null && (body.score < 0 || body.score > 100)){
+            this.props.addNotification(<div>Please submit a score that is between 0 and 100.</div>, 'error');
+            return;
+        }
+
+        var _this = this;
+        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/addScore/" + teamEvent.id, "POST", constants.useCredentials(), body, true).then(function (result) {
+            _this.props.addNotification(<div>Successfully submitted score for team <em>{teamEvent.teamName}</em> for event <em>{teamEvent.eventName}</em>.</div>, 'info');
+
+            let tempScores = _this.state.internalScores;
+            tempScores[teamEvent.id].hasBeenScored = !resetScore;
+
+            _this.setState({
+                internalScores: tempScores
+            }, () => {
+                _this.props.updateScores(teamEvent, body.score);
+            });
+
+        }).catch(function (error) {
+            console.log(error);
+            _this.props.addNotification(<div>Scores for team <b>{teamEvent.teamName}</b> could not be updated because: <em>{error.message}</em></div>, 'error');
         });
-
-        this.props.addNotification(<div>Successfully submitted score for team <em>{teamEvent.teamName}</em> for event <em>{teamEvent.eventName}</em>.</div>, 'info');
     }
 
     renderCategoryItem(team) {
@@ -52,11 +74,19 @@ class EventScores extends Component {
         }
     }
 
+    renderRemoveScoreButton(team){
+        if(this.state.internalScores[team.id].hasBeenScored) {
+            return (
+                <IconButton tooltip="Remove score from team" iconClassName="pe-7s-trash" onClick={this.handleSingleScoreUpdate.bind(this, team, true)}/>
+            )
+        }
+    }
+
     renderContentItem(team) {
         if(AuthService.isUserRoleAllowed(["JUDGE", "ADMIN"])) {
             return (
                 <div>
-                    <TextField name="scoreInput" type="number" style={{maxWidth: '75px'}}
+                    <TextField name="scoreInput" type="number" style={{maxWidth: '50px'}}
                                floatingLabelText="Score" hintText={"Score"}
                                value={this.state.internalScores[team.id].score}
                                margin="normal"
@@ -70,7 +100,12 @@ class EventScores extends Component {
                                }
                     />
                     &nbsp;&nbsp;
-                    <RaisedButton label={this.state.internalScores[team.id].hasBeenScored ? 'Update' : 'Score'} type='submit' icon={<FontIcon className="pe-7s-check" />} backgroundColor='#79d279' onClick={this.handleSingleScoreUpdate.bind(this, team)} />
+                    <IconButton
+                        tooltip={this.state.internalScores[team.id].hasBeenScored ? "Update Score" : "Submit Score" }
+                        iconClassName={this.state.internalScores[team.id].hasBeenScored ? "pe-7s-pen" : "pe-7s-check" }
+                        onClick={this.handleSingleScoreUpdate.bind(this, team, false)}
+                    />
+                    {this.renderRemoveScoreButton(team)}
                 </div>
             )
         } else {
