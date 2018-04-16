@@ -162,12 +162,15 @@ class EventDetail extends Component {
     }
 
     registerTeam() {
+
         var _this = this;
         //custom dropdown stores the entire object so just get the idea
         if (_this.state.selectedTeamValue === null) {
             _this.setState({teamSelectorError: 'Please select a team'});
         } else {
-            _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + _this.state.eventId + "/" + _this.state.selectedTeamValue.id, "POST", constants.useCredentials(), null, true).then(function (judgeResult) {
+            var body = {teamName: _this.state.selectedTeamValue.name, eventName: _this.state.eventDetail.name};
+
+            _this.serverRequestJudge = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/" + _this.state.eventId + "/" + _this.state.selectedTeamValue.id, "POST", constants.useCredentials(), body, true).then(function (judgeResult) {
                 _this.props.addNotification("Success, the team has been registered ", "success", "tc", 6);
                 _this.setState({loadAddTeam: true, teamModal: false, teamSelectorError: ''})
                 _this.componentDidMount();

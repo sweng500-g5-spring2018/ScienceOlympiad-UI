@@ -59,7 +59,8 @@
       "!src/variables/*",
       "!src/index.js",
       "!src/registerServiceWorker.js",
-      "!src/components/HttpExample/*"
+      "!src/components/HttpExample/*",
+      "!src/views/Scoring/*"
     ]
   },
   "jest-junit": {
