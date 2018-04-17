@@ -52,7 +52,8 @@ class UserProfile extends Component {
         HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getUserProfile', 'GET',
             constants.useCredentials(), null).then(function (result) {
             _this.setState({
-                user: result.body
+                user: result.body,
+                desc: result.body.school ? "School: " + result.body.school.schoolName : ""
             })
 
         }).catch(function (error) {
@@ -65,15 +66,13 @@ class UserProfile extends Component {
             this.setState({imageUrl : "https://telegram.org/file/811140509/b45/dQTLEwKZ9gs.22232.gif/4580677d940852f30e"});
         } else if (userType === "COACH") {
             this.setState({
-                imageUrl : "https://baseballmomstuff.com/wp-content/uploads/2016/02/coach-cartoon.jpg",
-                desc : "School: " + this.state.user.school
+                imageUrl : "https://baseballmomstuff.com/wp-content/uploads/2016/02/coach-cartoon.jpg"
             });
         } else if (userType === "JUDGE") {
             this.setState({imageUrl : "https://www.how-to-draw-funny-cartoons.com/image-files/cartoon-judge-010.jpg"});
         } else if (userType === "STUDENT") {
             this.setState({
-                imageUrl : "https://classroomclipart.com/images/gallery/Clipart/Science/TN_female-student-holding-flask-and-test-tube-in-science-lab-science-clipart.jpg",
-                desc : "Coach: " + this.state.user.coach
+                imageUrl : "https://classroomclipart.com/images/gallery/Clipart/Science/TN_female-student-holding-flask-and-test-tube-in-science-lab-science-clipart.jpg"
             });
         }
     }
