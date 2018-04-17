@@ -9,11 +9,18 @@ import { Grid, Row, Col } from 'react-bootstrap';
 
 //COMPONENT TO TEST
 import Dashboard from '../Dashboard';
+import AuthService from "../../../utils/AuthService";
+import HttpRequest from "../../../adapters/httpRequest";
 
 describe('Dashboard Component Tests', function () {
 
     // Test 1
     test('Should render Dashboard component with Grid layout', () => {
+
+        //Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+        sinon.stub(AuthService, 'getUserRole').returns("ADMIN")
+
         const component = shallow(<Dashboard />);
 
         expect(component.find('div.content')).to.have.length(1);

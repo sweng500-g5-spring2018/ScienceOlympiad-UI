@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import HttpRequest from '../../adapters/httpRequest';
+import {StatsCard} from '../../components/Cards/StatsCard.js';
 
 import ChuckNorris from './ChuckNorris';
 
@@ -33,14 +34,27 @@ class ChuckParent extends Component {
 
     render() {
         return (
-            <div key="contact-key" id="contact-id" className="contactClass">
+            <StatsCard
+                bigIcon={<i className="pe-7s-smile text-warning"></i>}
+                statsText="Chuck Norris Joke"
+                statsValue={<ChuckNorris
+                    chuckNorrisFromParent={this.state.chuckNorris}
+                    callChuckNorris={this.callChuckNorris}>
+                </ChuckNorris>}
+            />
+
+        );
+    }
+}
+export default ChuckParent;
+
+/*
+
+<div key="contact-key" id="contact-id" className="contactClass">
                 <span><h1>Chuck Norris Says</h1></span>
                 <ChuckNorris
                     chuckNorrisFromParent={this.state.chuckNorris}
                     callChuckNorris={this.callChuckNorris}>
                 </ChuckNorris>
             </div>
-        );
-    }
-}
-export default ChuckParent;
+ */
