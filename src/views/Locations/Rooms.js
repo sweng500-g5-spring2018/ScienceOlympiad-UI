@@ -141,18 +141,14 @@ class Rooms extends Component {
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/removeRoom/' + id, 'DELETE', constants.useCredentials(), null).then(function (result) {
 
             _this.setState({confirmDialog: false});
+            _this.addNotification(
+                "Success: The room has been deleted.",
+                "info",
+                "tc",
+                6
+            );
 
-            if (result.status === 200) {
-
-                _this.addNotification(
-                    "Success: The room has been deleted.",
-                    "info",
-                    "tc",
-                    6
-                );
-
-                _this.componentDidMount();
-            }
+            _this.componentDidMount();
 
         }).catch(function (error) {
 
@@ -325,32 +321,6 @@ class Rooms extends Component {
     renderIfRoomsFound() {
         if (this.state.roomList !== null && Object.keys(this.state.roomList).length !== 0) {
 
-            const columns = [{
-                Header: 'Room Name or Number',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, { keys: ["roomName"] }),
-                filterAll: true,
-                accessor: 'roomName' // String-based value accessors!
-            }, {
-                Header: 'Building Name',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, { keys: ["buildingName"] }),
-                filterAll: true,
-                accessor: 'buildingName' // String-based value accessors!
-            }, {
-                Header: 'Room Capacity',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, { keys: ["capacity"] }),
-                filterAll: true,
-                accessor: 'capacity' // String-based value accessors!
-            }, {
-                Header: 'Actions',
-                accessor: 'menuActions', // String-based value accessors!
-                style:{textAlign:'center'},
-                sortable: false,
-                filterable: false
-            }];
-
             var tempList = this.state.roomList;
 
             for(let value in tempList) {
@@ -368,7 +338,7 @@ class Rooms extends Component {
                     filterable
                     defaultFilterMethod={(filter, row) =>
                         String(row[filter.id]) === filter.value}
-                    columns={columns}
+                    columns={this.columns}
                     defaultPageSize={10}
                     className="-striped -highlight"
                     defaultSorted={[{id: "roomName"}]}
@@ -477,6 +447,32 @@ class Rooms extends Component {
             </MuiThemeProvider>
         );
     }
+
+    columns = [{
+        Header: 'Room Name or Number',
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["roomName"] }),
+        filterAll: true,
+        accessor: 'roomName' // String-based value accessors!
+    }, {
+        Header: 'Building Name',
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["buildingName"] }),
+        filterAll: true,
+        accessor: 'buildingName' // String-based value accessors!
+    }, {
+        Header: 'Room Capacity',
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["capacity"] }),
+        filterAll: true,
+        accessor: 'capacity' // String-based value accessors!
+    }, {
+        Header: 'Actions',
+        accessor: 'menuActions', // String-based value accessors!
+        style:{textAlign:'center'},
+        sortable: false,
+        filterable: false
+    }];
 }
 
 export default Rooms;

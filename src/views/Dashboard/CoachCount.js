@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import HttpRequest from "../../adapters/httpRequest";
 import constants from "../../utils/constants";
 import {StatsCard} from '../../components/Cards/StatsCard.js';
@@ -18,15 +17,12 @@ class CoachCount extends Component {
         this.getCoaches = this.getCoaches.bind(this);
     }
 
-    getCoaches(event) {
-        if(event) {event.preventDefault() };
-
+    getCoaches() {
         var _this = this;
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/getCoaches", "get", constants.useCredentials(), null, true).then(function (result) {
             _this.setState({
                 result: result.body
             })
-            console.log(result.body);
         }).catch(function (error) {
             console.log(error);
         })
@@ -40,7 +36,7 @@ class CoachCount extends Component {
                 <div className="footer">
                     <hr />
                     <div className="stats">
-                        <a style={{cursor:'pointer'}} onClick={event => this.getCoaches(event)}><i className="fa fa-refresh"></i> Update Now</a>
+                        <a style={{cursor:'pointer'}} onClick={this.getCoaches}><i className="fa fa-refresh"></i> Update Now</a>
                     </div>
                 </div>
             </div>
