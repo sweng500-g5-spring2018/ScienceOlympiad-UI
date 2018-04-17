@@ -55,7 +55,7 @@ class EventScores extends Component {
     }
 
     renderCategoryItem(team) {
-        if(AuthService.isUserRoleAllowed(["JUDGE", "ADMIN"])) {
+        if(this.isEditable()) {
             return (
                 <span>
                     Record results for team <em>{team.teamName}</em> in event <em>{team.eventName}</em>.
@@ -79,7 +79,7 @@ class EventScores extends Component {
     }
 
     renderContentItem(team) {
-        if(AuthService.isUserRoleAllowed(["JUDGE", "ADMIN"])) {
+        if(this.isEditable()) {
             return (
                 <div>
                     <TextField name="scoreInput" type="number" style={{maxWidth: '50px'}}
@@ -141,6 +141,26 @@ class EventScores extends Component {
                 </div>
             )
         }
+    }
+
+    isEditable() {
+        const role = AuthService.getUserRole();
+        const email = AuthService.getUserEmail();
+
+        if(role === "ADMIN") { return true; }
+
+        if(role === "JUDGE") {
+            if(this.props.allowedJudges && this.props.allowedJudges.length > 0) {
+                for(let i in this.props.allowedJudges) {
+                    if(this.props.allowedJudges[i] === email) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return false;
+        }
+        return false;
     }
 
     render() {

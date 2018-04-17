@@ -8,6 +8,7 @@ import {RaisedButton, AppBar, FontIcon, FlatButton, MuiThemeProvider, TextField}
 import ReactTable from "react-table";
 import matchSorter from "match-sorter";
 import EventScores from './EventScores';
+import AuthService from "../../utils/AuthService";
 
 class Scoring extends Component {
     constructor(props) {
@@ -17,14 +18,29 @@ class Scoring extends Component {
             expanded: {},
             eventTeamsList: undefined,
             _notificationSystem: null
-        }
+        };
 
         this.addNotification = this.addNotification.bind(this);
         this.handleRowExpanded = this.handleRowExpanded.bind(this);
         this.updateScores = this.updateScores.bind(this);
     }
 
+    getJudgesForEvents(eventId) {
+        var promise = new Promise(function (resolve, reject) {
+            HttpRequest.httpRequest(constants.getServerUrl() + "/sweng500/event/judges/" + eventId, "get", constants.useCredentials(), null, true).then(function (judgeResult) {
+                resolve(judgeResult.body);
+            }).catch(function (error) {
+                resolve([]);
+            })
+        });
+
+        return promise;
+    }
+
     getTeamEvents() {
+        const userRole = AuthService.getUserRole();
+        var judgePromises = [];
+
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getTeamEvents', 'GET', constants.useCredentials(), null, true).then(function (result) {
@@ -35,38 +51,54 @@ class Scoring extends Component {
                 if(teamMap.has(teamEvent.eventId)) {
                     let teamEventUpdate = teamMap.get(teamEvent.eventId);
                     teamEventUpdate.push(teamEvent);
+
                 } else {
                     let teamEventUpdate = [];
                     teamEventUpdate.push(teamEvent);
                     teamMap.set(teamEvent.eventId, teamEventUpdate);
+
+                    if(userRole === "JUDGE") {
+                        judgePromises.push(_this.getJudgesForEvents(teamEvent.eventId));
+                    }
                 }
             });
 
-            let eventTeamList = [];
+            Promise.all(judgePromises).then((results) => {
 
-            for(let key of teamMap.keys()) {
-                let localEvent = {};
-                let teList = teamMap.get(key);
+                let eventTeamList = [];
+                for(let key of teamMap.keys()) {
+                    let localEvent = {};
+                    let teList = teamMap.get(key);
 
-                localEvent.eventId = teList[0].eventId;
-                localEvent.eventName = teList[0].eventName;
-                localEvent.teams = [... teList];
+                    localEvent.eventId = teList[0].eventId;
+                    localEvent.eventName = teList[0].eventName;
+                    localEvent.teams = [... teList];
 
-                let allScored = true;
-                teList.forEach(function (te) {
-                    if(te.score == null) {
-                        allScored = false;
+                    if(userRole === "JUDGE") {
+                        localEvent.allowedJudges = [];
+                        let judges = results.shift();
+                        for(let i in judges) {
+                            localEvent.allowedJudges.push(judges[i].emailAddress);
+                        }
                     }
+
+                    let allScored = true;
+                    teList.forEach(function (te) {
+                        if(te.score == null) {
+                            allScored = false;
+                        }
+                    });
+
+                    localEvent.allScored = allScored ? "Scored" : "Pending";
+                    eventTeamList.push(localEvent);
+                }
+
+                _this.setState({
+                    eventTeamsList: eventTeamList
                 });
-
-                localEvent.allScored = allScored ? "Scored" : "Pending";
-                eventTeamList.push(localEvent);
-            }
-
-            _this.setState({
-                eventTeamsList: eventTeamList
+            }).catch((error) => {
+                console.log("Failed to obtain judges :(");
             });
-
         }).catch(function (error) {
             this.addNotification(<div>Could not retrieve teams at this time. Try again later.</div>, 'error');
             console.log(error);
@@ -126,8 +158,6 @@ class Scoring extends Component {
         }
     }
 
-
-
     componentDidMount() {
         this.setState({_notificationSystem: this.refs.notificationSystem}, () => {
             this.getTeamEvents();
@@ -156,7 +186,7 @@ class Scoring extends Component {
                         className="-striped -highlight"
                         defaultSorted={[{id: "eventName"}]}
                         SubComponent={row => (
-                            <EventScores teams={row.original.teams} label={row.original.eventName} updateScores={this.updateScores} addNotification={this.addNotification}/>
+                            <EventScores teams={row.original.teams} label={row.original.eventName} allowedJudges={row.original.allowedJudges} updateScores={this.updateScores} addNotification={this.addNotification}/>
 
                         )}
                     />
