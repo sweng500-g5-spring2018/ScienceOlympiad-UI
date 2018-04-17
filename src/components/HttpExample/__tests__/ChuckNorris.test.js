@@ -23,11 +23,10 @@ describe('ChuckNorris Component', function () {
     });
 
     // Test 2
-    test('Renders div with button and span with correct default props', function () {
+    test('Renders div with span with correct default props', function () {
         const component = shallow(<ChuckNorris />);
 
         expect(component.find('div#contact-chuck-container-div')).to.have.length(1);
-        expect(component.find('button')).to.have.length(1);
         expect(component.find('span')).to.have.length(1);
 
         expect(component.instance().props.chuckNorrisFromParent).to.equal(". . .");
@@ -45,7 +44,7 @@ describe('ChuckNorris Component', function () {
         const callChuckNorris = sinon.spy();
         const component = shallow(<ChuckNorris callChuckNorris={callChuckNorris}/>);
 
-        component.find('button').simulate('click');
+        component.find('a').simulate('click');
         expect(callChuckNorris.calledOnce).to.equal(true);
     })
 

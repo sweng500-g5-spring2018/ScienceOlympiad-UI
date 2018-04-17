@@ -30,27 +30,10 @@ describe('StatsCard Component Tests', function () {
         expect(component.find("div.card")).to.have.length(1);
         expect(component.find("div.card-stats")).to.have.length(1);
 
-        expect(component.find(Row)).to.have.length(1);
-        expect(component.find(Col)).to.have.length(2);
-
-        let myBigIconDiv = component.find("div.icon-big");
-        expect(myBigIconDiv).to.have.length(1);
-        expect(myBigIconDiv.text()).to.contain(cardData.bigIcon);
-
         let myNumbersDiv = component.find("div.numbers");
-        expect(myNumbersDiv).to.have.length(1);
-        expect(myNumbersDiv.text()).to.contain(cardData.statsText);
-        expect(myNumbersDiv.text()).to.contain(cardData.statsValue);
-
-        expect(component.find("div.footer")).to.have.length(1);
-        expect(component.find("div.stats")).to.have.length(1);
-        expect(component.find("hr")).to.have.length(1);
-        expect(component.find("p")).to.have.length(1);
+        expect(myNumbersDiv).to.have.length(2);
 
         let myContent = component.find("div.content");
         expect(myContent).to.have.length(1);
-
-        expect(myContent.text()).to.contain(cardData.statsIcon);
-        expect(myContent.text()).to.contain(cardData.statsIconText);
     })
 });

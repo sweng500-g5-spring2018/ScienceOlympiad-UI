@@ -7,11 +7,14 @@ class ChuckNorris extends Component {
 
         return (
             <div id="contact-chuck-container-div" key="contact-chuck-container-div" className="chuckNorrisClass">
-                <hr />
                 <span key="chuck-norris-quote"> {this.props.chuckNorrisFromParent} </span>
                 <br />
-                <button onClick={event => this.props.callChuckNorris(event) }>Chuck Norris Me</button>
-                <hr />
+                <div className="footer">
+                    <hr />
+                    <div className="stats">
+                        <a style={{cursor:'pointer'}} onClick={event => this.props.callChuckNorris(event)}><i className="fa fa-refresh"></i> Update Now</a>
+                    </div>
+                </div>
             </div>
         );
     }

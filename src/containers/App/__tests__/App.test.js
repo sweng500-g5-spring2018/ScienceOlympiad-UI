@@ -41,6 +41,7 @@ describe('App Component Tests', function () {
         sandbox.stub(AuthService, 'isLoggedIn').returns(true);
         sandbox.stub(AuthService, 'isAuthorized').returns(true);
         sandbox.stub(HttpRequest, 'httpRequest').resolves({status:200, body: "YAY"});
+        sandbox.stub(AuthService, 'getUserRole').returns("ADMIN");
 
         const component = mountWithRouter(<App {...props} />);
 
