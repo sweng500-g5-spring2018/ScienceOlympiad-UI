@@ -324,7 +324,7 @@ describe('School Component Tests', function () {
         component.instance().addNotification = sinon.spy();
 
         // Create a fake status variable
-        var s = [];
+        var s = {};
         s.status = "add";
 
         // Call the opening modal function
@@ -339,6 +339,73 @@ describe('School Component Tests', function () {
 
         // Check to see if the modal action is edit
         expect(component.state().modalAction).to.equal("edit");
+
+        s.status = "idk";
+        component.instance().openModal(s);
+        expect(component.state().modalAction).to.equal("edit");
+
+    });
+
+    // Test 13
+    test('Test confirmation and notification functions', async () => {
+        // Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+
+        const component = shallow(<Schools/>);
+
+        // Call the opening modal function
+        component.instance().setState({_notificationSystem: {addNotification: () => {} }});
+        component.instance().addNotification("YO", "yo", "yo", 2);
+        component.instance().addNotification("YO");
+
+        component.instance().closeConfirmDialog()
+        expect(component.state().confirmDialog).to.equal(false);
+
+        HttpRequest.httpRequest.restore();
+
+        //STUB: Http request to simulate data retrieval from API
+        sinon.stub(HttpRequest, 'httpRequest').rejects(
+            //import test data JSON for response
+            "awww"
+        );
+
+        component.instance().deleteSchool();
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        component.instance().setState({modal: true})
+        component.instance().setState({modalAction: 'add'})
+        component.instance().setState({schoolName: 'test'})
+        component.instance().setState({schoolContactName: 'test'})
+        component.instance().setState({schoolContactPhone: '11111111111'})
+
+        component.instance().handleSubmit();
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().modal).to.equal(false);
+
+        component.instance().setState({modal: true})
+        component.instance().setState({modalAction: 'edit'})
+        component.instance().setState({schoolName: 'test'})
+        component.instance().setState({schoolContactName: 'test'})
+        component.instance().setState({schoolContactPhone: '11111111111'})
+
+        component.instance().handleSubmit();
+
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().modal).to.equal(false);
+
+        component.instance().columns[0].filterMethod({value: 'schoolName'},[]);
+        component.instance().columns[1].filterMethod({value: 'schoolContactName'},[]);
+        component.instance().columns[2].filterMethod({value: 'schoolContactPhone'},[]);
     });
 
 });

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "5ad57a6eef6c494a123bf995",
+    "name": "asdf",
+    "description": "asdf",
+    "room": {
+      "id": "5ab841ce25ac18f646562ed6",
+      "roomName": "15",
+      "buildingID": "5a92229c25ac8ff0785f4d57",
+      "capacity": 35
+    },
+    "eventDate": 1523939922293,
+    "startTime": 1523939925339,
+    "endTime": 1523939927120
+  }
+]

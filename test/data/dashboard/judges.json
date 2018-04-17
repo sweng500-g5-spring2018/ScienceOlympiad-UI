@@ -1,0 +1,13 @@
+[
+  {
+    "id": "5ad5575a25ac47372aca0474",
+    "firstName": "Judge",
+    "lastName": "Judge",
+    "emailAddress": "judge@test.com",
+    "phoneNumber": "",
+    "minutesBeforeEvent": 10,
+    "receiveText": false,
+    "lastLoginDate": null,
+    "name": "Judge Judge"
+  }
+]

@@ -1,0 +1,53 @@
+[
+  {
+    "id": "5ad5586a25ac47372aca0475",
+    "firstName": "Coach",
+    "lastName": "Coach",
+    "emailAddress": "coach@test.com",
+    "phoneNumber": "+15551111111",
+    "minutesBeforeEvent": 10,
+    "receiveText": false,
+    "lastLoginDate": null,
+    "school": {
+      "id": "5a87826425acab41344f08aa",
+      "schoolName": "Dallas",
+      "schoolContactName": "Seymour Skinner",
+      "schoolContactPhone": "15554343867"
+    },
+    "name": "Coach Coach"
+  },
+  {
+    "id": "5ad55a14e4b0c7381b00450a",
+    "firstName": "Frank",
+    "lastName": "Smith",
+    "emailAddress": "fsmith@sweng500.com",
+    "phoneNumber": "+15551111111",
+    "minutesBeforeEvent": 10,
+    "receiveText": false,
+    "lastLoginDate": null,
+    "school": {
+      "id": "5a87826425acab41344f08aa",
+      "schoolName": "Dallas",
+      "schoolContactName": "Seymour Skinner",
+      "schoolContactPhone": "15554343867"
+    },
+    "name": "Frank Smith"
+  },
+  {
+    "id": "5ad55a65e4b0c7381b00450b",
+    "firstName": "Jamie",
+    "lastName": "Rovan",
+    "emailAddress": "jroven@sweng500.com",
+    "phoneNumber": "+15551111111",
+    "minutesBeforeEvent": 10,
+    "receiveText": false,
+    "lastLoginDate": null,
+    "school": {
+      "id": "5a88ff4125acab41344f08ba",
+      "schoolName": "Old Forge",
+      "schoolContactName": "Clark Kent",
+      "schoolContactPhone": "15553842343"
+    },
+    "name": "Jamie Rovan"
+  }
+]

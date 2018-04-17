@@ -125,17 +125,14 @@ class Schools extends Component {
 
             _this.setState({confirmDialog: false});
 
-            if (result.status === 200) {
+            _this.addNotification(
+                "Success: The school has been deleted.",
+                "info",
+                "tc",
+                6
+            );
 
-                _this.addNotification(
-                    "Success: The school has been deleted.",
-                    "info",
-                    "tc",
-                    6
-                );
-
-                _this.componentDidMount();
-            }
+            _this.componentDidMount();
 
         }).catch(function (error) {
 
@@ -309,32 +306,6 @@ class Schools extends Component {
     renderIfSchoolsFound() {
         if (this.state.schoolList !== null && Object.keys(this.state.schoolList).length !== 0) {
 
-            const columns = [{
-                Header: 'School Name',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, { keys: ["schoolName"] }),
-                filterAll: true,
-                accessor: 'schoolName' // String-based value accessors!
-            }, {
-                Header: 'School Contact',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, { keys: ["schoolContactName"] }),
-                filterAll: true,
-                accessor: 'schoolContactName' // String-based value accessors!
-            }, {
-                Header: 'School Phone Number',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, { keys: ["schoolContactPhone"] }),
-                filterAll: true,
-                accessor: 'formattedPhone' // String-based value accessors!
-            }, {
-                Header: 'Actions',
-                accessor: 'menuActions', // String-based value accessors!
-                style:{textAlign:'center'},
-                sortable: false,
-                filterable: false
-            }];
-
             for(let value in this.state.schoolList) {
 
                 this.state.schoolList[value].formattedPhone = this.formatPhoneNumber(this.state.schoolList[value].schoolContactPhone);
@@ -350,7 +321,7 @@ class Schools extends Component {
                     filterable
                     defaultFilterMethod={(filter, row) =>
                         String(row[filter.id]) === filter.value}
-                    columns={columns}
+                    columns={this.columns}
                     defaultPageSize={10}
                     className="-striped -highlight"
                     defaultSorted={[{id: "schoolName"}]}
@@ -466,6 +437,33 @@ class Schools extends Component {
             </MuiThemeProvider>
         );
     }
+
+    columns = [{
+        Header: 'School Name',
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["schoolName"] }),
+        filterAll: true,
+        accessor: 'schoolName' // String-based value accessors!
+    }, {
+        Header: 'School Contact',
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["schoolContactName"] }),
+        filterAll: true,
+        accessor: 'schoolContactName' // String-based value accessors!
+    }, {
+        Header: 'School Phone Number',
+        filterMethod: (filter, rows) =>
+            matchSorter(rows, filter.value, { keys: ["schoolContactPhone"] }),
+        filterAll: true,
+        accessor: 'formattedPhone' // String-based value accessors!
+    }, {
+        Header: 'Actions',
+        accessor: 'menuActions', // String-based value accessors!
+        style:{textAlign:'center'},
+        sortable: false,
+        filterable: false
+    }];
+
 }
 
 export default Schools;

@@ -22,6 +22,7 @@ import BuildingSelector from "../../../components/Buildings/BuildingSelector";
 describe('Room Component Tests', function () {
 
     const notify = sinon.spy();
+    const consoleSpy = sinon.spy();
 
     //Set up test data before running any tests
     beforeAll(function () {
@@ -32,7 +33,9 @@ describe('Room Component Tests', function () {
             require('../../../../test/data/rooms/getAllRoomsResponseData.json')
         )
         //STUB: Constants function used as argument to HttpRequest
-        sinon.stub(constants, 'getServerUrl').returns("wow tests are stupid")
+        sinon.stub(constants, 'getServerUrl').returns("wow tests are stupid");
+
+        console.log = consoleSpy;
     })
 
     afterEach(function () {
@@ -250,7 +253,7 @@ describe('Room Component Tests', function () {
         component.instance().addNotification = sinon.spy();
 
         // Create a fake status variable
-        var s = [];
+        var s = {};
         s.status = "add";
 
         // Call the opening modal function
@@ -265,6 +268,106 @@ describe('Room Component Tests', function () {
 
         // Check to see if the modal action is edit
         expect(component.state().modalAction).to.equal("edit");
+
+        s.status = "idk";
+        component.instance().openModal(s);
+        expect(component.state().modalAction).to.equal("edit");
     });
+
+    // Test 9
+    test('Test notification system and modals', async () => {
+
+        // Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true)
+
+        const component = shallow(<Rooms/>);
+
+        // Call the opening modal function
+        component.instance().setState({_notificationSystem: {addNotification: () => {} }});
+        component.instance().addNotification("YO", "yo", "yo", 2);
+        component.instance().addNotification("YO");
+
+        component.instance().buildingCallback(null, null, 0);
+        expect(component.state().building).to.equal(0);
+
+        component.instance().closeConfirmDialog();
+        expect(component.state().confirmDialog).to.equal(false);
+
+
+        HttpRequest.httpRequest.restore();
+
+        //STUB: Http request to simulate data retrieval from API
+        sinon.stub(HttpRequest, 'httpRequest').rejects(
+            //import test data JSON for response
+            "awww"
+        );
+
+        component.instance().deleteRoom();
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().confirmDialog).to.equal(false);
+
+        // Fill out the forms and sets state for an addition
+        component.instance().setState({modal: true})
+        component.instance().setState({modalAction: 'add'})
+        component.instance().setState({roomName: 'New Room'})
+        component.instance().setState({roomCapacity: 10})
+        component.instance().setState({building: 5})
+
+        component.instance().handleSubmit();
+        // Wait for setState's to finish and re-render component
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().modal).to.equal(false);
+
+        component.instance().setState({modalAction: 'add'})
+        component.instance().handleSubmit();
+
+        await helper.flushPromises();
+        component.update();
+
+        expect(component.state().modal).to.equal(false);
+
+        component.instance().componentDidMount();
+        await helper.flushPromises();
+        component.update();
+
+        component.instance().columns[0].filterMethod({value: 'roomName'},[]);
+        component.instance().columns[1].filterMethod({value: 'buildingName'},[]);
+        component.instance().columns[2].filterMethod({value: 'capacity'},[]);
+    });
+
+
+    // Test 10
+    test('Test getting building name', async () => {
+        HttpRequest.httpRequest.restore();
+
+        //STUB: Http request to simulate data retrieval from API
+        sinon.stub(HttpRequest, 'httpRequest').resolves(
+            //import test data JSON for response
+            require('../../../../test/data/buildings/getAllBuildingsResponseData.json')
+        );
+
+        // Simulate the user be logged on
+        sinon.stub(AuthService, 'isLoggedIn').returns(true);
+
+        const component = shallow(<Rooms/>);
+        await helper.flushPromises();
+        component.update();
+
+        // Call the opening modal function
+        component.instance().setState({_notificationSystem: {addNotification: () => {} }});
+        component.instance().addNotification("YO", "yo", "yo", 2);
+        component.instance().addNotification("YO");
+
+        let build = component.state().buildingList[0];
+        expect(component.instance().getBuildingName(build.id)).to.deep.equal(build.building);
+
+    });
+
+
 
 });
