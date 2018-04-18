@@ -301,7 +301,16 @@ class Events extends Component {
         this.setState({
             modal: false,
             editMode:false,
-            editEventId:''
+            editEventId:'',
+            eventNameError: undefined,
+            startTimeError: undefined,
+            eventDateError: undefined,
+            endTimeError: undefined,
+            eventLocationError: undefined,
+            eventDescriptionError: undefined
+
+
+
         })
     }
 
@@ -710,27 +719,27 @@ class Events extends Component {
     }
 
     renderIfEventsFound() {
-
+        const columns = [{
+            Header: 'Event Name',
+            filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, {keys: ["name"]}),
+            filterAll: true,
+            accessor: 'name' // String-based value accessors!
+        }, {
+            Header: 'Event Description',
+            filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, {keys: ["description"]}),
+            filterAll: true,
+            accessor: 'description' // String-based value accessors!
+        }, {
+            Header: 'Actions',
+            accessor: 'menuActions', // String-based value accessors!
+            style: {textAlign: 'center'},
+            sortable: false,
+            filterable: false
+        }];
         if (this.state.events !== null && Object.keys(this.state.events).length !== 0) {
-            const columns = [{
-                Header: 'Event Name',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, {keys: ["name"]}),
-                filterAll: true,
-                accessor: 'name' // String-based value accessors!
-            }, {
-                Header: 'Event Description',
-                filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, {keys: ["description"]}),
-                filterAll: true,
-                accessor: 'description' // String-based value accessors!
-            }, {
-                Header: 'Actions',
-                accessor: 'menuActions', // String-based value accessors!
-                style: {textAlign: 'center'},
-                sortable: false,
-                filterable: false
-            }];
+
             for (let value in this.state.events) {
                 if (this.state.showDeletebtn) {
                     this.state.events[value].status = "edit";
@@ -768,7 +777,18 @@ class Events extends Component {
             )
         } else {
 
-            <h1>Not Found</h1>
+            return (
+                <ReactTable
+                    data={this.state.events}
+                    filterable
+                    defaultFilterMethod={(filter, row) =>
+                        String(row[filter.id]) === filter.value}
+                    columns={columns}
+                    defaultPageSize={10}
+                    className="-striped -highlight"
+                    defaultSorted={[{id: "name"}]}
+                />
+            )
         }
     }
 
@@ -918,7 +938,7 @@ class Events extends Component {
                                                         value={this.state.eventDate}
                                                         hintText="Event Date"
                                                         floatingLabelText="Event Date"
-                                                        textFieldStyle={styles.formFields}
+                                                      //  textFieldStyle={styles.formFields}
 
                                                         mode="landscape"/>
 
@@ -936,7 +956,7 @@ class Events extends Component {
                                                         floatingLabelText="Start Time"
                                                         onChange={(event, newValue) => this.setState({startTime: newValue})}
                                                         value={this.state.startTime}
-                                                        textFieldStyle={styles.formFields}
+                                                       // textFieldStyle={styles.formFields}
                                                         hintText="Start time"
                                                         autoOk={true}
                                                     />
@@ -948,7 +968,7 @@ class Events extends Component {
                                                         onChange={(event, newValue) => this.setState({endTime: newValue})}
                                                         value={this.state.endTime}
                                                         hintText="End time"
-                                                        textFieldStyle={styles.formFields}
+                                                       // textFieldStyle={styles.formFields}
                                                         autoOk={true}
                                                     />
                                                 </Col>
