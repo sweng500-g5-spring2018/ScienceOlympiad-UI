@@ -93,7 +93,7 @@ class App extends Component {
             <div className="wrapper">
                 <NotificationSystem ref="notificationSystem" style={style}/>
                 <Sidebar {...this.props} />
-                <div id="main-panel" className="main-panel">
+                <div id="main-panel" className="main-panel" style={{height: '100%'}}>
                     <Header {...this.props}/>
                         <Switch>
                             {
