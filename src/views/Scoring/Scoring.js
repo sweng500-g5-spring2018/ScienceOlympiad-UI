@@ -100,7 +100,7 @@ class Scoring extends Component {
                 console.log("Failed to obtain judges :(");
             });
         }).catch(function (error) {
-            this.addNotification(<div>Could not retrieve teams at this time. Try again later.</div>, 'error');
+            _this.addNotification(<div>Could not retrieve teams at this time. Try again later.</div>, 'error');
             console.log(error);
         })
     }

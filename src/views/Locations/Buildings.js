@@ -292,7 +292,7 @@ class Buildings extends Component {
 
     // Fetch a list of buildings
     componentDidMount() {
-        this.setState({_notificationSystem: this.refs.notificationSystem});
+        // this.setState({_notificationSystem: this.refs.notificationSystem});
 
         //Make call out to backend
         var _this = this;
@@ -300,12 +300,20 @@ class Buildings extends Component {
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getBuildings', 'GET', constants.useCredentials(), null, true).then(function (result) {
 
             _this.setState({
+                _notificationSystem: _this.refs.notificationSystem,
                 buildingList: result.body,
                 loading: true
             })
 
         }).catch(function (error) {
-            console.log(error);
+            _this.setState({_notificationSystem: _this.refs.notificationSystem}, () => {
+                _this.addNotification(
+                    "Error: Could not retrieve Rooms data at this time.",
+                    "error",
+                    "tc",
+                    6
+                );
+            });
         })
     }
 

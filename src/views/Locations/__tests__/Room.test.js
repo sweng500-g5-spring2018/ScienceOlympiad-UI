@@ -331,7 +331,7 @@ describe('Room Component Tests', function () {
 
         expect(component.state().modal).to.equal(false);
 
-        component.instance().componentDidMount();
+        component.instance().getAllRoomsAndBuildings();
         await helper.flushPromises();
         component.update();
 

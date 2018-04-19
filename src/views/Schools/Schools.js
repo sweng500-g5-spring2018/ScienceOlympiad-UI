@@ -132,7 +132,7 @@ class Schools extends Component {
                 6
             );
 
-            _this.componentDidMount();
+            _this.getSchools();
 
         }).catch(function (error) {
 
@@ -218,7 +218,7 @@ class Schools extends Component {
                         _this.setState({modal: false})
 
                         // Update the component
-                        _this.componentDidMount();
+                        _this.getSchools();
 
                     }
 
@@ -254,7 +254,7 @@ class Schools extends Component {
                             6
                         );
 
-                        _this.componentDidMount();
+                        _this.getSchools();
 
                     }
 
@@ -275,11 +275,7 @@ class Schools extends Component {
         }
     }
 
-    // Fetch a list of schools
-    componentDidMount() {
-        this.setState({_notificationSystem: this.refs.notificationSystem});
-
-        //Make call out to backend
+    getSchools() {
         var _this = this;
 
         _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getSchools', 'GET', constants.useCredentials(), null).then(function (result) {
@@ -289,7 +285,22 @@ class Schools extends Component {
             })
 
         }).catch(function (error) {
+            _this.addNotification(
+                "Error: Could not retrieve Rooms data at this time.",
+                "error",
+                "tc",
+                6
+            );
         })
+    }
+
+    // Fetch a list of schools
+    componentDidMount() {
+
+        //Make call out to backend
+        this.setState({_notificationSystem: this.refs.notificationSystem}, () => {
+            this.getSchools();
+        });
     }
 
     // Reformat the phone number

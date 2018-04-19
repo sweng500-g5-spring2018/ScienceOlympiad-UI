@@ -148,7 +148,7 @@ class Rooms extends Component {
                 6
             );
 
-            _this.componentDidMount();
+            _this.getAllRoomsAndBuildings();
 
         }).catch(function (error) {
 
@@ -229,7 +229,7 @@ class Rooms extends Component {
                         _this.setState({modal: false})
 
                         // Update the component
-                        _this.componentDidMount();
+                        _this.getAllRoomsAndBuildings();
 
                     }
 
@@ -265,7 +265,7 @@ class Rooms extends Component {
                             6
                         );
 
-                        _this.componentDidMount();
+                        _this.getAllRoomsAndBuildings();
 
                     }
 
@@ -286,34 +286,33 @@ class Rooms extends Component {
         }
     }
 
+    getAllRoomsAndBuildings() {
+        var promises = [];
+        promises.push(HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getAllRooms', 'GET', constants.useCredentials(), null));
+        promises.push(HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getBuildings', 'GET', constants.useCredentials(), null, true));
+
+        Promise.all(promises).then( (results) => {
+            this.setState({
+                roomList: results[0].body,
+                buildingList: results[1].body,
+                loading: true
+            })
+        }).catch( (error) => {
+            this.addNotification(
+                "Error: Could not retrieve Rooms data at this time.",
+                "error",
+                "tc",
+                6
+            );
+        });
+    }
+
     // Fetch a list of rooms
     componentDidMount() {
-        this.setState({_notificationSystem: this.refs.notificationSystem});
 
-        //Make call out to backend to get a list of rooms
-        var _this = this;
-
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getAllRooms', 'GET', constants.useCredentials(), null).then(function (result) {
-            _this.setState({
-                roomList: result.body,
-                loading: true
-            })
-
-        }).catch(function (error) {
+        this.setState({_notificationSystem: this.refs.notificationSystem}, () => {
+            this.getAllRoomsAndBuildings();
         })
-
-        //Make call out to backend to get a list of buildings
-        _this.serverRequest = HttpRequest.httpRequest(constants.getServerUrl() + '/sweng500/getBuildings', 'GET', constants.useCredentials(), null, true).then(function (result) {
-
-            _this.setState({
-                buildingList: result.body,
-                loading: true
-            })
-
-        }).catch(function (error) {
-            console.log(error);
-        })
-
 
     }
 
