@@ -15,7 +15,7 @@ import Dialog from 'material-ui/Dialog';
 import constants from "../../utils/constants";
 import NotificationSystem from 'react-notification-system';
 import {style} from "../../variables/Variables";
-import BuildingSelector from '../../components/Buildings/BuildingSelector';
+import CustomDropdown from "../../elements/CustomSelector/CustomDropdown";
 
 
 class Rooms extends Component {
@@ -37,6 +37,7 @@ class Rooms extends Component {
             confirmMessage: '',
             roomName: '',
             building: null,
+            buildingDropdownValue:null,
             buildingRequired: null,
             roomCapacity: null,
             buildingError: null,
@@ -63,10 +64,12 @@ class Rooms extends Component {
         });
     }
 
-    buildingCallback(event, index, value) {
+    //modified to get value from customdropdown to display and keep original building as the id
+    buildingCallback(value) {
 
         this.setState({
-            building: value});
+            buildingDropdownValue:value,
+            building: value.id});
     }
 
     // Open the modal
@@ -421,11 +424,17 @@ class Rooms extends Component {
                                 errorText={this.state.roomCapacityRequired}
                             />
                             <br/>
-                            <BuildingSelector selected={this.state.building}
-                                              errorMsg={this.state.buildingRequired}
-                                              callBack={this.buildingCallback}
-                                              labelText={"Building"}
-                                              hintText={"Select a building"}/>
+                            <CustomDropdown
+                                name={"Building"}
+                                labelText={"Building"}
+                                hintText={"Select a building"}
+                                selected={this.state.buildingDropdownValue}
+                                endpoint={"/sweng500/getBuildings"}
+                                sortKey={"building"}
+                                textKeys={["building"]}
+                                selectedValue={this.buildingCallback}
+                                errorText={this.state.buildingRequired}
+                            />
                         </Modal.Body>
                         <Modal.Footer>
                             <RaisedButton icon={<FontIcon className="pe-7s-close-circle" />} primary={true} label="Cancel"
