@@ -17,7 +17,7 @@ import {Modal} from 'react-bootstrap';
 import Rooms from '../Rooms';
 import AuthService from "../../../utils/AuthService";
 import RaisedButton from "material-ui/RaisedButton/index";
-import BuildingSelector from "../../../components/Buildings/BuildingSelector";
+import CustomDropdown from "../../../elements/CustomSelector/CustomDropdown";
 
 describe('Room Component Tests', function () {
 
@@ -235,7 +235,7 @@ describe('Room Component Tests', function () {
         //FIND children components being rendered
         var textfield1 = component.find(TextField).at(0);
         var textfield2 = component.find(TextField).at(1);
-        var selector = component.find(BuildingSelector);
+        var selector = component.find(CustomDropdown);
 
         expect(textfield1.simulate('change', {target: {value: 'name={"roomName"}'}}, 'Room1'));
         expect(textfield2.simulate('change', {target: {value: 'name={"roomCapacity"}'}}, 5));
@@ -287,8 +287,8 @@ describe('Room Component Tests', function () {
         component.instance().addNotification("YO", "yo", "yo", 2);
         component.instance().addNotification("YO");
 
-        component.instance().buildingCallback(null, null, 0);
-        expect(component.state().building).to.equal(0);
+        component.instance().buildingCallback(0);
+        expect(component.state().buildingDropdownValue).to.equal(0);
 
         component.instance().closeConfirmDialog();
         expect(component.state().confirmDialog).to.equal(false);
