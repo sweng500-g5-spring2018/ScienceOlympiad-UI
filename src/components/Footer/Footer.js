@@ -23,6 +23,11 @@ class Footer extends Component {
                                     Science Olympiad
                                 </a>
                             </li>
+                            <li>
+                                <a href="http://www.sweng500.com/docs" target="_blank">
+                                    Java API Docs
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                     <p className="copyright pull-right">

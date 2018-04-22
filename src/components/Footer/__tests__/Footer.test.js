@@ -26,7 +26,7 @@ describe('Footer Component Tests', function () {
 
         let references = component.find("a");
 
-        expect(references.length).to.equal(3);
+        expect(references.length).to.equal(4);
         expect(references.at(0).text()).to.equal("Home");
         expect(references.at(0).prop("href")).to.equal("/#/app/dashboard");
     })
