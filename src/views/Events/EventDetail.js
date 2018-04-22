@@ -150,6 +150,9 @@ class EventDetail extends Component {
         var ampm = hours >= 12 ? 'pm' : 'am';
         hours = hours % 12;
         hours = hours ? hours : 12;
+        if(minutes < 10) {
+            minutes = '0' + minutes;
+        }
         return hours + ":" + minutes + " " + ampm;
     }
 
