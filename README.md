@@ -51,7 +51,7 @@ This application will run on the Node.js runtime and NPM.
     f) set the scripts to 'start'
     
 
-## Running ScienceOlympiad
+## Running ScienceOlympiad Locally
 1) The following are NPM commands for installing module dependencies in the package.json 
 and for compiling/executing modules.  Run these commands from project root directory.
  
@@ -64,7 +64,7 @@ and for compiling/executing modules.  Run these commands from project root direc
     >       npm start
     
     c) Currently the application runs on port 8080; navigate to:
-    >       http://localhost:3000
+    >       http://localhost:8080
     
 
 ## Testing 
